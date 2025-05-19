@@ -12,18 +12,15 @@ import BaseDivider from '../components/BaseDivider';
 import BaseButtons from '../components/BaseButtons';
 import { useRouter } from 'next/router';
 import { getPageTitle } from '../config';
-
 import Select from 'react-select';
 import { useAppDispatch } from '../stores/hooks';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import axiosInstance from '../utils/axiosInstance';
 
 export default function Register() {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
-
   const [organizations, setOrganizations] = React.useState(null);
   const [selectedOrganization, setSelectedOrganization] = React.useState(null);
   const dispatch = useAppDispatch();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
 import LayoutGuest from '../layouts/Guest';

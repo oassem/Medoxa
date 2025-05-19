@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import { useAppSelector } from '../stores/hooks';
 import LayoutGuest from '../layouts/Guest';
 import WebSiteHeader from '../components/WebPageComponents/Header';
 import WebSiteFooter from '../components/WebPageComponents/Footer';

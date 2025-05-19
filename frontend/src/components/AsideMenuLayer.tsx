@@ -1,11 +1,10 @@
 import React from 'react';
-import { mdiLogout, mdiClose } from '@mdi/js';
+import { mdiClose } from '@mdi/js';
 import BaseIcon from './BaseIcon';
 import AsideMenuList from './AsideMenuList';
 import { MenuAsideItem } from '../interfaces';
 import { useAppSelector } from '../stores/hooks';
 import Link from 'next/link';
-
 import { useAppDispatch } from '../stores/hooks';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../utils/axiosInstance';

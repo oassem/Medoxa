@@ -3,7 +3,7 @@ import Switch from 'react-switch';
 import { useTranslation } from 'next-i18next';
 
 export const SwitchField = ({ field, form, disabled }) => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('common');
   const isRTL = i18n.language === 'ar';
 
   const handleChange = (data: any) => {

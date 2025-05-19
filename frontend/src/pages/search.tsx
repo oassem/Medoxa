@@ -2,9 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppDispatch } from '../stores/hooks';
-
 import { useAppSelector } from '../stores/hooks';
-
 import { useRouter } from 'next/router';
 import LayoutAuthenticated from '../layouts/Authenticated';
 import SectionTitleLineWithButton from '../components/SectionTitleLineWithButton';

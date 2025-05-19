@@ -27,7 +27,7 @@ const SingleVal = (props: SingleValueProps<LanguageOption, false>) => (
 );
 
 const LanguageSwitcher: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('common');
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState<LanguageOption>(LANGS[0]);

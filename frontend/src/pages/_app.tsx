@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 import ErrorBoundary from '../components/ErrorBoundary';
 import 'intro.js/introjs.css';
 import { appWithTranslation } from 'next-i18next';
-import '../i18n';
 import IntroGuide from '../components/IntroGuide';
 import {
   appSteps,
