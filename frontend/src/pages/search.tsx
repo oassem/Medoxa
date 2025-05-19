@@ -16,7 +16,7 @@ import BaseButton from '../components/BaseButton';
 import BaseDivider from '../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 const SearchView = () => {
   const router = useRouter();
@@ -35,7 +35,7 @@ const SearchView = () => {
   const fetchData = createAsyncThunk('/search', async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/search', {
+      const response = await axiosInstance.post('/search', {
         searchQuery,
         organizationsId,
       });

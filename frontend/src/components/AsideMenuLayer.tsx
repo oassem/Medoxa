@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 import { useAppDispatch } from '../stores/hooks';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 type Props = {
   menu: MenuAsideItem[];
@@ -43,7 +43,7 @@ export default function AsideMenuLayer({
 
   const fetchOrganizations = createAsyncThunk('/org-for-auth', async () => {
     try {
-      const response = await axios.get('/org-for-auth');
+      const response = await axiosInstance.get('/org-for-auth');
       setOrganizations(response.data);
       return response.data;
     } catch (error) {

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'permissions/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `permissions${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'permissions/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('permissions/deleteByIds', { data });
+      await axiosInstance.post('permissions/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'permissions/deletePermissions',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`permissions/${id}`);
+      await axiosInstance.delete(`permissions/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'permissions/createPermissions',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('permissions', { data });
+      const result = await axiosInstance.post('permissions', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +99,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('permissions/bulk-import', data, {
+      const result = await axiosInstance.post('permissions/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -120,7 +120,7 @@ export const update = createAsyncThunk(
   'permissions/updatePermissions',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`permissions/${payload.id}`, {
+      const result = await axiosInstance.put(`permissions/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

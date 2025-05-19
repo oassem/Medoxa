@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableImaging_order_items from '../../components/Imaging_order_items/TableImaging_order_items';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -55,7 +55,7 @@ const Imaging_order_itemsTablesPage = () => {
   };
 
   const getImaging_order_itemsCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/imaging_order_items?filetype=csv',
       method: 'GET',
       responseType: 'blob',

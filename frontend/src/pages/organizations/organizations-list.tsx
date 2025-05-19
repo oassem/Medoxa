@@ -9,8 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableOrganizations from '../../components/Organizations/TableOrganizations';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
-import Link from 'next/link';
+import axiosInstance from '../../utils/axiosInstance';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -51,7 +50,7 @@ const OrganizationsTablesPage = () => {
   };
 
   const getOrganizationsCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/organizations?filetype=csv',
       method: 'GET',
       responseType: 'blob',

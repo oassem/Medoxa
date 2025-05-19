@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableSick_leaves from '../../components/Sick_leaves/TableSick_leaves';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -60,7 +60,7 @@ const Sick_leavesTablesPage = () => {
   };
 
   const getSick_leavesCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/sick_leaves?filetype=csv',
       method: 'GET',
       responseType: 'blob',

@@ -21,6 +21,7 @@ export default function NavBarItem({ item }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const excludedRef = useRef(null);
+  const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   const navBarItemLabelActiveColorStyle = useAppSelector(
     (state) => state.style.navBarItemLabelActiveColorStyle,
@@ -33,12 +34,10 @@ export default function NavBarItem({ item }: Props) {
   );
 
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-
   const userName = `${currentUser?.firstName ? currentUser?.firstName : ''} ${
     currentUser?.lastName ? currentUser?.lastName : ''
   }`;
-
-  const [isDropdownActive, setIsDropdownActive] = useState(false);
+  const itemLabel = item.isCurrentUser ? userName : item.label;
 
   useEffect(() => {
     return () => setIsDropdownActive(false);
@@ -52,8 +51,6 @@ export default function NavBarItem({ item }: Props) {
     item.menu ? 'lg:py-2 lg:px-3' : 'py-2 px-3',
     item.isDesktopNoLabel ? 'lg:w-16 lg:justify-center' : '',
   ].join(' ');
-
-  const itemLabel = item.isCurrentUser ? userName : item.label;
 
   const handleMenuClick = () => {
     if (item.menu) {
@@ -93,7 +90,11 @@ export default function NavBarItem({ item }: Props) {
         onClick={handleMenuClick}
       >
         {item.icon && (
-          <BaseIcon path={item.icon} size={22} className='transition-colors' />
+          <BaseIcon
+            path={item.icon}
+            size={22}
+            className={`transition-colors ${item.flipIconRTL ? 'rotate-180' : ''}`}
+          />
         )}
         <span
           className={`px-2 transition-colors w-40 grow ${
@@ -102,14 +103,18 @@ export default function NavBarItem({ item }: Props) {
         >
           {itemLabel}
         </span>
-        {item.isCurrentUser && (
-          <UserAvatarCurrentUser className='w-6 h-6 mr-3 inline-flex' />
-        )}
-        {item.menu && (
-          <BaseIcon
-            path={isDropdownActive ? mdiChevronUp : mdiChevronDown}
-            className='hidden lg:inline-flex transition-colors'
-          />
+        {(item.isCurrentUser || item.menu) && (
+          <div className='flex items-center'>
+            {item.isCurrentUser && (
+              <UserAvatarCurrentUser className='w-6 h-6 inline-flex' />
+            )}
+            {item.menu && (
+              <BaseIcon
+                path={isDropdownActive ? mdiChevronUp : mdiChevronDown}
+                className='hidden lg:inline-flex transition-colors'
+              />
+            )}
+          </div>
         )}
       </div>
       {item.menu && (

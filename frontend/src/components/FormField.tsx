@@ -10,7 +10,7 @@ type Props = {
   isBorderless?: boolean;
   isTransparent?: boolean;
   hasTextareaHeight?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
   disabled?: boolean;
   borderButtom?: boolean;
   diversity?: boolean;
@@ -22,7 +22,6 @@ const FormField = ({ icons = [], ...props }: Props) => {
   const bgColor = useAppSelector((state) => state.style.cardsColor);
   const focusRing = useAppSelector((state) => state.style.focusRingColor);
   const corners = useAppSelector((state) => state.style.corners);
-  const bgWebsiteColor = useAppSelector((state) => state.style.bgLayoutColor);
   let elementWrapperClass = '';
 
   switch (childrenCount) {
@@ -81,7 +80,7 @@ const FormField = ({ icons = [], ...props }: Props) => {
         ))}
       </div>
       {props.help && (
-        <div className='text-xs    text-gray-500 dark:text-dark-600 mt-1'>
+        <div className='text-xs text-gray-500 dark:text-dark-600 mt-1'>
           {props.help}
         </div>
       )}

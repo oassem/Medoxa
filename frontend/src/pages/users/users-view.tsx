@@ -19,22 +19,16 @@ import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
 import { SwitchField } from '../../components/SwitchField';
 import FormField from '../../components/FormField';
-
-import { hasPermission } from '../../helpers/userPermissions';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 const UsersView = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { users } = useAppSelector((state) => state.users);
-
-  const { currentUser } = useAppSelector((state) => state.auth);
-
   const { id } = router.query;
-
-  function removeLastCharacter(str) {
-    console.log(str, `str`);
-    return str.slice(0, -1);
-  }
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
 
   useEffect(() => {
     dispatch(fetch({ id }));
@@ -43,42 +37,46 @@ const UsersView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View users')}</title>
+        <title>
+          {getPageTitle(
+            t('pages.users.viewTitle', { defaultValue: 'View users' }),
+          )}
+        </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={removeLastCharacter('View users')}
+          title={t('pages.users.viewTitle', { defaultValue: 'View users' })}
           main
         >
           <BaseButton
             color='info'
-            label='Edit'
+            label={t('actions.edit')}
             href={`/users/users-edit/?id=${id}`}
           />
         </SectionTitleLineWithButton>
         <CardBox>
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>First Name</p>
+            <p className={'block font-bold mb-2'}>{t('fields.firstName')}</p>
             <p>{users?.firstName}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Last Name</p>
+            <p className={'block font-bold mb-2'}>{t('fields.lastName')}</p>
             <p>{users?.lastName}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Phone Number</p>
+            <p className={'block font-bold mb-2'}>{t('fields.phoneNumber')}</p>
             <p>{users?.phoneNumber}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>E-Mail</p>
+            <p className={'block font-bold mb-2'}>{t('fields.email')}</p>
             <p>{users?.email}</p>
           </div>
 
-          <FormField label='Disabled'>
+          <FormField label={t('fields.disabled')}>
             <SwitchField
               field={{ name: 'disabled', value: users?.disabled }}
               form={{ setFieldValue: () => null }}
@@ -87,7 +85,7 @@ const UsersView = () => {
           </FormField>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Avatar</p>
+            <p className={'block font-bold mb-2'}>{t('fields.avatar')}</p>
             {users?.avatar?.length ? (
               <ImageField
                 name={'avatar'}
@@ -95,548 +93,728 @@ const UsersView = () => {
                 className='w-20 h-20'
               />
             ) : (
-              <p>No Avatar</p>
+              <p>{t('messages.noAvatar')}</p>
             )}
           </div>
 
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>App Role</p>
-
-            <p>{users?.app_role?.name ?? 'No data'}</p>
+          <div className={'mb-8'}>
+            <p className={'block font-bold mb-2'}>{t('fields.appRole')}</p>
+            <p>{users?.app_role?.name ?? t('messages.noData')}</p>
           </div>
 
-          <>
-            <p className={'block font-bold mb-2'}>Custom Permissions</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.custom_permissions &&
-                      Array.isArray(users.custom_permissions) &&
-                      users.custom_permissions.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/permissions/permissions-view/?id=${item.id}`,
-                            )
-                          }
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.customPermissions')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.name')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.custom_permissions &&
+                    Array.isArray(users.custom_permissions) &&
+                    users.custom_permissions.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/permissions/permissions-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='name'
                         >
-                          <td data-label='name'>{item.name}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.custom_permissions?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
+                          {item.name}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.custom_permissions?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
 
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Organizations</p>
+          <div className='my-8' />
 
-            <p>{users?.organizations?.name ?? 'No data'}</p>
-          </div>
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.organizations')}
+          </h2>
+          <p>{users?.organizations?.name ?? t('messages.noData')}</p>
 
-          <>
-            <p className={'block font-bold mb-2'}>Appointments Doctor</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>AppointmentDate</th>
+          <div className='my-8' />
 
-                      <th>StartTime</th>
-
-                      <th>EndTime</th>
-
-                      <th>Type</th>
-
-                      <th>Status</th>
-
-                      <th>ReminderSent</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.appointments_doctor &&
-                      Array.isArray(users.appointments_doctor) &&
-                      users.appointments_doctor.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/appointments/appointments-view/?id=${item.id}`,
-                            )
-                          }
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.appointmentsDoctor')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.appointmentDate')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.startTime')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.endTime')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.type')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.status')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.reminderSent')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.appointments_doctor &&
+                    Array.isArray(users.appointments_doctor) &&
+                    users.appointments_doctor.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/appointments/appointments-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='appointment_date'
                         >
-                          <td data-label='appointment_date'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.appointment_date,
-                            )}
-                          </td>
-
-                          <td data-label='start_time'>
-                            {dataFormatter.dateTimeFormatter(item.start_time)}
-                          </td>
-
-                          <td data-label='end_time'>
-                            {dataFormatter.dateTimeFormatter(item.end_time)}
-                          </td>
-
-                          <td data-label='type'>{item.type}</td>
-
-                          <td data-label='status'>{item.status}</td>
-
-                          <td data-label='reminder_sent'>
-                            {dataFormatter.booleanFormatter(item.reminder_sent)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.appointments_doctor?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>
-              Doctor_availabilities Doctor
-            </p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Weekday</th>
-
-                      <th>MorningStartTime</th>
-
-                      <th>MorningEndTime</th>
-
-                      <th>EveningStartTime</th>
-
-                      <th>EveningEndTime</th>
-
-                      <th>SlotDurationMinutes</th>
-
-                      <th>IsActive</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.doctor_availabilities_doctor &&
-                      Array.isArray(users.doctor_availabilities_doctor) &&
-                      users.doctor_availabilities_doctor.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/doctor_availabilities/doctor_availabilities-view/?id=${item.id}`,
-                            )
-                          }
+                          {dataFormatter.dateTimeFormatter(
+                            item.appointment_date,
+                          )}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='start_time'
                         >
-                          <td data-label='weekday'>{item.weekday}</td>
-
-                          <td data-label='morning_start_time'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.morning_start_time,
-                            )}
-                          </td>
-
-                          <td data-label='morning_end_time'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.morning_end_time,
-                            )}
-                          </td>
-
-                          <td data-label='evening_start_time'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.evening_start_time,
-                            )}
-                          </td>
-
-                          <td data-label='evening_end_time'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.evening_end_time,
-                            )}
-                          </td>
-
-                          <td data-label='slot_duration_minutes'>
-                            {item.slot_duration_minutes}
-                          </td>
-
-                          <td data-label='is_active'>
-                            {dataFormatter.booleanFormatter(item.is_active)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.doctor_availabilities_doctor?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>Holidays Doctor</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>StartDate</th>
-
-                      <th>EndDate</th>
-
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.holidays_doctor &&
-                      Array.isArray(users.holidays_doctor) &&
-                      users.holidays_doctor.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/holidays/holidays-view/?id=${item.id}`,
-                            )
-                          }
+                          {dataFormatter.dateTimeFormatter(item.start_time)}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='end_time'
                         >
-                          <td data-label='start_date'>
-                            {dataFormatter.dateTimeFormatter(item.start_date)}
-                          </td>
-
-                          <td data-label='end_date'>
-                            {dataFormatter.dateTimeFormatter(item.end_date)}
-                          </td>
-
-                          <td data-label='notes'>{item.notes}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.holidays_doctor?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>
-              Imaging_orders ImagingTechnician
-            </p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>TotalAmount</th>
-
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.imaging_orders_imaging_technician &&
-                      Array.isArray(users.imaging_orders_imaging_technician) &&
-                      users.imaging_orders_imaging_technician.map(
-                        (item: any) => (
-                          <tr
-                            key={item.id}
-                            onClick={() =>
-                              router.push(
-                                `/imaging_orders/imaging_orders-view/?id=${item.id}`,
-                              )
-                            }
-                          >
-                            <td data-label='total_amount'>
-                              {item.total_amount}
-                            </td>
-
-                            <td data-label='status'>{item.status}</td>
-                          </tr>
-                        ),
-                      )}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.imaging_orders_imaging_technician?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>Lab_orders LabTechnician</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>TotalAmount</th>
-
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.lab_orders_lab_technician &&
-                      Array.isArray(users.lab_orders_lab_technician) &&
-                      users.lab_orders_lab_technician.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/lab_orders/lab_orders-view/?id=${item.id}`,
-                            )
-                          }
+                          {dataFormatter.dateTimeFormatter(item.end_time)}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='type'
                         >
-                          <td data-label='total_amount'>{item.total_amount}</td>
-
-                          <td data-label='status'>{item.status}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.lab_orders_lab_technician?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>Patients User</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>FullName(English)</th>
-
-                      <th>FullName(Arabic)</th>
-
-                      <th>DateofBirth</th>
-
-                      <th>Gender</th>
-
-                      <th>Nationality</th>
-
-                      <th>IdentifierType</th>
-
-                      <th>Identifier</th>
-
-                      <th>Address</th>
-
-                      <th>EmergencyContactName</th>
-
-                      <th>EmergencyContactPhone</th>
-
-                      <th>MedicalHistory</th>
-
-                      <th>Allergies</th>
-
-                      <th>CurrentMedications</th>
-
-                      <th>FamilyHistory</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.patients_user &&
-                      Array.isArray(users.patients_user) &&
-                      users.patients_user.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/patients/patients-view/?id=${item.id}`,
-                            )
-                          }
+                          {item.type}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='status'
                         >
-                          <td data-label='full_name_en'>{item.full_name_en}</td>
-
-                          <td data-label='full_name_ar'>{item.full_name_ar}</td>
-
-                          <td data-label='date_of_birth'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.date_of_birth,
-                            )}
-                          </td>
-
-                          <td data-label='gender'>{item.gender}</td>
-
-                          <td data-label='nationality'>{item.nationality}</td>
-
-                          <td data-label='identifier_type'>
-                            {item.identifier_type}
-                          </td>
-
-                          <td data-label='identifier'>{item.identifier}</td>
-
-                          <td data-label='address'>{item.address}</td>
-
-                          <td data-label='emergency_contact_name'>
-                            {item.emergency_contact_name}
-                          </td>
-
-                          <td data-label='emergency_contact_phone'>
-                            {item.emergency_contact_phone}
-                          </td>
-
-                          <td data-label='medical_history'>
-                            {item.medical_history}
-                          </td>
-
-                          <td data-label='allergies'>{item.allergies}</td>
-
-                          <td data-label='current_medications'>
-                            {item.current_medications}
-                          </td>
-
-                          <td data-label='family_history'>
-                            {item.family_history}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.patients_user?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
-            <p className={'block font-bold mb-2'}>Pharmacy_orders Pharmacist</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>TotalAmount</th>
-
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.pharmacy_orders_pharmacist &&
-                      Array.isArray(users.pharmacy_orders_pharmacist) &&
-                      users.pharmacy_orders_pharmacist.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/pharmacy_orders/pharmacy_orders-view/?id=${item.id}`,
-                            )
-                          }
+                          {item.status}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='reminder_sent'
                         >
-                          <td data-label='total_amount'>{item.total_amount}</td>
+                          {dataFormatter.booleanFormatter(item.reminder_sent)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.appointments_doctor?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
 
-                          <td data-label='status'>{item.status}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.pharmacy_orders_pharmacist?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
+          <div className='my-8' />
 
-          <>
-            <p className={'block font-bold mb-2'}>Visits Doctor</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>VisitDateTime</th>
-
-                      <th>Symptoms</th>
-
-                      <th>Diagnosis</th>
-
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.visits_doctor &&
-                      Array.isArray(users.visits_doctor) &&
-                      users.visits_doctor.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(`/visits/visits-view/?id=${item.id}`)
-                          }
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.doctor_availabilities_doctor')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.weekday')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.morning_start_time')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.morning_end_time')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.evening_start_time')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.evening_end_time')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.slot_duration_minutes')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.is_active')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.doctor_availabilities_doctor &&
+                    Array.isArray(users.doctor_availabilities_doctor) &&
+                    users.doctor_availabilities_doctor.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/doctor_availabilities/doctor_availabilities-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='weekday'
                         >
-                          <td data-label='visit_datetime'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.visit_datetime,
-                            )}
-                          </td>
+                          {item.weekday}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='morning_start_time'
+                        >
+                          {dataFormatter.dateTimeFormatter(
+                            item.morning_start_time,
+                          )}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='morning_end_time'
+                        >
+                          {dataFormatter.dateTimeFormatter(
+                            item.morning_end_time,
+                          )}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='evening_start_time'
+                        >
+                          {dataFormatter.dateTimeFormatter(
+                            item.evening_start_time,
+                          )}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='evening_end_time'
+                        >
+                          {dataFormatter.dateTimeFormatter(
+                            item.evening_end_time,
+                          )}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='slot_duration_minutes'
+                        >
+                          {item.slot_duration_minutes}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='is_active'
+                        >
+                          {dataFormatter.booleanFormatter(item.is_active)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.doctor_availabilities_doctor?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
 
-                          <td data-label='symptoms'>{item.symptoms}</td>
+          <div className='my-8' />
 
-                          <td data-label='diagnosis'>{item.diagnosis}</td>
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.holidays_doctor')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.start_date')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.end_date')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.notes')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.holidays_doctor &&
+                    Array.isArray(users.holidays_doctor) &&
+                    users.holidays_doctor.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(`/holidays/holidays-view/?id=${item.id}`)
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='start_date'
+                        >
+                          {dataFormatter.dateTimeFormatter(item.start_date)}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='end_date'
+                        >
+                          {dataFormatter.dateTimeFormatter(item.end_date)}
+                        </td>
+                        <td data-label='notes'>{item.notes}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.holidays_doctor?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
 
-                          <td data-label='notes'>{item.notes}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!users?.visits_doctor?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.imaging_orders_imaging_technician')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.total_amount')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.status')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.imaging_orders_imaging_technician &&
+                    Array.isArray(users.imaging_orders_imaging_technician) &&
+                    users.imaging_orders_imaging_technician.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/imaging_orders/imaging_orders-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='total_amount'
+                        >
+                          {item.total_amount}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='status'
+                        >
+                          {item.status}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.imaging_orders_imaging_technician?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
+
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.lab_orders_lab_technician')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.total_amount')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.status')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.lab_orders_lab_technician &&
+                    Array.isArray(users.lab_orders_lab_technician) &&
+                    users.lab_orders_lab_technician.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/lab_orders/lab_orders-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='total_amount'
+                        >
+                          {item.total_amount}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='status'
+                        >
+                          {item.status}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.lab_orders_lab_technician?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
+
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.patients_user')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.full_name_en')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.full_name_ar')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.date_of_birth')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.gender')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.nationality')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.identifier_type')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.identifier')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.address')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.emergency_contact_name')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.emergency_contact_phone')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.medical_history')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.allergies')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.current_medications')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.family_history')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.patients_user &&
+                    Array.isArray(users.patients_user) &&
+                    users.patients_user.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(`/patients/patients-view/?id=${item.id}`)
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='full_name_en'
+                        >
+                          {item.full_name_en}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='full_name_ar'
+                        >
+                          {item.full_name_ar}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='date_of_birth'
+                        >
+                          {dataFormatter.dateTimeFormatter(item.date_of_birth)}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='gender'
+                        >
+                          {item.gender}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='nationality'
+                        >
+                          {item.nationality}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='identifier_type'
+                        >
+                          {item.identifier_type}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='identifier'
+                        >
+                          {item.identifier}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='address'
+                        >
+                          {item.address}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='emergency_contact_name'
+                        >
+                          {item.emergency_contact_name}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='emergency_contact_phone'
+                        >
+                          {item.emergency_contact_phone}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='medical_history'
+                        >
+                          {item.medical_history}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='allergies'
+                        >
+                          {item.allergies}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='current_medications'
+                        >
+                          {item.current_medications}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='family_history'
+                        >
+                          {item.family_history}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.patients_user?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
+
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.pharmacy_orders_pharmacist')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.total_amount')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.status')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.pharmacy_orders_pharmacist &&
+                    Array.isArray(users.pharmacy_orders_pharmacist) &&
+                    users.pharmacy_orders_pharmacist.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(
+                            `/pharmacy_orders/pharmacy_orders-view/?id=${item.id}`,
+                          )
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='total_amount'
+                        >
+                          {item.total_amount}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='status'
+                        >
+                          {item.status}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.pharmacy_orders_pharmacist?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
+
+          <div className='my-8' />
+
+          <h2 className='text-2xl font-extrabold'>
+            {t('fields.visits_doctor')}
+          </h2>
+          <CardBox
+            className='mb-6 border border-gray-300 rounded overflow-hidden'
+            hasTable
+          >
+            <div className='overflow-x-auto'>
+              <table>
+                <thead>
+                  <tr>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.visit_datetime')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.symptoms')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.diagnosis')}
+                    </th>
+                    <th className='text-left rtl:text-right'>
+                      {t('fields.notes')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.visits_doctor &&
+                    Array.isArray(users.visits_doctor) &&
+                    users.visits_doctor.map((item: any) => (
+                      <tr
+                        key={item.id}
+                        onClick={() =>
+                          router.push(`/visits/visits-view/?id=${item.id}`)
+                        }
+                      >
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='visit_datetime'
+                        >
+                          {dataFormatter.dateTimeFormatter(item.visit_datetime)}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='symptoms'
+                        >
+                          {item.symptoms}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='diagnosis'
+                        >
+                          {item.diagnosis}
+                        </td>
+                        <td
+                          className='text-left rtl:text-right'
+                          data-label='notes'
+                        >
+                          {item.notes}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {!users?.visits_doctor?.length && (
+              <div className={'text-center py-4'}>{t('messages.noData')}</div>
+            )}
+          </CardBox>
 
           <BaseDivider />
 
           <BaseButton
             color='info'
-            label='Back'
+            label={t('actions.back')}
             onClick={() => router.push('/users/users-list')}
           />
         </CardBox>
@@ -652,3 +830,11 @@ UsersView.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersView;
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

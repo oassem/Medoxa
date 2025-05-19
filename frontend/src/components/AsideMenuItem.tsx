@@ -7,6 +7,7 @@ import AsideMenuList from './AsideMenuList';
 import { MenuAsideItem } from '../interfaces';
 import { useAppSelector } from '../stores/hooks';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   item: MenuAsideItem;
@@ -16,7 +17,7 @@ type Props = {
 const AsideMenuItem = ({ item, isDropdownList = false }: Props) => {
   const [isLinkActive, setIsLinkActive] = useState(false);
   const [isDropdownActive, setIsDropdownActive] = useState(false);
-
+  const { t } = useTranslation('common');
   const asideMenuItemStyle = useAppSelector(
     (state) => state.style.asideMenuItemStyle,
   );
@@ -39,7 +40,6 @@ const AsideMenuItem = ({ item, isDropdownList = false }: Props) => {
     if (item.href && isReady) {
       const linkPathName = new URL(item.href, location.href).pathname + '/';
       const activePathname = new URL(asPath, location.href).pathname;
-
       const activeView = activePathname.split('/')[1];
       const linkPathNameView = linkPathName.split('/')[1];
 
@@ -58,10 +58,10 @@ const AsideMenuItem = ({ item, isDropdownList = false }: Props) => {
       )}
       <span
         className={`grow text-ellipsis line-clamp-1 ${
-          item.menu ? '' : 'pr-12'
+          item.menu ? '' : 'pr-0'
         } ${activeClassAddon}`}
       >
-        {item.label}
+        {t(item.label)}
       </span>
       {item.menu && (
         <BaseIcon
@@ -74,7 +74,7 @@ const AsideMenuItem = ({ item, isDropdownList = false }: Props) => {
   );
 
   const componentClass = [
-    'flex cursor-pointer py-1.5 ',
+    'flex cursor-pointer py-1.5',
     isDropdownList ? 'px-6 text-sm' : '',
     item.color
       ? getButtonColor(item.color, false, true)

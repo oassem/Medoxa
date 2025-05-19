@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'doctor_availabilities/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `doctor_availabilities${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'doctor_availabilities/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('doctor_availabilities/deleteByIds', { data });
+      await axiosInstance.post('doctor_availabilities/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'doctor_availabilities/deleteDoctor_availabilities',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`doctor_availabilities/${id}`);
+      await axiosInstance.delete(`doctor_availabilities/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,9 @@ export const create = createAsyncThunk(
   'doctor_availabilities/createDoctor_availabilities',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('doctor_availabilities', { data });
+      const result = await axiosInstance.post('doctor_availabilities', {
+        data,
+      });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +101,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post(
+      const result = await axiosInstance.post(
         'doctor_availabilities/bulk-import',
         data,
         {
@@ -124,10 +126,13 @@ export const update = createAsyncThunk(
   'doctor_availabilities/updateDoctor_availabilities',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`doctor_availabilities/${payload.id}`, {
-        id: payload.id,
-        data: payload.data,
-      });
+      const result = await axiosInstance.put(
+        `doctor_availabilities/${payload.id}`,
+        {
+          id: payload.id,
+          data: payload.data,
+        },
+      );
       return result.data;
     } catch (error) {
       if (!error.response) {

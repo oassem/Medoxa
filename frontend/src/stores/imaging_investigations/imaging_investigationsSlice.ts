@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'imaging_investigations/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `imaging_investigations${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'imaging_investigations/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('imaging_investigations/deleteByIds', { data });
+      await axiosInstance.post('imaging_investigations/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'imaging_investigations/deleteImaging_investigations',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`imaging_investigations/${id}`);
+      await axiosInstance.delete(`imaging_investigations/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,9 @@ export const create = createAsyncThunk(
   'imaging_investigations/createImaging_investigations',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('imaging_investigations', { data });
+      const result = await axiosInstance.post('imaging_investigations', {
+        data,
+      });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +101,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post(
+      const result = await axiosInstance.post(
         'imaging_investigations/bulk-import',
         data,
         {
@@ -124,10 +126,13 @@ export const update = createAsyncThunk(
   'imaging_investigations/updateImaging_investigations',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`imaging_investigations/${payload.id}`, {
-        id: payload.id,
-        data: payload.data,
-      });
+      const result = await axiosInstance.put(
+        `imaging_investigations/${payload.id}`,
+        {
+          id: payload.id,
+          data: payload.data,
+        },
+      );
       return result.data;
     } catch (error) {
       if (!error.response) {

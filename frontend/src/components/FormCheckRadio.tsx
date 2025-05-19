@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
   type: 'checkbox' | 'radio' | 'switch';
   label?: string;
   className?: string;

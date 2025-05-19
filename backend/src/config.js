@@ -16,14 +16,12 @@ const config = {
     GOOGLE: 'google',
     MICROSOFT: 'microsoft',
   },
-  secret_key: process.env.SECRET_KEY || '',
+  secret_key: process.env.SECRET_KEY || 'mySuperSecretKey',
   remote: '',
   port: process.env.NODE_ENV === 'production' ? '' : '8080',
   hostUI: process.env.NODE_ENV === 'production' ? '' : 'http://localhost',
   portUI: process.env.NODE_ENV === 'production' ? '' : '3000',
-
   portUIProd: process.env.NODE_ENV === 'production' ? '' : ':3000',
-
   swaggerUI: process.env.NODE_ENV === 'production' ? '' : 'http://localhost',
   swaggerPort: process.env.NODE_ENV === 'production' ? '' : ':8080',
   google: {
@@ -49,21 +47,18 @@ const config = {
   },
   roles: {
     super_admin: 'Super Administrator',
-
     admin: 'Administrator',
-
     user: 'Medical Intern',
   },
-
   project_uuid: '2231a1c1-a63e-4528-8359-c69e460bf391',
   flHost:
     process.env.NODE_ENV === 'production' ||
-    process.env.NODE_ENV === 'dev_stage'
+      process.env.NODE_ENV === 'dev_stage'
       ? 'https://flatlogic.com/projects'
       : 'http://localhost:3000/projects',
 };
 
-config.pexelsKey = process.env.PEXELS_KEY || '';
+config.pexelsKey = process.env.PEXELS_KEY || 'DixuYMDWS28d6aHGNT9fVrveCen6SbadVTr1T9N4R1u1vfthOD05DyuO';
 config.pexelsQuery = 'Abstract healthcare technology concept';
 config.host =
   process.env.NODE_ENV === 'production' ? config.remote : 'http://localhost';

@@ -27,6 +27,7 @@ export type MenuNavBarItem = {
   isToggleLightDark?: boolean;
   isCurrentUser?: boolean;
   menu?: MenuNavBarItem[];
+  flipIconRTL?: boolean;
 };
 
 export type ColorKey =

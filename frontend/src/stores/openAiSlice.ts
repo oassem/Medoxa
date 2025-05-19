@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 interface MainState {
   isFetchingQuery: boolean;
@@ -32,7 +32,7 @@ export const aiPrompt = createAsyncThunk(
   'openai/aiPrompt',
   async (data: any, { rejectWithValue }) => {
     try {
-      return await axios.post('/openai/create_widget', data);
+      return await axiosInstance.post('/openai/create_widget', data);
     } catch (error) {
       if (!error.response) {
         throw error;

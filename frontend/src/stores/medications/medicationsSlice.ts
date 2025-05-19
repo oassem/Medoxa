@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'medications/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `medications${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'medications/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('medications/deleteByIds', { data });
+      await axiosInstance.post('medications/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'medications/deleteMedications',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`medications/${id}`);
+      await axiosInstance.delete(`medications/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'medications/createMedications',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('medications', { data });
+      const result = await axiosInstance.post('medications', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +99,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('medications/bulk-import', data, {
+      const result = await axiosInstance.post('medications/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -120,7 +120,7 @@ export const update = createAsyncThunk(
   'medications/updateMedications',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`medications/${payload.id}`, {
+      const result = await axiosInstance.put(`medications/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

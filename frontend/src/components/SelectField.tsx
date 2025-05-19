@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from 'react';
 import { AsyncPaginate } from 'react-select-async-paginate';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 export const SelectField = ({
   options,
@@ -35,7 +35,7 @@ export const SelectField = ({
     const path = `/${itemRef}/autocomplete?limit=${PAGE_SIZE}&offset=${
       loadedOptions.length
     }${inputValue ? `&query=${inputValue}` : ''}`;
-    const { data } = await axios(path);
+    const { data } = await axiosInstance(path);
     return {
       options: data.map(mapResponseToValuesAndLabels),
       hasMore: data.length === PAGE_SIZE,

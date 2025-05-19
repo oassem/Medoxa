@@ -9,8 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TablePermissions from '../../components/Permissions/TablePermissions';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
-import Link from 'next/link';
+import axiosInstance from '../../utils/axiosInstance';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -51,7 +50,7 @@ const PermissionsTablesPage = () => {
   };
 
   const getPermissionsCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/permissions?filetype=csv',
       method: 'GET',
       responseType: 'blob',

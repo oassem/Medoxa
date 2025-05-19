@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableDoctor_availabilities from '../../components/Doctor_availabilities/TableDoctor_availabilities';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -65,7 +65,7 @@ const Doctor_availabilitiesTablesPage = () => {
   };
 
   const getDoctor_availabilitiesCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/doctor_availabilities?filetype=csv',
       method: 'GET',
       responseType: 'blob',

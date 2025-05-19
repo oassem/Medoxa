@@ -1,4 +1,3 @@
-import { mdiClose } from '@mdi/js';
 import { ReactNode } from 'react';
 import type { ColorButtonKey } from '../interfaces';
 import BaseButton from './BaseButton';
@@ -6,6 +5,7 @@ import BaseButtons from './BaseButtons';
 import CardBox from './CardBox';
 import CardBoxComponentTitle from './CardBoxComponentTitle';
 import OverlayLayer from './OverlayLayer';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   title: string;
@@ -26,6 +26,8 @@ const CardBoxModal = ({
   onConfirm,
   onCancel,
 }: Props) => {
+  const { t } = useTranslation('common');
+
   if (!isActive) {
     return null;
   }
@@ -35,7 +37,7 @@ const CardBoxModal = ({
       <BaseButton label={buttonLabel} color={buttonColor} onClick={onConfirm} />
       {!!onCancel && (
         <BaseButton
-          label='Cancel'
+          label={t('users.cancel')}
           color={buttonColor}
           outline
           onClick={onCancel}
@@ -54,19 +56,9 @@ const CardBoxModal = ({
         isModal
         footer={footer}
       >
-        <CardBoxComponentTitle title={title}>
-          {!!onCancel && (
-            <BaseButton
-              icon={mdiClose}
-              color='whiteDark'
-              onClick={onCancel}
-              small
-              roundedFull
-            />
-          )}
-        </CardBoxComponentTitle>
+        <CardBoxComponentTitle title={title}></CardBoxComponentTitle>
 
-        <div className='space-y-3'>{children}</div>
+        <div className='space-y-3 mt-6'>{children}</div>
       </CardBox>
     </OverlayLayer>
   );

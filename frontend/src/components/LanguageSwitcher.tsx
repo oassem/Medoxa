@@ -5,14 +5,13 @@ import Select, {
   SingleValueProps,
   OptionProps,
 } from 'react-select';
+import { useRouter } from 'next/router';
 
 type LanguageOption = { label: string; value: string };
 
 const LANGS: LanguageOption[] = [
-  { value: 'en', label: '🇬🇧 EN' },
-  { value: 'fr', label: '🇫🇷 FR' },
-  { value: 'es', label: '🇪🇸 ES' },
-  { value: 'de', label: '🇩🇪 DE' },
+  { value: 'en', label: 'EN' },
+  { value: 'ar', label: 'AR' },
 ];
 
 const Option = (props: OptionProps<LanguageOption, false>) => (
@@ -29,6 +28,7 @@ const SingleVal = (props: SingleValueProps<LanguageOption, false>) => (
 
 const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState<LanguageOption>(LANGS[0]);
 
@@ -40,7 +40,7 @@ const LanguageSwitcher: React.FC = () => {
   const handleChange = (opt: LanguageOption | null) => {
     if (!opt) return;
     setSelected(opt);
-    i18n.changeLanguage(opt.value);
+    router.push(router.asPath, router.asPath, { locale: opt.value });
   };
 
   if (!mounted) return null;

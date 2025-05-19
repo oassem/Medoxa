@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import Link from 'next/link';
 import { toast, ToastContainer } from 'react-toastify';
 import { getPexelsImage, getPexelsVideo } from '../helpers/pexels';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export default function Login() {
   const { t } = useTranslation('common');
@@ -52,6 +53,7 @@ export default function Login() {
     remember: true,
   });
 
+  const [year, setYear] = useState<number | null>(null);
   const title = 'Medoxa';
 
   // Fetch Pexels image/video
@@ -89,6 +91,10 @@ export default function Login() {
       dispatch(resetAction());
     }
   }, [notifyState?.showNotification]);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -337,9 +343,10 @@ export default function Login() {
       </SectionFullScreen>
       <div className='bg-black text-white flex flex-col text-center justify-center md:flex-row'>
         <p className='py-6 text-sm'>
-          © 2024 <span>{title}</span>. {t('pages.login.footer.copyright')}
+          © {year ?? ''} <span>{title}</span>.{' '}
+          {t('pages.login.footer.copyright')}
         </p>
-        <Link className='py-6 ml-4 text-sm' href='/privacy-policy/'>
+        <Link className='py-6 ml-4 text-sm underline' href='/privacy-policy/'>
           {t('pages.login.footer.privacy')}
         </Link>
       </div>
@@ -351,3 +358,11 @@ export default function Login() {
 Login.getLayout = function getLayout(page: ReactElement) {
   return <LayoutGuest>{page}</LayoutGuest>;
 };
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

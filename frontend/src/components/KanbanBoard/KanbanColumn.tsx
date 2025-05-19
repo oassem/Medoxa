@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import Axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import CardBox from '../CardBox';
 import CardBoxModal from '../CardBoxModal';
 import { AsyncThunk } from '@reduxjs/toolkit';
@@ -91,7 +91,8 @@ const KanbanColumn = ({
     (page: number, filters = '') => {
       const query = `?page=${page}&limit=${perPage}&field=createdAt&sort=desc&${columnFieldName}=${column.id}&${filters}`;
       setLoading(true);
-      Axios.get(`${entityName}${query}`)
+      axiosInstance
+        .get(`${entityName}${query}`)
         .then((res) => {
           setData((prevState) =>
             page === 0 ? res.data.rows : [...prevState, ...res.data.rows],

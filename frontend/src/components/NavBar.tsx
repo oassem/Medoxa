@@ -10,7 +10,7 @@ import { useAppSelector } from '../stores/hooks';
 type Props = {
   menu: MenuNavBarItem[];
   className: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function NavBar({ menu, className = '', children }: Props) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from 'react';
 import { AsyncPaginate } from 'react-select-async-paginate';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 export const RoleSelect = ({
   options,
@@ -32,6 +32,7 @@ export const RoleSelect = ({
     value: data.id,
     label: data.label,
   });
+
   const handleChange = (option) => {
     form.setFieldValue(field.name, option);
     setValue(option);
@@ -41,12 +42,13 @@ export const RoleSelect = ({
     const path = `/${itemRef}/autocomplete?limit=${PAGE_SIZE}&offset=${
       loadedOptions.length
     }${inputValue ? `&query=${inputValue}` : ''}`;
-    const { data } = await axios(path);
+    const { data } = await axiosInstance(path);
     return {
       options: data.map(mapResponseToValuesAndLabels),
       hasMore: data.length === PAGE_SIZE,
     };
   }
+
   return (
     <AsyncPaginate
       classNames={{
@@ -60,6 +62,13 @@ export const RoleSelect = ({
       onChange={handleChange}
       defaultOptions
       isDisabled={disabled}
+      styles={{
+        menuList: (provided) => ({
+          ...provided,
+          maxHeight: 220,
+          overflowY: 'auto',
+        }),
+      }}
     />
   );
 };

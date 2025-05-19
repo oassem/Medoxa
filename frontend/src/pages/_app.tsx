@@ -6,8 +6,6 @@ import Head from 'next/head';
 import { store } from '../stores/store';
 import { Provider } from 'react-redux';
 import '../css/main.css';
-import axios from 'axios';
-import { baseURLApi } from '../config';
 import { useRouter } from 'next/router';
 import ErrorBoundary from '../components/ErrorBoundary';
 import 'intro.js/introjs.css';
@@ -42,20 +40,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [steps, setSteps] = React.useState([]);
 
   React.useEffect(() => {
-    // Initialize axios
-    console.log(
-      'process.env.NEXT_PUBLIC_BACK_API',
-      process.env.NEXT_PUBLIC_BACK_API,
-    );
-    axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACK_API
-      ? process.env.NEXT_PUBLIC_BACK_API
-      : baseURLApi;
-    axios.defaults.headers.common['Content-Type'] = 'application/json';
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-    }
-
     // Setup message handler
     const handleMessage = (event) => {
       if (event.data === 'getLocation') {
@@ -140,7 +124,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <meta property='og:image:type' content='image/png' />
             <meta property='og:image:width' content={imageWidth} />
             <meta property='og:image:height' content={imageHeight} />
-
             <meta property='twitter:card' content='summary_large_image' />
             <meta property='twitter:title' content={title} />
             <meta property='twitter:description' content={description} />

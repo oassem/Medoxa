@@ -1,6 +1,6 @@
 import { GridRenderEditCellParams, useGridApiContext } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { MenuItem, Select } from '@mui/material';
 
 interface Props {
@@ -13,7 +13,7 @@ const DataGridMultiSelect = (props: GridRenderEditCellParams & Props) => {
   const [options, setOptions] = useState([]);
 
   async function callApi(entityName: string) {
-    const data = await axios(`/${entityName}/autocomplete?limit=100`);
+    const data = await axiosInstance(`/${entityName}/autocomplete?limit=100`);
     return data.data;
   }
 

@@ -4,7 +4,7 @@ import BaseIcon from './BaseIcon';
 
 // Define the props and state interfaces
 interface ErrorBoundaryProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface ErrorBoundaryState {

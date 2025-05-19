@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'imaging_orders/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `imaging_orders${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'imaging_orders/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('imaging_orders/deleteByIds', { data });
+      await axiosInstance.post('imaging_orders/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'imaging_orders/deleteImaging_orders',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`imaging_orders/${id}`);
+      await axiosInstance.delete(`imaging_orders/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'imaging_orders/createImaging_orders',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('imaging_orders', { data });
+      const result = await axiosInstance.post('imaging_orders', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,11 +99,15 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('imaging_orders/bulk-import', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const result = await axiosInstance.post(
+        'imaging_orders/bulk-import',
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       return result.data;
     } catch (error) {
@@ -120,7 +124,7 @@ export const update = createAsyncThunk(
   'imaging_orders/updateImaging_orders',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`imaging_orders/${payload.id}`, {
+      const result = await axiosInstance.put(`imaging_orders/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

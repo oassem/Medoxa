@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import Axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { baseURLApi } from '../../config';
 
 function extractExtensionFrom(filename) {
@@ -63,7 +63,7 @@ export default class FileUploader {
     formData.append('file', file);
     formData.append('filename', filename);
     const uri = `/file/upload/${path}`;
-    await Axios.post(uri, formData, {
+    await axiosInstance.post(uri, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

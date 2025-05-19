@@ -4,6 +4,7 @@ import BaseButton from './BaseButton';
 import BaseIcon from './BaseIcon';
 import IconRounded from './IconRounded';
 import { humanize } from '../helpers/humanize';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   icon: string;
@@ -18,6 +19,8 @@ export default function SectionTitleLineWithButton({
   main = false,
   children,
 }: Props) {
+  const { i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
   const hasChildren = !!Children.count(children);
 
   return (
@@ -26,9 +29,16 @@ export default function SectionTitleLineWithButton({
     >
       <div className='flex items-center justify-start'>
         {icon && main && (
-          <IconRounded icon={icon} color='light' className='mr-3' bg />
+          <IconRounded
+            icon={icon}
+            color='light'
+            className={isRTL ? 'ml-3' : 'mr-3'}
+            bg
+          />
         )}
-        {icon && !main && <BaseIcon path={icon} className='mr-2' size='20' />}
+        {icon && !main && (
+          <BaseIcon path={icon} className={isRTL ? 'ml-2' : 'mr-2'} size='20' />
+        )}
         <h1 className={`leading-tight ${main ? 'text-3xl' : 'text-2xl'}`}>
           {humanize(title)}
         </h1>

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import jwt from 'jsonwebtoken';
 
 interface MainState {
@@ -29,7 +29,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (creds: Record<string, string>, { rejectWithValue }) => {
     try {
-      const response = await axios.post('auth/signin/local', creds);
+      const response = await axiosInstance.post('auth/signin/local', creds);
       return response.data;
     } catch (error) {
       if (!error.response) {
@@ -44,7 +44,7 @@ export const passwordReset = createAsyncThunk(
   'auth/passwordReset',
   async (value: Record<string, string>, { rejectWithValue }) => {
     try {
-      const { data: response } = await axios.put('/auth/password-reset', {
+      const { data: response } = await axiosInstance.put('/auth/password-reset', {
         token: value.token,
         password: value.password,
         type: value.type,
@@ -62,7 +62,7 @@ export const passwordReset = createAsyncThunk(
 );
 
 export const findMe = createAsyncThunk('auth/findMe', async () => {
-  const response = await axios.get('auth/me');
+  const response = await axiosInstance.get('/auth/me');
   return response.data;
 });
 
@@ -73,7 +73,6 @@ export const authSlice = createSlice({
     logoutUser: (state) => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      axios.defaults.headers.common['Authorization'] = '';
       state.currentUser = null;
       state.token = '';
     },
@@ -90,7 +89,6 @@ export const authSlice = createSlice({
       state.token = token;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
     });
 
     builder.addCase(loginUser.rejected, (state, action) => {

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -34,7 +34,7 @@ const initialState: MainState = {
 
 export const fetch = createAsyncThunk('insurances/fetch', async (data: any) => {
   const { id, query } = data;
-  const result = await axios.get(`insurances${query || (id ? `/${id}` : '')}`);
+  const result = await axiosInstance.get(`insurances${query || (id ? `/${id}` : '')}`);
   return id
     ? result.data
     : { rows: result.data.rows, count: result.data.count };
@@ -44,7 +44,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'insurances/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('insurances/deleteByIds', { data });
+      await axiosInstance.post('insurances/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -59,7 +59,7 @@ export const deleteItem = createAsyncThunk(
   'insurances/deleteInsurances',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`insurances/${id}`);
+      await axiosInstance.delete(`insurances/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -74,7 +74,7 @@ export const create = createAsyncThunk(
   'insurances/createInsurances',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('insurances', { data });
+      const result = await axiosInstance.post('insurances', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -94,7 +94,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('insurances/bulk-import', data, {
+      const result = await axiosInstance.post('insurances/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -115,7 +115,7 @@ export const update = createAsyncThunk(
   'insurances/updateInsurances',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`insurances/${payload.id}`, {
+      const result = await axiosInstance.put(`insurances/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

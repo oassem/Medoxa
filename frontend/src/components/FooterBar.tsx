@@ -2,12 +2,15 @@ import React, { ReactNode } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { containerMaxW } from '../config';
 import Logo from './Logo';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   children?: ReactNode;
 };
 
 export default function FooterBar({ children }: Props) {
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
   const year = new Date().getFullYear();
 
   return (
@@ -15,11 +18,9 @@ export default function FooterBar({ children }: Props) {
       <div className='block md:flex items-center justify-between'>
         <div className='text-center md:text-left mb-6 md:mb-0'>
           <b>
-            &copy;{year},{` `}
-            <a href='https://flatlogic.com/' rel='noreferrer' target='_blank'>
-              Flatlogic
-            </a>
-            .
+            {isRTL
+              ? `${t('pages.login.footer.copyright')} ${year} ©`
+              : `© ${year} ${t('pages.login.footer.copyright')}`}
           </b>
           {` `}
           {children}
@@ -27,9 +28,6 @@ export default function FooterBar({ children }: Props) {
 
         <div className='flex item-center md:py-2 gap-4'>
           <LanguageSwitcher />
-          <a href='https://flatlogic.com/' rel='noreferrer' target='_blank'>
-            <Logo className='w-auto h-8 md:h-6 mx-auto' />
-          </a>
         </div>
       </div>
     </footer>

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'sick_leaves/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `sick_leaves${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'sick_leaves/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('sick_leaves/deleteByIds', { data });
+      await axiosInstance.post('sick_leaves/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'sick_leaves/deleteSick_leaves',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`sick_leaves/${id}`);
+      await axiosInstance.delete(`sick_leaves/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'sick_leaves/createSick_leaves',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('sick_leaves', { data });
+      const result = await axiosInstance.post('sick_leaves', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +99,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('sick_leaves/bulk-import', data, {
+      const result = await axiosInstance.post('sick_leaves/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -120,7 +120,7 @@ export const update = createAsyncThunk(
   'sick_leaves/updateSick_leaves',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`sick_leaves/${payload.id}`, {
+      const result = await axiosInstance.put(`sick_leaves/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

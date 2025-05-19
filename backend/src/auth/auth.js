@@ -1,8 +1,6 @@
 const config = require('../config');
-const providers = config.providers;
 const helpers = require('../helpers');
 const db = require('../db/models');
-
 const passport = require('passport');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
@@ -35,34 +33,34 @@ passport.use(
   ),
 );
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: config.google.clientId,
-      clientSecret: config.google.clientSecret,
-      callbackURL: config.apiUrl + '/auth/signin/google/callback',
-      passReqToCallback: true,
-    },
-    function (request, accessToken, refreshToken, profile, done) {
-      socialStrategy(profile.email, profile, providers.GOOGLE, done);
-    },
-  ),
-);
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       clientID: config.google.clientId,
+//       clientSecret: config.google.clientSecret,
+//       callbackURL: config.apiUrl + '/auth/signin/google/callback',
+//       passReqToCallback: true,
+//     },
+//     function (request, accessToken, refreshToken, profile, done) {
+//       socialStrategy(profile.email, profile, providers.GOOGLE, done);
+//     },
+//   ),
+// );
 
-passport.use(
-  new MicrosoftStrategy(
-    {
-      clientID: config.microsoft.clientId,
-      clientSecret: config.microsoft.clientSecret,
-      callbackURL: config.apiUrl + '/auth/signin/microsoft/callback',
-      passReqToCallback: true,
-    },
-    function (request, accessToken, refreshToken, profile, done) {
-      const email = profile._json.mail || profile._json.userPrincipalName;
-      socialStrategy(email, profile, providers.MICROSOFT, done);
-    },
-  ),
-);
+// passport.use(
+//   new MicrosoftStrategy(
+//     {
+//       clientID: config.microsoft.clientId,
+//       clientSecret: config.microsoft.clientSecret,
+//       callbackURL: config.apiUrl + '/auth/signin/microsoft/callback',
+//       passReqToCallback: true,
+//     },
+//     function (request, accessToken, refreshToken, profile, done) {
+//       const email = profile._json.mail || profile._json.userPrincipalName;
+//       socialStrategy(email, profile, providers.MICROSOFT, done);
+//     },
+//   ),
+// );
 
 function socialStrategy(email, profile, provider, done) {
   db.users

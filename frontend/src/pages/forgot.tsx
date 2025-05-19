@@ -12,7 +12,7 @@ import BaseDivider from '../components/BaseDivider';
 import BaseButtons from '../components/BaseButtons';
 import { useRouter } from 'next/router';
 import { getPageTitle } from '../config';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 export default function Forgot() {
   const [loading, setLoading] = React.useState(false);
@@ -22,7 +22,7 @@ export default function Forgot() {
   const handleSubmit = async (value) => {
     setLoading(true);
     try {
-      const { data: response } = await axios.post(
+      const { data: response } = await axiosInstance.post(
         '/auth/send-password-reset-email',
         value,
       );

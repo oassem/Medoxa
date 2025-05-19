@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'patient_documents/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `patient_documents${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'patient_documents/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('patient_documents/deleteByIds', { data });
+      await axiosInstance.post('patient_documents/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'patient_documents/deletePatient_documents',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`patient_documents/${id}`);
+      await axiosInstance.delete(`patient_documents/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'patient_documents/createPatient_documents',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('patient_documents', { data });
+      const result = await axiosInstance.post('patient_documents', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,11 +99,15 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('patient_documents/bulk-import', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const result = await axiosInstance.post(
+        'patient_documents/bulk-import',
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       return result.data;
     } catch (error) {
@@ -120,10 +124,13 @@ export const update = createAsyncThunk(
   'patient_documents/updatePatient_documents',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`patient_documents/${payload.id}`, {
-        id: payload.id,
-        data: payload.data,
-      });
+      const result = await axiosInstance.put(
+        `patient_documents/${payload.id}`,
+        {
+          id: payload.id,
+          data: payload.data,
+        },
+      );
       return result.data;
     } catch (error) {
       if (!error.response) {

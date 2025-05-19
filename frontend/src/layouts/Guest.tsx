@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { useAppSelector } from '../stores/hooks';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function LayoutGuest({ children }: Props) {

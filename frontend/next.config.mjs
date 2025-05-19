@@ -1,9 +1,12 @@
+import i18nextConfig from './next-i18next.config.js';
+
 /**
  * @type {import('next').NextConfig}
  */
 
 const output = process.env.NODE_ENV === 'production' ? 'export' : 'standalone';
 const nextConfig = {
+  i18n: i18nextConfig.i18n,
   trailingSlash: true,
   distDir: 'build',
   output,

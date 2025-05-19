@@ -9,13 +9,12 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TablePatients from '../../components/Patients/TablePatients';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
 import { setRefetch, uploadCsv } from '../../stores/patients/patientsSlice';
-
 import { hasPermission } from '../../helpers/userPermissions';
 
 const PatientsTablesPage = () => {
@@ -77,7 +76,7 @@ const PatientsTablesPage = () => {
   };
 
   const getPatientsCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/patients?filetype=csv',
       method: 'GET',
       responseType: 'blob',

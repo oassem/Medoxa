@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableInvoice_items from '../../components/Invoice_items/TableInvoice_items';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -57,7 +57,7 @@ const Invoice_itemsTablesPage = () => {
   };
 
   const getInvoice_itemsCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/invoice_items?filetype=csv',
       method: 'GET',
       responseType: 'blob',

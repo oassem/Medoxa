@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -33,11 +33,11 @@ const initialState: MainState = {
 };
 
 export const fetch = createAsyncThunk(
-  'imaging_order_items/fetch',
+  'imaging_orders/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
-      `imaging_order_items${query || (id ? `/${id}` : '')}`,
+    const result = await axiosInstance.get(
+      `imaging_orders${query || (id ? `/${id}` : '')}`,
     );
     return id
       ? result.data
@@ -46,10 +46,10 @@ export const fetch = createAsyncThunk(
 );
 
 export const deleteItemsByIds = createAsyncThunk(
-  'imaging_order_items/deleteByIds',
+  'imaging_orders/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('imaging_order_items/deleteByIds', { data });
+      await axiosInstance.post('imaging_orders/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -61,10 +61,10 @@ export const deleteItemsByIds = createAsyncThunk(
 );
 
 export const deleteItem = createAsyncThunk(
-  'imaging_order_items/deleteImaging_order_items',
+  'imaging_orders/deleteImaging_orders',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`imaging_order_items/${id}`);
+      await axiosInstance.delete(`imaging_orders/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -76,10 +76,10 @@ export const deleteItem = createAsyncThunk(
 );
 
 export const create = createAsyncThunk(
-  'imaging_order_items/createImaging_order_items',
+  'imaging_orders/createImaging_orders',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('imaging_order_items', { data });
+      const result = await axiosInstance.post('imaging_orders', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -92,14 +92,14 @@ export const create = createAsyncThunk(
 );
 
 export const uploadCsv = createAsyncThunk(
-  'imaging_order_items/uploadCsv',
+  'imaging_orders/uploadCsv',
   async (file: File, { rejectWithValue }) => {
     try {
       const data = new FormData();
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('imaging_order_items/bulk-import', data, {
+      const result = await axiosInstance.post('imaging_orders/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -117,10 +117,10 @@ export const uploadCsv = createAsyncThunk(
 );
 
 export const update = createAsyncThunk(
-  'imaging_order_items/updateImaging_order_items',
+  'imaging_orders/updateImaging_orders',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`imaging_order_items/${payload.id}`, {
+      const result = await axiosInstance.put(`imaging_orders/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

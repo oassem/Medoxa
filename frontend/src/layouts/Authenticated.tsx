@@ -3,7 +3,7 @@ import { useState } from 'react';
 import jwt from 'jsonwebtoken';
 import { mdiForwardburger, mdiBackburger, mdiMenu } from '@mdi/js';
 import menuAside from '../menuAside';
-import menuNavBar from '../menuNavBar';
+import { getMenuNavBar } from '../menuNavBar';
 import BaseIcon from '../components/BaseIcon';
 import NavBar from '../components/NavBar';
 import NavBarItemPlain from '../components/NavBarItemPlain';
@@ -13,11 +13,11 @@ import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import Search from '../components/Search';
 import { useRouter } from 'next/router';
 import { findMe, logoutUser } from '../stores/authSlice';
-
+import { useTranslation } from 'next-i18next';
 import { hasPermission } from '../helpers/userPermissions';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
 
   permission?: string;
 };
@@ -27,6 +27,8 @@ export default function LayoutAuthenticated({
 
   permission,
 }: Props) {
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { token, currentUser } = useAppSelector((state) => state.auth);
@@ -56,12 +58,10 @@ export default function LayoutAuthenticated({
 
   useEffect(() => {
     if (!permission || !currentUser) return;
-
     if (!hasPermission(currentUser, permission)) router.push('/error');
   }, [currentUser, permission]);
 
   const darkMode = useAppSelector((state) => state.style.darkMode);
-
   const [isAsideMobileExpanded, setIsAsideMobileExpanded] = useState(false);
   const [isAsideLgActive, setIsAsideLgActive] = useState(false);
 
@@ -80,23 +80,24 @@ export default function LayoutAuthenticated({
     };
   }, [router.events, dispatch]);
 
-  const layoutAsidePadding = 'xl:pl-60';
+  const layoutAsidePadding = isRTL ? 'xl:pr-60' : 'xl:pl-60';
+  const asideMargin = isRTL ? 'mr-60 lg:mr-0' : 'ml-60 lg:ml-0';
+  const menuNavBar = getMenuNavBar(t, isRTL);
 
   return (
     <div
-      className={`${
-        darkMode ? 'dark' : ''
-      } overflow-hidden lg:overflow-visible`}
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={`${darkMode ? 'dark' : ''} ${isRTL ? 'rtl' : ''} overflow-hidden lg:overflow-visible`}
     >
       <div
         className={`${layoutAsidePadding} ${
-          isAsideMobileExpanded ? 'ml-60 lg:ml-0' : ''
+          isAsideMobileExpanded ? asideMargin : ''
         } pt-14 min-h-screen w-screen transition-position lg:w-auto ${bgColor}  dark:bg-dark-800 dark:text-slate-100`}
       >
         <NavBar
           menu={menuNavBar}
           className={`${layoutAsidePadding} ${
-            isAsideMobileExpanded ? 'ml-60 lg:ml-0' : ''
+            isAsideMobileExpanded ? asideMargin : ''
           }`}
         >
           <NavBarItemPlain
@@ -123,9 +124,10 @@ export default function LayoutAuthenticated({
           isAsideLgActive={isAsideLgActive}
           menu={menuAside}
           onAsideLgClose={() => setIsAsideLgActive(false)}
+          isRTL={isRTL}
         />
         {children}
-        <FooterBar>Hand-crafted & Made with ❤️</FooterBar>
+        <FooterBar />
       </div>
     </div>
   );

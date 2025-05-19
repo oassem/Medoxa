@@ -12,27 +12,31 @@ import {
   deleteItemsByIds,
 } from '../../stores/users/usersSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { useRouter } from 'next/router';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configureUsersCols';
 import _ from 'lodash';
 import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
+import { dataGridStyles_ar } from '../../styles_ar';
+import { useTranslation } from 'next-i18next';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { StylesProvider, jssPreset } from '@mui/styles';
+import { create } from 'jss';
+import rtl from 'jss-rtl';
 
+const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 const perPage = 10;
-
 const TableSampleUsers = ({
   filterItems,
   setFilterItems,
   filters,
   showGrid,
 }) => {
-  const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
-
+  const { t, i18n } = useTranslation('common');
+  const notify = (type, msg) =>
+    toast(t(msg), { type, position: 'bottom-center' });
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
   const pagesList = [];
   const [id, setId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -67,9 +71,8 @@ const TableSampleUsers = ({
     if (page !== currentPage) setCurrentPage(page);
     if (request !== filterRequest) setFilterRequest(request);
     const { sort, field } = sortModel[0];
-
     const query = `?page=${page}&limit=${perPage}${request}&sort=${sort}&field=${field}`;
-    dispatch(fetch({ limit: perPage, page, query }));
+    dispatch(fetch({ query }));
   };
 
   useEffect(() => {
@@ -180,11 +183,14 @@ const TableSampleUsers = ({
 
   useEffect(() => {
     if (!currentUser) return;
-
-    loadColumns(handleDeleteModalAction, `users`, currentUser).then((newCols) =>
-      setColumns(newCols),
-    );
-  }, [currentUser]);
+    loadColumns(
+      handleDeleteModalAction,
+      `users`,
+      currentUser,
+      t,
+      i18n.language,
+    ).then((newCols) => setColumns(newCols));
+  }, [currentUser, t, i18n.language]);
 
   const handleTableSubmit = async (id: string, data) => {
     delete data?.password;
@@ -208,56 +214,73 @@ const TableSampleUsers = ({
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
-  const dataGrid = (
-    <div id='usersTable' className='relative overflow-x-auto'>
-      <DataGrid
-        autoHeight
-        rowHeight={64}
-        sx={dataGridStyles}
-        className={'datagrid--table'}
-        getRowClassName={() => `datagrid--row`}
-        rows={users ?? []}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
-        disableRowSelectionOnClick
-        onProcessRowUpdateError={(params) => {
-          console.log('Error', params);
-        }}
-        processRowUpdate={async (newRow, oldRow) => {
-          const data = dataFormatter.dataGridEditFormatter(newRow);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        direction: i18n.language === 'ar' ? 'rtl' : 'ltr',
+      }),
+    [i18n.language],
+  );
 
-          try {
-            await handleTableSubmit(newRow.id, data);
-            return newRow;
-          } catch {
-            return oldRow;
-          }
-        }}
-        sortingMode={'server'}
-        checkboxSelection
-        onRowSelectionModelChange={(ids) => {
-          setSelectedRows(ids);
-        }}
-        onSortModelChange={(params) => {
-          params.length
-            ? setSortModel(params)
-            : setSortModel([{ field: '', sort: 'desc' }]);
-        }}
-        rowCount={count}
-        pageSizeOptions={[10]}
-        paginationMode={'server'}
-        loading={loading}
-        onPaginationModelChange={(params) => {
-          onPageChange(params.page);
-        }}
-      />
-    </div>
+  const dataGrid = (
+    <StylesProvider jss={jss}>
+      <ThemeProvider theme={theme}>
+        <div
+          id='usersTable'
+          className='relative overflow-x-auto'
+          dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
+        >
+          <DataGrid
+            autoHeight
+            rowHeight={64}
+            sx={i18n.language === 'ar' ? dataGridStyles_ar : dataGridStyles}
+            className={'datagrid--table'}
+            getRowClassName={() => `datagrid--row`}
+            rows={users ?? []}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            disableRowSelectionOnClick
+            onProcessRowUpdateError={(params) => {
+              console.log('Error', params);
+            }}
+            processRowUpdate={async (newRow, oldRow) => {
+              const data = dataFormatter.dataGridEditFormatter(newRow);
+
+              try {
+                await handleTableSubmit(newRow.id, data);
+                return newRow;
+              } catch {
+                return oldRow;
+              }
+            }}
+            sortingMode={'server'}
+            checkboxSelection
+            onRowSelectionModelChange={(ids) => {
+              setSelectedRows(ids);
+            }}
+            onSortModelChange={(params) => {
+              params.length
+                ? setSortModel(params)
+                : setSortModel([{ field: '', sort: 'desc' }]);
+            }}
+            rowCount={count}
+            pageSizeOptions={[10]}
+            paginationMode={'server'}
+            loading={loading}
+            onPaginationModelChange={(params) => {
+              onPageChange(params.page);
+            }}
+            disableColumnMenu
+          />
+        </div>
+      </ThemeProvider>
+    </StylesProvider>
   );
 
   return (
@@ -273,17 +296,17 @@ const TableSampleUsers = ({
             onSubmit={() => null}
           >
             <Form>
-              <>
+              <div dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
                 {filterItems &&
                   filterItems.map((filterItem) => {
                     return (
                       <div key={filterItem.id} className='flex mb-4'>
-                        <div className='flex flex-col w-full mr-3'>
-                          <div className='  text-gray-500  font-bold'>
-                            Filter
+                        <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.filter')}
                           </div>
                           <Field
-                            className={controlClasses}
+                            className={`${controlClasses} filter-select`}
                             name='selectedField'
                             id='selectedField'
                             component='select'
@@ -304,8 +327,10 @@ const TableSampleUsers = ({
                           (filter) =>
                             filter.title === filterItem?.fields?.selectedField,
                         )?.type === 'enum' ? (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='text-gray-500 font-bold'>Value</div>
+                          <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                            <div className='text-gray-500 font-bold'>
+                              {t('filters.value')}
+                            </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
@@ -314,7 +339,9 @@ const TableSampleUsers = ({
                               value={filterItem?.fields?.filterValue || ''}
                               onChange={handleChange(filterItem.id)}
                             >
-                              <option value=''>Select Value</option>
+                              <option value=''>
+                                {t('filters.selectValue')}
+                              </option>
                               {filters
                                 .find(
                                   (filter) =>
@@ -333,15 +360,15 @@ const TableSampleUsers = ({
                               filter.title ===
                               filterItem?.fields?.selectedField,
                           )?.number ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
-                                From
+                          <div className='flex flex-row w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                            <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('filters.fromPlaceholder')}
                                 id='filterValueFrom'
                                 value={
                                   filterItem?.fields?.filterValueFrom || ''
@@ -350,13 +377,13 @@ const TableSampleUsers = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('filters.toPlaceholder')}
                                 id='filterValueTo'
                                 value={filterItem?.fields?.filterValueTo || ''}
                                 onChange={handleChange(filterItem.id)}
@@ -368,15 +395,15 @@ const TableSampleUsers = ({
                               filter.title ===
                               filterItem?.fields?.selectedField,
                           )?.date ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
-                                From
+                          <div className='flex flex-row w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                            <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('filters.fromPlaceholder')}
                                 id='filterValueFrom'
                                 type='datetime-local'
                                 value={
@@ -386,13 +413,13 @@ const TableSampleUsers = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('filters.toPlaceholder')}
                                 id='filterValueTo'
                                 type='datetime-local'
                                 value={filterItem?.fields?.filterValueTo || ''}
@@ -401,14 +428,14 @@ const TableSampleUsers = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='  text-gray-500  font-bold'>
-                              Contains
+                          <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                            <div className='text-gray-500 font-bold'>
+                              {t('filters.contains')}
                             </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
-                              placeholder='Contained'
+                              placeholder={t('filters.containedPlaceholder')}
                               id='filterValue'
                               value={filterItem?.fields?.filterValue || ''}
                               onChange={handleChange(filterItem.id)}
@@ -416,14 +443,14 @@ const TableSampleUsers = ({
                           </div>
                         )}
                         <div className='flex flex-col'>
-                          <div className='  text-gray-500  font-bold'>
-                            Action
+                          <div className='text-gray-500 font-bold invisible'>
+                            {t('actions.action')}
                           </div>
                           <BaseButton
                             className='my-2'
                             type='reset'
                             color='danger'
-                            label='Delete'
+                            label={t('actions.delete')}
                             onClick={() => {
                               deleteFilter(filterItem.id);
                             }}
@@ -434,32 +461,32 @@ const TableSampleUsers = ({
                   })}
                 <div className='flex'>
                   <BaseButton
-                    className='my-2 mr-3'
+                    className='my-2 mr-3 rtl:ml-3 rtl:mr-0'
                     color='success'
-                    label='Apply'
+                    label={t('actions.apply')}
                     onClick={handleSubmit}
                   />
                   <BaseButton
                     className='my-2'
                     color='info'
-                    label='Cancel'
+                    label={t('actions.cancel')}
                     onClick={handleReset}
                   />
                 </div>
-              </>
+              </div>
             </Form>
           </Formik>
         </CardBox>
       ) : null}
       <CardBoxModal
-        title='Please confirm'
+        title={t('users.confirmDeleteTitle')}
         buttonColor='info'
-        buttonLabel={loading ? 'Deleting...' : 'Confirm'}
+        buttonLabel={loading ? t('users.deleting') : t('users.confirm')}
         isActive={isModalTrashActive}
         onConfirm={handleDeleteAction}
         onCancel={handleModalAction}
       >
-        <p>Are you sure you want to delete this item?</p>
+        <p>{t('users.confirmDeleteMessage')}</p>
       </CardBoxModal>
 
       {dataGrid}
@@ -469,12 +496,16 @@ const TableSampleUsers = ({
           <BaseButton
             className='me-4'
             color='danger'
-            label={`Delete ${selectedRows.length === 1 ? 'Row' : 'Rows'}`}
+            label={
+              selectedRows.length === 1
+                ? t('users.deleteRow')
+                : t('users.deleteRows', { count: selectedRows.length })
+            }
             onClick={() => onDeleteRows(selectedRows)}
           />,
           document.getElementById('delete-rows-button'),
         )}
-      <ToastContainer />
+      <ToastContainer rtl={i18n.language === 'ar'} />
     </>
   );
 };

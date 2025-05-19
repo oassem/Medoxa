@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -34,7 +34,9 @@ const initialState: MainState = {
 
 export const fetch = createAsyncThunk('roles/fetch', async (data: any) => {
   const { id, query } = data;
-  const result = await axios.get(`roles${query || (id ? `/${id}` : '')}`);
+  const result = await axiosInstance.get(
+    `roles${query || (id ? `/${id}` : '')}`,
+  );
   return id
     ? result.data
     : { rows: result.data.rows, count: result.data.count };
@@ -44,7 +46,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'roles/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('roles/deleteByIds', { data });
+      await axiosInstance.post('roles/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -59,7 +61,7 @@ export const deleteItem = createAsyncThunk(
   'roles/deleteRoles',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`roles/${id}`);
+      await axiosInstance.delete(`roles/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -74,7 +76,7 @@ export const create = createAsyncThunk(
   'roles/createRoles',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('roles', { data });
+      const result = await axiosInstance.post('roles', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -94,7 +96,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('roles/bulk-import', data, {
+      const result = await axiosInstance.post('roles/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -115,7 +117,7 @@ export const update = createAsyncThunk(
   'roles/updateRoles',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`roles/${payload.id}`, {
+      const result = await axiosInstance.put(`roles/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });
@@ -133,13 +135,16 @@ export const update = createAsyncThunk(
 export const removeWidget = createAsyncThunk(
   'openai/removeWidget',
   async (payload: any) => {
-    const result = await axios.delete(`openai/roles-info/${payload.id}`, {
-      params: {
-        roleId: payload.roleId,
-        infoId: payload.widgetId,
-        key: 'widgets',
+    const result = await axiosInstance.delete(
+      `openai/roles-info/${payload.id}`,
+      {
+        params: {
+          roleId: payload.roleId,
+          infoId: payload.widgetId,
+          key: 'widgets',
+        },
       },
-    });
+    );
     return result.data;
   },
 );
@@ -147,7 +152,7 @@ export const removeWidget = createAsyncThunk(
 export const fetchWidgets = createAsyncThunk(
   'openai/fetchWidgets',
   async (roleId: any) => {
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `openai/info-by-key?key=widgets&roleId=${roleId}`,
     );
     return result.data;

@@ -7,7 +7,7 @@ import SectionFullScreen from '../components/SectionFullScreen';
 import LayoutGuest from '../layouts/Guest';
 import { useRouter } from 'next/router';
 import { getPageTitle } from '../config';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 export default function Verify() {
   const [loading, setLoading] = React.useState(false);
@@ -22,7 +22,7 @@ export default function Verify() {
     }
     const handleSubmit = async () => {
       setLoading(true);
-      await axios
+      await axiosInstance
         .put('/auth/verify-email', {
           token,
         })

@@ -1,36 +1,25 @@
-import {
-  mdiAccount,
-  mdiChartTimelineVariant,
-  mdiMail,
-  mdiUpload,
-} from '@mdi/js';
+import { mdiChartTimelineVariant, mdiUpload } from '@mdi/js';
 import Head from 'next/head';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import { getPageTitle } from '../../config';
-
 import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
-import FormCheckRadio from '../../components/FormCheckRadio';
-import FormCheckRadioGroup from '../../components/FormCheckRadioGroup';
-import FormFilePicker from '../../components/FormFilePicker';
 import FormImagePicker from '../../components/FormImagePicker';
 import { SwitchField } from '../../components/SwitchField';
-
 import { SelectField } from '../../components/SelectField';
 import { SelectFieldMany } from '../../components/SelectFieldMany';
-import { RichTextField } from '../../components/RichTextField';
-
 import { create } from '../../stores/users/usersSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import moment from 'moment';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const initialValues = {
   firstName: '',
@@ -55,6 +44,7 @@ const initialValues = {
 const UsersNew = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('common');
 
   const handleSubmit = async (data) => {
     await dispatch(create(data));
@@ -63,12 +53,16 @@ const UsersNew = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('New Item')}</title>
+        <title>
+          {getPageTitle(
+            t('pages.users.newTitle', { defaultValue: 'New User' }),
+          )}
+        </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New Item'
+          title={t('pages.users.newTitle', { defaultValue: 'New User' })}
           main
         >
           {''}
@@ -79,23 +73,26 @@ const UsersNew = () => {
             onSubmit={(values) => handleSubmit(values)}
           >
             <Form>
-              <FormField label='First Name'>
-                <Field name='firstName' placeholder='First Name' />
+              <FormField label={t('fields.firstName')}>
+                <Field name='firstName' placeholder={t('fields.firstName')} />
               </FormField>
 
-              <FormField label='Last Name'>
-                <Field name='lastName' placeholder='Last Name' />
+              <FormField label={t('fields.lastName')}>
+                <Field name='lastName' placeholder={t('fields.lastName')} />
               </FormField>
 
-              <FormField label='Phone Number'>
-                <Field name='phoneNumber' placeholder='Phone Number' />
+              <FormField label={t('fields.phoneNumber')}>
+                <Field
+                  name='phoneNumber'
+                  placeholder={t('fields.phoneNumber')}
+                />
               </FormField>
 
-              <FormField label='E-Mail'>
-                <Field name='email' placeholder='E-Mail' />
+              <FormField label={t('fields.email')}>
+                <Field name='email' placeholder={t('fields.email')} />
               </FormField>
 
-              <FormField label='Disabled' labelFor='disabled'>
+              <FormField label={t('fields.disabled')} labelFor='disabled'>
                 <Field
                   name='disabled'
                   id='disabled'
@@ -105,7 +102,7 @@ const UsersNew = () => {
 
               <FormField>
                 <Field
-                  label='Avatar'
+                  label={t('fields.avatar')}
                   color='info'
                   icon={mdiUpload}
                   path={'users/avatar'}
@@ -119,7 +116,7 @@ const UsersNew = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='App Role' labelFor='app_role'>
+              <FormField label={t('fields.appRole')} labelFor='app_role'>
                 <Field
                   name='app_role'
                   id='app_role'
@@ -130,7 +127,7 @@ const UsersNew = () => {
               </FormField>
 
               <FormField
-                label='Custom Permissions'
+                label={t('fields.customPermissions')}
                 labelFor='custom_permissions'
               >
                 <Field
@@ -142,7 +139,10 @@ const UsersNew = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='Organizations' labelFor='organizations'>
+              <FormField
+                label={t('fields.organizations')}
+                labelFor='organizations'
+              >
                 <Field
                   name='organizations'
                   id='organizations'
@@ -154,13 +154,22 @@ const UsersNew = () => {
 
               <BaseDivider />
               <BaseButtons>
-                <BaseButton type='submit' color='info' label='Submit' />
-                <BaseButton type='reset' color='info' outline label='Reset' />
+                <BaseButton
+                  type='submit'
+                  color='info'
+                  label={t('actions.submit')}
+                />
+                <BaseButton
+                  type='reset'
+                  color='info'
+                  outline
+                  label={t('actions.reset')}
+                />
                 <BaseButton
                   type='reset'
                   color='danger'
                   outline
-                  label='Cancel'
+                  label={t('actions.cancel')}
                   onClick={() => router.push('/users/users-list')}
                 />
               </BaseButtons>
@@ -181,3 +190,11 @@ UsersNew.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersNew;
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

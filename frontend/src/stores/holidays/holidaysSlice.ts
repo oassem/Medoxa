@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -34,7 +34,9 @@ const initialState: MainState = {
 
 export const fetch = createAsyncThunk('holidays/fetch', async (data: any) => {
   const { id, query } = data;
-  const result = await axios.get(`holidays${query || (id ? `/${id}` : '')}`);
+  const result = await axiosInstance.get(
+    `holidays${query || (id ? `/${id}` : '')}`,
+  );
   return id
     ? result.data
     : { rows: result.data.rows, count: result.data.count };
@@ -44,7 +46,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'holidays/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('holidays/deleteByIds', { data });
+      await axiosInstance.post('holidays/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -59,7 +61,7 @@ export const deleteItem = createAsyncThunk(
   'holidays/deleteHolidays',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`holidays/${id}`);
+      await axiosInstance.delete(`holidays/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -74,7 +76,7 @@ export const create = createAsyncThunk(
   'holidays/createHolidays',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('holidays', { data });
+      const result = await axiosInstance.post('holidays', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -94,7 +96,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('holidays/bulk-import', data, {
+      const result = await axiosInstance.post('holidays/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -115,7 +117,7 @@ export const update = createAsyncThunk(
   'holidays/updateHolidays',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`holidays/${payload.id}`, {
+      const result = await axiosInstance.put(`holidays/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

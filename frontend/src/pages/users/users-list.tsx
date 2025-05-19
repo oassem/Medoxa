@@ -9,34 +9,32 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableUsers from '../../components/Users/TableUsers';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
-import Link from 'next/link';
+import axiosInstance from '../../utils/axiosInstance';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
 import { setRefetch, uploadCsv } from '../../stores/users/usersSlice';
-
+import { useTranslation } from 'next-i18next';
 import { hasPermission } from '../../helpers/userPermissions';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const UsersTablesPage = () => {
+  const { t } = useTranslation('common');
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
 
   const { currentUser } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
-    { label: 'First Name', title: 'firstName' },
-    { label: 'Last Name', title: 'lastName' },
-    { label: 'Phone Number', title: 'phoneNumber' },
-    { label: 'E-Mail', title: 'email' },
-
-    { label: 'App Role', title: 'app_role' },
-
-    { label: 'Custom Permissions', title: 'custom_permissions' },
+    { label: t('users.firstName'), title: 'firstName' },
+    { label: t('users.lastName'), title: 'lastName' },
+    { label: t('users.phoneNumber'), title: 'phoneNumber' },
+    { label: t('users.email'), title: 'email' },
+    { label: t('users.appRole'), title: 'app_role' },
+    { label: t('users.customPermissions'), title: 'custom_permissions' },
   ]);
 
   const hasCreatePermission =
@@ -57,7 +55,7 @@ const UsersTablesPage = () => {
   };
 
   const getUsersCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/users?filetype=csv',
       method: 'GET',
       responseType: 'blob',
@@ -86,12 +84,12 @@ const UsersTablesPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Users')}</title>
+        <title>{getPageTitle(t('users.title'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='Users'
+          title={t('users.title')}
           main
         >
           {''}
@@ -103,30 +101,30 @@ const UsersTablesPage = () => {
         >
           {hasCreatePermission && (
             <BaseButton
-              className={'mr-3'}
+              className={'me-3'}
               href={'/users/users-new'}
               color='info'
-              label='Add/Invite User'
+              label={t('users.addInviteUser')}
             />
           )}
 
           <BaseButton
-            className={'mr-3'}
+            className={'me-3'}
             color='info'
-            label='Filter'
+            label={t('users.filter')}
             onClick={addFilter}
           />
           <BaseButton
-            className={'mr-3'}
+            className={'me-3'}
             color='info'
-            label='Download CSV'
+            label={t('users.downloadCSV')}
             onClick={getUsersCSV}
           />
 
           {hasCreatePermission && (
             <BaseButton
               color='info'
-              label='Upload CSV'
+              label={t('users.uploadCSV')}
               onClick={() => setIsModalActive(true)}
             />
           )}
@@ -146,10 +144,9 @@ const UsersTablesPage = () => {
         </CardBox>
       </SectionMain>
       <CardBoxModal
-        title='Upload CSV'
+        title={t('users.uploadCSV')}
         buttonColor='info'
-        buttonLabel={'Confirm'}
-        // buttonLabel={false ? 'Deleting...' : 'Confirm'}
+        buttonLabel={t('users.confirm')}
         isActive={isModalActive}
         onConfirm={onModalConfirm}
         onCancel={onModalCancel}
@@ -171,3 +168,11 @@ UsersTablesPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersTablesPage;
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

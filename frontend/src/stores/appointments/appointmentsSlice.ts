@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'appointments/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `appointments${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'appointments/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('appointments/deleteByIds', { data });
+      await axiosInstance.post('appointments/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'appointments/deleteAppointments',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`appointments/${id}`);
+      await axiosInstance.delete(`appointments/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'appointments/createAppointments',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('appointments', { data });
+      const result = await axiosInstance.post('appointments', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,11 +99,15 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('appointments/bulk-import', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const result = await axiosInstance.post(
+        'appointments/bulk-import',
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       return result.data;
     } catch (error) {
@@ -120,7 +124,7 @@ export const update = createAsyncThunk(
   'appointments/updateAppointments',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`appointments/${payload.id}`, {
+      const result = await axiosInstance.put(`appointments/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });

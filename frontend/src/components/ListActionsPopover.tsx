@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import Button from '@mui/material/Button';
 import BaseIcon from './BaseIcon';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@mdi/js';
 import Popover from '@mui/material/Popover';
 import { IconButton } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   itemId: string;
@@ -30,6 +30,7 @@ const ListActionsPopover = ({
   pathEdit,
   pathView,
 }: Props) => {
+  const { t, i18n } = useTranslation('common');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,6 +43,7 @@ const ListActionsPopover = ({
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const isRTL = i18n.language === 'ar';
 
   return (
     <>
@@ -73,36 +75,50 @@ const ListActionsPopover = ({
           horizontal: 'center',
         }}
       >
-        <div className={'flex  flex-col'}>
+        <div className={'flex flex-col'}>
           <Button
-            startIcon={<BaseIcon path={mdiEye} size={24} />}
+            {...(isRTL
+              ? { endIcon: <BaseIcon path={mdiEye} size={24} /> }
+              : { startIcon: <BaseIcon path={mdiEye} size={24} /> })}
             className='w-full MuiButton-colorInherit'
             href={linkView}
-            sx={{ justifyContent: 'start' }}
+            sx={{
+              justifyContent: isRTL ? 'end' : 'start',
+            }}
           >
-            View
+            {t('users.view')}
           </Button>
           {hasUpdatePermission && (
             <Button
-              startIcon={<BaseIcon path={mdiPencilOutline} size={24} />}
+              {...(isRTL
+                ? { endIcon: <BaseIcon path={mdiPencilOutline} size={24} /> }
+                : {
+                    startIcon: <BaseIcon path={mdiPencilOutline} size={24} />,
+                  })}
               className='w-full MuiButton-colorInherit'
               href={linkEdit}
-              sx={{ justifyContent: 'start' }}
+              sx={{
+                justifyContent: isRTL ? 'end' : 'start',
+              }}
             >
-              Edit
+              {t('users.edit')}
             </Button>
           )}
           {hasUpdatePermission && (
             <Button
-              startIcon={<BaseIcon path={mdiTrashCan} size={24} />}
+              {...(isRTL
+                ? { endIcon: <BaseIcon path={mdiTrashCan} size={24} /> }
+                : { startIcon: <BaseIcon path={mdiTrashCan} size={24} /> })}
               className='MuiButton-colorInherit'
               onClick={() => {
                 handleClose();
                 onDelete(itemId);
               }}
-              sx={{ justifyContent: 'start' }}
+              sx={{
+                justifyContent: isRTL ? 'end' : 'start',
+              }}
             >
-              Delete
+              {t('users.delete')}
             </Button>
           )}
         </div>

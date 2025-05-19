@@ -103,3 +103,19 @@
     @apply text-pavitra-800;
   }
 }
+
+.switch-wrapper .check {
+  direction: rtl;
+  transform: scaleX(-1);
+}
+
+/* Flip select arrow for RTL */
+[dir='rtl'] .filter-select {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Optional: flip the arrow to the left for Webkit browsers */
+[dir='rtl'] .filter-select {
+  background-position: left 0.5rem center;
+}

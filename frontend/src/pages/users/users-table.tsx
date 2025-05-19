@@ -9,23 +9,18 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableUsers from '../../components/Users/TableUsers';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
-import Link from 'next/link';
+import axiosInstance from '../../utils/axiosInstance';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
 import { setRefetch, uploadCsv } from '../../stores/users/usersSlice';
-
 import { hasPermission } from '../../helpers/userPermissions';
 
 const UsersTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
@@ -57,7 +52,7 @@ const UsersTablesPage = () => {
   };
 
   const getUsersCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/users?filetype=csv',
       method: 'GET',
       responseType: 'blob',

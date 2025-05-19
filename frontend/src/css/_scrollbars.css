@@ -38,4 +38,15 @@
   .dark-scrollbars::-webkit-scrollbar-thumb:hover {
     @apply bg-slate-500;
   }
+
+  /* Hide scrollbar for Webkit browsers */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for Firefox */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
 }

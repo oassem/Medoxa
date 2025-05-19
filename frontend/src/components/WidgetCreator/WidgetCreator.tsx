@@ -11,9 +11,7 @@ import {
   resetNotify,
 } from '../../stores/openAiSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-
 import { fetchWidgets } from '../../stores/roles/rolesSlice';
-
 import BaseButton from '../BaseButton';
 import CardBoxModal from '../CardBoxModal';
 import { RoleSelect } from './RoleSelect';
@@ -24,12 +22,13 @@ export const WidgetCreator = ({
   setWidgetsRole,
   widgetsRole,
 }) => {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const { notify: openAiNotify } = useAppSelector((state) => state.openAi);
-
+  const isRTL = i18n.language === 'ar';
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
+
   React.useEffect(() => {
     if (openAiNotify.showNotification) {
       notify(openAiNotify.typeNotification, openAiNotify.textNotification);
@@ -83,7 +82,7 @@ export const WidgetCreator = ({
     <>
       <CardBox id='widgetCreator' className='mb-6 relative'>
         <BaseButton
-          className='absolute top-0 right-0 m-4'
+          className={`absolute top-0 ${isRTL ? 'left-0' : 'right-0'} m-4`}
           icon={mdiCog}
           color='whiteDark'
           roundedFull
@@ -126,27 +125,36 @@ export const WidgetCreator = ({
       >
         {({ submitForm }) => (
           <CardBoxModal
-            title='Widget Creator Settings'
+            title={t('components.widgetCreator.settingsTitle', {
+              defaultValue: 'Widget Creator Settings',
+            })}
             buttonColor='info'
-            buttonLabel='Done'
+            buttonLabel={t('components.widgetCreator.done', {
+              defaultValue: 'Done',
+            })}
             isActive={isModalOpen}
             onConfirm={submitForm}
-            onCancel={() => setIsModalOpen(false)}
           >
-            <p>What role are we showing and creating widgets for?</p>
-
-            <Form>
-              <FormField>
-                <Field
-                  name='role'
-                  id='role'
-                  component={RoleSelect}
-                  options={widgetsRole?.role || []}
-                  itemRef={'roles'}
-                  currentUser={currentUser}
-                ></Field>
-              </FormField>
-            </Form>
+            <div dir={isRTL ? 'rtl' : 'ltr'} className='mt-8'>
+              <p className='mb-4'>
+                {t('components.widgetCreator.rolePrompt', {
+                  defaultValue:
+                    'What role are we showing and creating widgets for?',
+                })}
+              </p>
+              <Form>
+                <FormField>
+                  <Field
+                    name='role'
+                    id='role'
+                    component={RoleSelect}
+                    options={widgetsRole?.role || []}
+                    itemRef={'roles'}
+                    currentUser={currentUser}
+                  ></Field>
+                </FormField>
+              </Form>
+            </div>
           </CardBoxModal>
         )}
       </Formik>

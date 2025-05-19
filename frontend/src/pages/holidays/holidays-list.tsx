@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableHolidays from '../../components/Holidays/TableHolidays';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -57,7 +57,7 @@ const HolidaysTablesPage = () => {
   };
 
   const getHolidaysCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/holidays?filetype=csv',
       method: 'GET',
       responseType: 'blob',

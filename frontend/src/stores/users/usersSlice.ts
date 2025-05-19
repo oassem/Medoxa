@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -34,7 +34,15 @@ const initialState: MainState = {
 
 export const fetch = createAsyncThunk('users/fetch', async (data: any) => {
   const { id, query } = data;
-  const result = await axios.get(`users${query || (id ? `/${id}` : '')}`);
+  let url = '/users';
+  if (id) {
+    url += `/${id}`;
+  }
+  if (query) {
+    url += query;
+  }
+
+  const result = await axiosInstance.get(url);
   return id
     ? result.data
     : { rows: result.data.rows, count: result.data.count };
@@ -44,7 +52,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'users/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('users/deleteByIds', { data });
+      await axiosInstance.post('/users/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -59,7 +67,7 @@ export const deleteItem = createAsyncThunk(
   'users/deleteUsers',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`users/${id}`);
+      await axiosInstance.delete(`/users/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -74,7 +82,7 @@ export const create = createAsyncThunk(
   'users/createUsers',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('users', { data });
+      const result = await axiosInstance.post('/users', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -94,7 +102,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post('users/bulk-import', data, {
+      const result = await axiosInstance.post('users/bulk-import', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -115,7 +123,7 @@ export const update = createAsyncThunk(
   'users/updateUsers',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`users/${payload.id}`, {
+      const result = await axiosInstance.put(`users/${payload.id}`, {
         id: payload.id,
         data: payload.data,
       });
@@ -165,7 +173,7 @@ export const usersSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Users has been deleted');
+      fulfilledNotify(state, 'notifications.usersDeleted');
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -180,7 +188,7 @@ export const usersSlice = createSlice({
 
     builder.addCase(deleteItem.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Users'.slice(0, -1)} has been deleted`);
+      fulfilledNotify(state, 'notifications.userDeleted');
     });
 
     builder.addCase(deleteItem.rejected, (state, action) => {
@@ -199,7 +207,7 @@ export const usersSlice = createSlice({
 
     builder.addCase(create.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Users'.slice(0, -1)} has been created`);
+      fulfilledNotify(state, 'notifications.userCreated');
     });
 
     builder.addCase(update.pending, (state) => {
@@ -208,7 +216,7 @@ export const usersSlice = createSlice({
     });
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Users'.slice(0, -1)} has been updated`);
+      fulfilledNotify(state, 'notifications.userUpdated');
     });
     builder.addCase(update.rejected, (state, action) => {
       state.loading = false;
@@ -221,7 +229,7 @@ export const usersSlice = createSlice({
     });
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Users has been uploaded');
+      fulfilledNotify(state, 'notifications.usersUploaded');
     });
     builder.addCase(uploadCsv.rejected, (state, action) => {
       state.loading = false;

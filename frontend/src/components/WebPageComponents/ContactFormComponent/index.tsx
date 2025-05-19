@@ -7,7 +7,7 @@ import SimpleAndCleanForm from './designs/SimpleAndCleanForm';
 import HighlightedForm from './designs/HighlightedForm';
 import FormWithImage from './designs/FormWithImage';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function ContactFormSection({
@@ -44,7 +44,7 @@ export default function ContactFormSection({
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      await axios.post('/contact-form/send', values);
+      await axiosInstance.post('/contact-form/send', values);
       toast.success('Your message has been sent successfully!');
       resetForm();
     } catch (error) {

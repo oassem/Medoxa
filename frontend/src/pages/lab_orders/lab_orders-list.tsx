@@ -9,7 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableLab_orders from '../../components/Lab_orders/TableLab_orders';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
@@ -61,7 +61,7 @@ const Lab_ordersTablesPage = () => {
   };
 
   const getLab_ordersCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/lab_orders?filetype=csv',
       method: 'GET',
       responseType: 'blob',

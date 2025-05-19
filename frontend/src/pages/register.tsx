@@ -17,7 +17,7 @@ import Select from 'react-select';
 import { useAppDispatch } from '../stores/hooks';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 export default function Register() {
   const [loading, setLoading] = React.useState(false);
@@ -29,7 +29,7 @@ export default function Register() {
   const dispatch = useAppDispatch();
   const fetchOrganizations = createAsyncThunk('/org-for-auth', async () => {
     try {
-      const response = await axios.get('/org-for-auth');
+      const response = await axiosInstance.get('/org-for-auth');
       setOrganizations(response.data);
       return response.data;
     } catch (error) {
@@ -37,6 +37,7 @@ export default function Register() {
       throw error;
     }
   });
+
   React.useEffect(() => {
     dispatch(fetchOrganizations());
   }, [dispatch]);
@@ -50,7 +51,10 @@ export default function Register() {
     try {
       const formData = { ...value, organizationId: selectedOrganization.value };
 
-      const { data: response } = await axios.post('/auth/signup', formData);
+      const { data: response } = await axiosInstance.post(
+        '/auth/signup',
+        formData,
+      );
       await router.push('/login');
       setLoading(false);
       notify('success', 'Please check your email for verification link');

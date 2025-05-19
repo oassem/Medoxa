@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import {
   fulfilledNotify,
   rejectNotify,
@@ -36,7 +36,7 @@ export const fetch = createAsyncThunk(
   'pharmacy_order_items/fetch',
   async (data: any) => {
     const { id, query } = data;
-    const result = await axios.get(
+    const result = await axiosInstance.get(
       `pharmacy_order_items${query || (id ? `/${id}` : '')}`,
     );
     return id
@@ -49,7 +49,7 @@ export const deleteItemsByIds = createAsyncThunk(
   'pharmacy_order_items/deleteByIds',
   async (data: any, { rejectWithValue }) => {
     try {
-      await axios.post('pharmacy_order_items/deleteByIds', { data });
+      await axiosInstance.post('pharmacy_order_items/deleteByIds', { data });
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -64,7 +64,7 @@ export const deleteItem = createAsyncThunk(
   'pharmacy_order_items/deletePharmacy_order_items',
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`pharmacy_order_items/${id}`);
+      await axiosInstance.delete(`pharmacy_order_items/${id}`);
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'pharmacy_order_items/createPharmacy_order_items',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axios.post('pharmacy_order_items', { data });
+      const result = await axiosInstance.post('pharmacy_order_items', { data });
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -99,7 +99,7 @@ export const uploadCsv = createAsyncThunk(
       data.append('file', file);
       data.append('filename', file.name);
 
-      const result = await axios.post(
+      const result = await axiosInstance.post(
         'pharmacy_order_items/bulk-import',
         data,
         {
@@ -124,10 +124,13 @@ export const update = createAsyncThunk(
   'pharmacy_order_items/updatePharmacy_order_items',
   async (payload: any, { rejectWithValue }) => {
     try {
-      const result = await axios.put(`pharmacy_order_items/${payload.id}`, {
-        id: payload.id,
-        data: payload.data,
-      });
+      const result = await axiosInstance.put(
+        `pharmacy_order_items/${payload.id}`,
+        {
+          id: payload.id,
+          data: payload.data,
+        },
+      );
       return result.data;
     } catch (error) {
       if (!error.response) {

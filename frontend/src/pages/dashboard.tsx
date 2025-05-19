@@ -1,7 +1,7 @@
 import * as icon from '@mdi/js';
 import Head from 'next/head';
 import React from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import type { ReactElement } from 'react';
 import LayoutAuthenticated from '../layouts/Authenticated';
 import SectionMain from '../components/SectionMain';
@@ -10,15 +10,15 @@ import BaseIcon from '../components/BaseIcon';
 import { getPageTitle } from '../config';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-
 import { hasPermission } from '../helpers/userPermissions';
 import { fetchWidgets } from '../stores/roles/rolesSlice';
 import { WidgetCreator } from '../components/WidgetCreator/WidgetCreator';
 import { SmartWidget } from '../components/SmartWidget/SmartWidget';
-
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
 const Dashboard = () => {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const dispatch = useAppDispatch();
   const iconsColor = useAppSelector((state) => state.style.iconsColor);
   const corners = useAppSelector((state) => state.style.corners);
@@ -65,10 +65,8 @@ const Dashboard = () => {
   });
   const { currentUser } = useAppSelector((state) => state.auth);
   const { isFetchingQuery } = useAppSelector((state) => state.openAi);
-
   const { rolesWidgets, loading } = useAppSelector((state) => state.roles);
-
-  const organizationId = currentUser?.organizations?.id;
+  const isRTL = i18n.language === 'ar';
 
   async function loadData() {
     const entities = [
@@ -128,7 +126,7 @@ const Dashboard = () => {
 
     const requests = entities.map((entity, index) => {
       if (hasPermission(currentUser, `READ_${entity.toUpperCase()}`)) {
-        return axios.get(`/${entity.toLowerCase()}/count`);
+        return axiosInstance.get(`/${entity.toLowerCase()}/count`);
       } else {
         fns[index](null);
         return Promise.resolve({ data: { count: null } });
@@ -149,6 +147,7 @@ const Dashboard = () => {
   async function getWidgets(roleId) {
     await dispatch(fetchWidgets(roleId));
   }
+
   React.useEffect(() => {
     if (!currentUser) return;
     loadData().then();
@@ -206,7 +205,7 @@ const Dashboard = () => {
               } dark:bg-dark-900 text-lg leading-tight   text-gray-500 flex items-center ${cardsStyle} dark:border-dark-700 p-6`}
             >
               <BaseIcon
-                className={`${iconsColor} animate-spin mr-5`}
+                className={`${iconsColor} animate-spin ${isRTL ? 'ml-5' : 'mr-5'}`}
                 w='w-16'
                 h='h-16'
                 size={48}
@@ -246,7 +245,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Users
+                      {t('pages.dashboard.users')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {users}
@@ -278,7 +277,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Appointment rules
+                      {t('pages.dashboard.appointmentRules')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {appointment_rules}
@@ -314,7 +313,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Appointments
+                      {t('pages.dashboard.appointments')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {appointments}
@@ -350,7 +349,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Departments
+                      {t('pages.dashboard.departments')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {departments}
@@ -386,7 +385,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Doctor availabilities
+                      {t('pages.dashboard.doctorAvailabilities')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {doctor_availabilities}
@@ -422,7 +421,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Holidays
+                      {t('pages.dashboard.holidays')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {holidays}
@@ -458,7 +457,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Imaging investigations
+                      {t('pages.dashboard.imagingInvestigations')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {imaging_investigations}
@@ -494,7 +493,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Imaging order items
+                      {t('pages.dashboard.imagingOrderItems')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {imaging_order_items}
@@ -530,7 +529,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Imaging orders
+                      {t('pages.dashboard.imagingOrders')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {imaging_orders}
@@ -566,7 +565,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Insurances
+                      {t('pages.dashboard.insurances')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {insurances}
@@ -602,7 +601,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Invoice items
+                      {t('pages.dashboard.invoiceItems')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {invoice_items}
@@ -638,7 +637,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Invoices
+                      {t('pages.dashboard.invoices')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {invoices}
@@ -674,7 +673,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Lab order items
+                      {t('pages.dashboard.labOrderItems')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {lab_order_items}
@@ -710,7 +709,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Lab orders
+                      {t('pages.dashboard.labOrders')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {lab_orders}
@@ -746,7 +745,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Lab tests
+                      {t('pages.dashboard.labTests')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {lab_tests}
@@ -782,7 +781,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Medications
+                      {t('pages.dashboard.medications')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {medications}
@@ -818,7 +817,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Patient documents
+                      {t('pages.dashboard.patientDocuments')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {patient_documents}
@@ -854,7 +853,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Patients
+                      {t('pages.dashboard.patients')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {patients}
@@ -890,7 +889,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Pharmacy order items
+                      {t('pages.dashboard.pharmacyOrderItems')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {pharmacy_order_items}
@@ -926,7 +925,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Pharmacy orders
+                      {t('pages.dashboard.pharmacyOrders')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {pharmacy_orders}
@@ -962,7 +961,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Sick leaves
+                      {t('pages.dashboard.sickLeaves')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {sick_leaves}
@@ -998,7 +997,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Visits
+                      {t('pages.dashboard.visits')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {visits}
@@ -1034,7 +1033,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Roles
+                      {t('pages.dashboard.roles')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {roles}
@@ -1068,7 +1067,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Permissions
+                      {t('pages.dashboard.permissions')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {permissions}
@@ -1100,7 +1099,7 @@ const Dashboard = () => {
                 <div className='flex justify-between align-center'>
                   <div>
                     <div className='text-lg leading-tight   text-gray-500 dark:text-gray-400'>
-                      Organizations
+                      {t('pages.dashboard.organizations')}
                     </div>
                     <div className='text-3xl leading-tight font-semibold'>
                       {organizations}
@@ -1132,3 +1131,11 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default Dashboard;
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

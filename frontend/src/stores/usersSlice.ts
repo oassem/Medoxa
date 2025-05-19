@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 interface MainState {
   users: any;
@@ -23,7 +23,9 @@ const initialState: MainState = {
 
 export const fetch = createAsyncThunk('users/fetch', async (data: any) => {
   const { id, query } = data;
-  const result = await axios.get(`users${query || (id ? `/${id}` : '')}`);
+  const result = await axiosInstance.get(
+    `users${query || (id ? `/${id}` : '')}`,
+  );
   return id ? result.data : result.data.rows;
 });
 
@@ -31,7 +33,7 @@ export const deleteItem = createAsyncThunk(
   'users/deleteUser',
   async (id: string, thunkAPI) => {
     try {
-      await axios.delete(`users/${id}`);
+      await axiosInstance.delete(`users/${id}`);
       thunkAPI.dispatch(fetch({ id: '', query: '' }));
     } catch (error) {
       console.log(error);
@@ -44,7 +46,7 @@ export const deleteItem = createAsyncThunk(
 export const create = createAsyncThunk(
   'users/createUser',
   async (data: any) => {
-    const result = await axios.post('users', { data });
+    const result = await axiosInstance.post('users', { data });
     // showNotification('Users has been created', 'success');
     return result.data;
   },
@@ -53,7 +55,7 @@ export const create = createAsyncThunk(
 export const update = createAsyncThunk(
   'users/updateUser',
   async (payload: any) => {
-    const result = await axios.put(`users/${payload.id}`, {
+    const result = await axiosInstance.put(`users/${payload.id}`, {
       id: payload.id,
       data: payload.data,
     });

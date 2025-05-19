@@ -4,6 +4,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
+import { useTranslation } from 'next-i18next';
 
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
@@ -33,10 +34,12 @@ import dataFormatter from '../../helpers/dataFormatter';
 import ImageField from '../../components/ImageField';
 
 import { hasPermission } from '../../helpers/userPermissions';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const EditUsersPage = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('common');
   const initVals = {
     firstName: '',
 
@@ -92,12 +95,16 @@ const EditUsersPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Edit users')}</title>
+        <title>
+          {getPageTitle(
+            t('pages.users.editTitle', { defaultValue: 'Edit users' }),
+          )}
+        </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={'Edit users'}
+          title={t('pages.users.editTitle', { defaultValue: 'Edit users' })}
           main
         >
           {''}
@@ -109,23 +116,26 @@ const EditUsersPage = () => {
             onSubmit={(values) => handleSubmit(values)}
           >
             <Form>
-              <FormField label='First Name'>
-                <Field name='firstName' placeholder='First Name' />
+              <FormField label={t('fields.firstName')}>
+                <Field name='firstName' placeholder={t('fields.firstName')} />
               </FormField>
 
-              <FormField label='Last Name'>
-                <Field name='lastName' placeholder='Last Name' />
+              <FormField label={t('fields.lastName')}>
+                <Field name='lastName' placeholder={t('fields.lastName')} />
               </FormField>
 
-              <FormField label='Phone Number'>
-                <Field name='phoneNumber' placeholder='Phone Number' />
+              <FormField label={t('fields.phoneNumber')}>
+                <Field
+                  name='phoneNumber'
+                  placeholder={t('fields.phoneNumber')}
+                />
               </FormField>
 
-              <FormField label='E-Mail'>
-                <Field name='email' placeholder='E-Mail' />
+              <FormField label={t('fields.email')}>
+                <Field name='email' placeholder={t('fields.email')} />
               </FormField>
 
-              <FormField label='Disabled' labelFor='disabled'>
+              <FormField label={t('fields.disabled')} labelFor='disabled'>
                 <Field
                   name='disabled'
                   id='disabled'
@@ -135,7 +145,7 @@ const EditUsersPage = () => {
 
               <FormField>
                 <Field
-                  label='Avatar'
+                  label={t('fields.avatar')}
                   color='info'
                   icon={mdiUpload}
                   path={'users/avatar'}
@@ -149,7 +159,7 @@ const EditUsersPage = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='App Role' labelFor='app_role'>
+              <FormField label={t('fields.appRole')} labelFor='app_role'>
                 <Field
                   name='app_role'
                   id='app_role'
@@ -161,7 +171,7 @@ const EditUsersPage = () => {
               </FormField>
 
               <FormField
-                label='Custom Permissions'
+                label={t('fields.customPermissions')}
                 labelFor='custom_permissions'
               >
                 <Field
@@ -174,7 +184,10 @@ const EditUsersPage = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='Organizations' labelFor='organizations'>
+              <FormField
+                label={t('fields.organizations')}
+                labelFor='organizations'
+              >
                 <Field
                   name='organizations'
                   id='organizations'
@@ -185,19 +198,29 @@ const EditUsersPage = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='Password'>
-                <Field name='password' placeholder='password' />
+              <FormField label={t('fields.password')}>
+                <Field name='password' placeholder={t('fields.password')} />
               </FormField>
 
               <BaseDivider />
               <BaseButtons>
-                <BaseButton type='submit' color='info' label='Submit' />
-                <BaseButton type='reset' color='info' outline label='Reset' />
+                <BaseButton
+                  type='submit'
+                  color='info'
+                  label={t('actions.submit')}
+                />
+                <BaseButton
+                  type='reset'
+                  color='info'
+                  outline
+                  label={t('actions.reset')}
+                  onClick={() => setInitialValues(initVals)}
+                />
                 <BaseButton
                   type='reset'
                   color='danger'
                   outline
-                  label='Cancel'
+                  label={t('actions.cancel')}
                   onClick={() => router.push('/users/users-list')}
                 />
               </BaseButtons>
@@ -218,3 +241,11 @@ EditUsersPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default EditUsersPage;
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}

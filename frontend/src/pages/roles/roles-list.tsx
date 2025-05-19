@@ -9,8 +9,7 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config';
 import TableRoles from '../../components/Roles/TableRoles';
 import BaseButton from '../../components/BaseButton';
-import axios from 'axios';
-import Link from 'next/link';
+import axiosInstance from '../../utils/axiosInstance';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -52,7 +51,7 @@ const RolesTablesPage = () => {
   };
 
   const getRolesCSV = async () => {
-    const response = await axios({
+    const response = await axiosInstance({
       url: '/roles?filetype=csv',
       method: 'GET',
       responseType: 'blob',

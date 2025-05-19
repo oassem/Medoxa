@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 export async function getPexelsImage() {
   try {
-    const response = await axios.get(`/pexels/image`);
+    const response = await axiosInstance.get(`/pexels/image`);
     return response.data;
   } catch (error) {
     console.error('Error fetching image:', error);
@@ -12,7 +12,7 @@ export async function getPexelsImage() {
 
 export async function getPexelsVideo() {
   try {
-    const response = await axios.get(`/pexels/video`);
+    const response = await axiosInstance.get(`/pexels/video`);
     return response.data;
   } catch (error) {
     console.error('Error fetching video:', error);
@@ -50,7 +50,7 @@ export async function getMultiplePexelsImages(
     const queryString = missingQueries.join(',');
 
     try {
-      const response = await axios.get(`/pexels/multiple-images`, {
+      const response = await axiosInstance.get(`/pexels/multiple-images`, {
         params: { queries: queryString },
       });
 
@@ -68,8 +68,6 @@ export async function getMultiplePexelsImages(
   }
 
   const result = queries.map((query) => cachedImages[normalizeQuery(query)]);
-
   localStorageLock = false;
-
   return result;
 }
