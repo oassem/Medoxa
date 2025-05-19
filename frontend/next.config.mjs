@@ -27,39 +27,39 @@ const nextConfig = {
     ],
   },
 
-  async rewrites() {
-    return [
-      {
-        source: '/',
-        destination: '/web_pages/home',
-      },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/web_pages/home',
+  //     },
 
-      {
-        source: '/home',
-        destination: '/web_pages/home',
-      },
+  //     {
+  //       source: '/home',
+  //       destination: '/web_pages/home',
+  //     },
 
-      {
-        source: '/about',
-        destination: '/web_pages/about',
-      },
+  //     {
+  //       source: '/about',
+  //       destination: '/web_pages/about',
+  //     },
 
-      {
-        source: '/services',
-        destination: '/web_pages/services',
-      },
+  //     {
+  //       source: '/services',
+  //       destination: '/web_pages/services',
+  //     },
 
-      {
-        source: '/contact',
-        destination: '/web_pages/contact',
-      },
+  //     {
+  //       source: '/contact',
+  //       destination: '/web_pages/contact',
+  //     },
 
-      {
-        source: '/faq',
-        destination: '/web_pages/faq',
-      },
-    ];
-  },
+  //     {
+  //       source: '/faq',
+  //       destination: '/web_pages/faq',
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
