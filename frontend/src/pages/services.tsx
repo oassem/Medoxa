@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import { useAppSelector } from '../../stores/hooks';
-import LayoutGuest from '../../layouts/Guest';
-import WebSiteHeader from '../../components/WebPageComponents/Header';
-import WebSiteFooter from '../../components/WebPageComponents/Footer';
+import LayoutGuest from '../layouts/Guest';
+import WebSiteHeader from '../components/WebPageComponents/Header';
+import WebSiteFooter from '../components/WebPageComponents/Footer';
 import {
   ContactFormDesigns,
   HeroDesigns,
   FeaturesDesigns,
-} from '../../components/WebPageComponents/designs';
+} from '../components/WebPageComponents/designs';
 
-import ContactFormSection from '../../components/WebPageComponents/ContactFormComponent';
+import ContactFormSection from '../components/WebPageComponents/ContactFormComponent';
 
-import HeroSection from '../../components/WebPageComponents/HeroComponent';
+import HeroSection from '../components/WebPageComponents/HeroComponent';
 
-import FeaturesSection from '../../components/WebPageComponents/FeaturesComponent';
+import FeaturesSection from '../components/WebPageComponents/FeaturesComponent';
 
 export default function WebSite() {
-  const cardsStyle = useAppSelector((state) => state.style.cardsStyle);
-  const bgColor = useAppSelector((state) => state.style.bgLayoutColor);
   const projectName = 'Medoxa';
 
   useEffect(() => {

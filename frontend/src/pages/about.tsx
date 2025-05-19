@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import { useAppSelector } from '../../stores/hooks';
-import LayoutGuest from '../../layouts/Guest';
-import WebSiteHeader from '../../components/WebPageComponents/Header';
-import WebSiteFooter from '../../components/WebPageComponents/Footer';
+import { useAppSelector } from '../stores/hooks';
+import LayoutGuest from '../layouts/Guest';
+import WebSiteHeader from '../components/WebPageComponents/Header';
+import WebSiteFooter from '../components/WebPageComponents/Footer';
 import {
   HeroDesigns,
   AboutUsDesigns,
   FeaturesDesigns,
   ContactFormDesigns,
-} from '../../components/WebPageComponents/designs';
+} from '../components/WebPageComponents/designs';
 
-import HeroSection from '../../components/WebPageComponents/HeroComponent';
+import HeroSection from '../components/WebPageComponents/HeroComponent';
 
-import AboutUsSection from '../../components/WebPageComponents/AboutUsComponent';
+import AboutUsSection from '../components/WebPageComponents/AboutUsComponent';
 
-import FeaturesSection from '../../components/WebPageComponents/FeaturesComponent';
+import FeaturesSection from '../components/WebPageComponents/FeaturesComponent';
 
-import ContactFormSection from '../../components/WebPageComponents/ContactFormComponent';
+import ContactFormSection from '../components/WebPageComponents/ContactFormComponent';
 
 export default function WebSite() {
-  const cardsStyle = useAppSelector((state) => state.style.cardsStyle);
-  const bgColor = useAppSelector((state) => state.style.bgLayoutColor);
   const projectName = 'Medoxa';
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useAppSelector } from '../stores/hooks';
 import LayoutGuest from '../layouts/Guest';
 import WebSiteHeader from '../components/WebPageComponents/Header';
@@ -25,8 +24,6 @@ import ContactFormSection from '../components/WebPageComponents/ContactFormCompo
 import FaqSection from '../components/WebPageComponents/FaqComponent';
 
 export default function WebSite() {
-  const cardsStyle = useAppSelector((state) => state.style.cardsStyle);
-  const bgColor = useAppSelector((state) => state.style.bgLayoutColor);
   const projectName = 'Medoxa';
 
   useEffect(() => {
