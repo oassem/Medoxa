@@ -30,6 +30,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/',
+        destination: '/web_pages/home',
+      },
+
+      {
         source: '/home',
         destination: '/web_pages/home',
       },
