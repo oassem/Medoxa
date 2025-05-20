@@ -11,19 +11,13 @@ const HeroImageRight = ({
 }) => (
   <div className='flex flex-col lg:flex-row pb-24 h-auto lg:h-screen'>
     <div className='flex-1 lg:w-2/5 order-first lg:order-last'>
-      {imageHero[0]?.src ? (
-        <Image
-          src='https://images.pexels.com/photos/20860586/pexels-photo-20860586.jpeg'
-          alt='Hero'
-          width={800}
-          height={400}
-          className='w-full h-64 sm:h-full object-cover'
-        />
-      ) : (
-        <div className='w-full h-64 sm:h-full bg-gray-200 flex items-center justify-center'>
-          <span className='text-gray-400'>Loading image...</span>
-        </div>
-      )}
+      <Image
+        src='https://images.pexels.com/photos/20860586/pexels-photo-20860586.jpeg'
+        alt='Hero'
+        width={800}
+        height={400}
+        className='w-full h-64 sm:h-full object-cover'
+      />
       <div className='flex justify-center w-full bg-blue-300/20'>
         <a
           href={imageHero[0]?.photographer_url}

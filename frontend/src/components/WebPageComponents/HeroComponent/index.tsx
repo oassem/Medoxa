@@ -20,24 +20,21 @@ export default function HeroSection({
   const pexelsQueriesWebSite = image;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const fetchImages = async () => {
-        try {
-          const images = await getMultiplePexelsImages(pexelsQueriesWebSite);
-          const formattedImages = (images || []).map((image) => ({
-            src: image?.src || undefined,
-            photographer: image?.photographer || undefined,
-            photographer_url: image?.photographer_url || undefined,
-          }));
-          setImages(formattedImages);
-        } catch (error) {
-          console.error('Error fetching images:', error);
-        }
-      };
-      fetchImages();
-    }, 1000);
+    const fetchImages = async () => {
+      try {
+        const images = await getMultiplePexelsImages(pexelsQueriesWebSite);
+        const formattedImages = (images || []).map((image) => ({
+          src: image?.src || undefined,
+          photographer: image?.photographer || undefined,
+          photographer_url: image?.photographer_url || undefined,
+        }));
+        setImages(formattedImages);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchImages();
   }, [pexelsQueriesWebSite, design]);
 
   let DesignComponent;
