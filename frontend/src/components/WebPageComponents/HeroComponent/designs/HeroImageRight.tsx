@@ -13,7 +13,7 @@ const HeroImageRight = ({
     <div className='flex-1 lg:w-2/5 order-first lg:order-last'>
       {imageHero[0]?.src ? (
         <Image
-          src={imageHero[0].src}
+          src='https://images.pexels.com/photos/20860586/pexels-photo-20860586.jpeg'
           alt='Hero'
           width={800}
           height={400}
