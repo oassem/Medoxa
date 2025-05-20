@@ -20,4 +20,7 @@ i18n
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
     interpolation: { escapeValue: false },
+    supportedLngs: ['en', 'ar'],
   });
+
+export default i18n;

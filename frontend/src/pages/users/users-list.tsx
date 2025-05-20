@@ -14,9 +14,8 @@ import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
 import { setRefetch, uploadCsv } from '../../stores/users/usersSlice';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../../helpers/userPermissions';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const UsersTablesPage = () => {
   const { t } = useTranslation('common');
@@ -168,11 +167,3 @@ UsersTablesPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersTablesPage;
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

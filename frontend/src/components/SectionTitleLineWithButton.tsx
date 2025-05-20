@@ -4,7 +4,7 @@ import BaseButton from './BaseButton';
 import BaseIcon from './BaseIcon';
 import IconRounded from './IconRounded';
 import { humanize } from '../helpers/humanize';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   icon: string;

@@ -9,13 +9,12 @@ import SectionTitleLineWithButton from '../components/SectionTitleLineWithButton
 import BaseIcon from '../components/BaseIcon';
 import { getPageTitle } from '../config';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../helpers/userPermissions';
 import { fetchWidgets } from '../stores/roles/rolesSlice';
 import { WidgetCreator } from '../components/WidgetCreator/WidgetCreator';
 import { SmartWidget } from '../components/SmartWidget/SmartWidget';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Dashboard = () => {
   const { t, i18n } = useTranslation('common');
@@ -1131,11 +1130,3 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default Dashboard;
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

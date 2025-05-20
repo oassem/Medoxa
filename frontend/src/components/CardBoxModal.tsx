@@ -5,7 +5,7 @@ import BaseButtons from './BaseButtons';
 import CardBox from './CardBox';
 import CardBoxComponentTitle from './CardBoxComponentTitle';
 import OverlayLayer from './OverlayLayer';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   title: string;

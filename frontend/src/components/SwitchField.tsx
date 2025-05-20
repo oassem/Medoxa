@@ -1,6 +1,6 @@
 import React from 'react';
 import Switch from 'react-switch';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 export const SwitchField = ({ field, form, disabled }) => {
   const { i18n } = useTranslation('common');

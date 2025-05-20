@@ -1,8 +1,7 @@
 import React, { ReactNode } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { containerMaxW } from '../config';
-import Logo from './Logo';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   children?: ReactNode;

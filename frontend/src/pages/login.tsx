@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import BaseButton from '../components/BaseButton';
 import CardBox from '../components/CardBox';
 import BaseIcon from '../components/BaseIcon';
@@ -20,10 +20,9 @@ import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import Link from 'next/link';
 import { toast, ToastContainer } from 'react-toastify';
 import { getPexelsImage, getPexelsVideo } from '../helpers/pexels';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export default function Login() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const router = useRouter();
   const dispatch = useAppDispatch();
   const textColor = useAppSelector((state) => state.style.linkColor);
@@ -53,8 +52,14 @@ export default function Login() {
     remember: true,
   });
 
-  const [year, setYear] = useState<number | null>(null);
   const title = 'Medoxa';
+  const [year, setYear] = useState<number | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (i18n.isInitialized) setReady(true);
+    else i18n.on('initialized', () => setReady(true));
+  }, [i18n]);
 
   // Fetch Pexels image/video
   useEffect(() => {
@@ -95,6 +100,8 @@ export default function Login() {
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
+  if (!ready) return null;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -358,11 +365,3 @@ export default function Login() {
 Login.getLayout = function getLayout(page: ReactElement) {
   return <LayoutGuest>{page}</LayoutGuest>;
 };
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

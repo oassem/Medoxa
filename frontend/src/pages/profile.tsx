@@ -20,15 +20,12 @@ import { update } from '../stores/users/usersSlice';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import { useRouter } from 'next/router';
 import { findMe } from '../stores/authSlice';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const EditUsers = () => {
   const { t } = useTranslation('common');
-  const { currentUser, isFetching, token } = useAppSelector(
-    (state) => state.auth,
-  );
+  const { currentUser } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const notify = (type, msg) => toast(msg, { type });
@@ -189,11 +186,3 @@ EditUsers.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default EditUsers;
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

@@ -19,7 +19,7 @@ import _ from 'lodash';
 import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
 import { dataGridStyles_ar } from '../../styles_ar';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { StylesProvider, jssPreset } from '@mui/styles';
 import { create } from 'jss';
@@ -183,13 +183,9 @@ const TableSampleUsers = ({
 
   useEffect(() => {
     if (!currentUser) return;
-    loadColumns(
-      handleDeleteModalAction,
-      `users`,
-      currentUser,
-      t,
-      i18n.language,
-    ).then((newCols) => setColumns(newCols));
+    loadColumns(handleDeleteModalAction, currentUser, t).then((newCols) =>
+      setColumns(newCols),
+    );
   }, [currentUser, t, i18n.language]);
 
   const handleTableSubmit = async (id: string, data) => {

@@ -2,7 +2,7 @@ import { mdiChartTimelineVariant, mdiUpload } from '@mdi/js';
 import Head from 'next/head';
 import React, { ReactElement, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
@@ -20,7 +20,6 @@ import { SwitchField } from '../../components/SwitchField';
 import { update, fetch } from '../../stores/users/usersSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const EditUsersPage = () => {
   const router = useRouter();
@@ -48,11 +47,7 @@ const EditUsersPage = () => {
     password: '',
   };
   const [initialValues, setInitialValues] = useState(initVals);
-
   const { users } = useAppSelector((state) => state.users);
-
-  const { currentUser } = useAppSelector((state) => state.auth);
-
   const { id } = router.query;
 
   useEffect(() => {
@@ -227,10 +222,3 @@ EditUsersPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default EditUsersPage;
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

@@ -13,31 +13,47 @@ import { useAppDispatch, useAppSelector } from '../stores/hooks';
 import Search from '../components/Search';
 import { useRouter } from 'next/router';
 import { findMe, logoutUser } from '../stores/authSlice';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../helpers/userPermissions';
 
 type Props = {
   children?: ReactNode;
-
   permission?: string;
 };
 
-export default function LayoutAuthenticated({
-  children,
-
-  permission,
-}: Props) {
+export default function LayoutAuthenticated({ children, permission }: Props) {
   const { t, i18n } = useTranslation('common');
   const isRTL = i18n.language === 'ar';
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { token, currentUser } = useAppSelector((state) => state.auth);
   const bgColor = useAppSelector((state) => state.style.bgLayoutColor);
-  let localToken;
-  if (typeof window !== 'undefined') {
-    // Perform localStorage action
-    localToken = localStorage.getItem('token');
-  }
+  const [localToken, setLocalToken] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setLocalToken(token);
+  }, []);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted) return;
+    dispatch(findMe());
+    if (!isTokenValid()) {
+      dispatch(logoutUser());
+      router.push('/login');
+    }
+  }, [token, localToken, hasMounted]);
+
+  useEffect(() => {
+    if (!hasMounted) return;
+    if (!permission || !currentUser) return;
+    if (!hasPermission(currentUser, permission)) router.push('/error');
+  }, [currentUser, permission, hasMounted]);
 
   const isTokenValid = () => {
     const token = localStorage.getItem('token');
@@ -47,19 +63,6 @@ export default function LayoutAuthenticated({
     if (!data) return;
     return date < data.exp;
   };
-
-  useEffect(() => {
-    dispatch(findMe());
-    if (!isTokenValid()) {
-      dispatch(logoutUser());
-      router.push('/login');
-    }
-  }, [token, localToken]);
-
-  useEffect(() => {
-    if (!permission || !currentUser) return;
-    if (!hasPermission(currentUser, permission)) router.push('/error');
-  }, [currentUser, permission]);
 
   const darkMode = useAppSelector((state) => state.style.darkMode);
   const [isAsideMobileExpanded, setIsAsideMobileExpanded] = useState(false);
@@ -83,6 +86,8 @@ export default function LayoutAuthenticated({
   const layoutAsidePadding = isRTL ? 'xl:pr-60' : 'xl:pl-60';
   const asideMargin = isRTL ? 'mr-60 lg:mr-0' : 'ml-60 lg:ml-0';
   const menuNavBar = getMenuNavBar(t, isRTL);
+
+  if (!hasMounted) return null;
 
   return (
     <div

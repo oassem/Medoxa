@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import { useAppSelector } from '../../stores/hooks';
 import LayoutGuest from '../../layouts/Guest';
 import WebSiteHeader from '../../components/WebPageComponents/Header';
 import WebSiteFooter from '../../components/WebPageComponents/Footer';
@@ -13,20 +11,13 @@ import {
   ContactFormDesigns,
   FaqDesigns,
 } from '../../components/WebPageComponents/designs';
-
 import HeroSection from '../../components/WebPageComponents/HeroComponent';
-
 import FeaturesSection from '../../components/WebPageComponents/FeaturesComponent';
-
 import AboutUsSection from '../../components/WebPageComponents/AboutUsComponent';
-
 import ContactFormSection from '../../components/WebPageComponents/ContactFormComponent';
-
 import FaqSection from '../../components/WebPageComponents/FaqComponent';
 
 export default function WebSite() {
-  const cardsStyle = useAppSelector((state) => state.style.cardsStyle);
-  const bgColor = useAppSelector((state) => state.style.bgLayoutColor);
   const projectName = 'Medoxa';
 
   useEffect(() => {

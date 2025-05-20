@@ -7,7 +7,7 @@ import AsideMenuList from './AsideMenuList';
 import { MenuAsideItem } from '../interfaces';
 import { useAppSelector } from '../stores/hooks';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   item: MenuAsideItem;

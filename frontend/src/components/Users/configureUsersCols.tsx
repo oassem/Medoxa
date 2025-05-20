@@ -9,13 +9,7 @@ import { hasPermission } from '../../helpers/userPermissions';
 
 type Params = (id: string) => void;
 
-export const loadColumns = async (
-  onDelete: Params,
-  entityName: string,
-  user,
-  t,
-  locale = 'en',
-) => {
+export const loadColumns = async (onDelete: Params, user, t) => {
   async function callOptionsApi(entityName: string) {
     if (!hasPermission(user, 'READ_' + entityName.toUpperCase())) return [];
 
@@ -29,10 +23,6 @@ export const loadColumns = async (
   }
 
   const hasUpdatePermission = hasPermission(user, 'UPDATE_USERS');
-
-  // Helper to prefix path with locale if not default
-  const withLocale = (path: string) =>
-    locale && locale !== 'en' ? `/${locale}${path}` : path;
 
   return [
     {
@@ -175,8 +165,8 @@ export const loadColumns = async (
             <ListActionsPopover
               onDelete={onDelete}
               itemId={params?.row?.id}
-              pathEdit={withLocale(`/users/users-edit/?id=${params?.row?.id}`)}
-              pathView={withLocale(`/users/users-view/?id=${params?.row?.id}`)}
+              pathEdit={`/users/users-edit/?id=${params?.row?.id}`}
+              pathView={`/users/users-view/?id=${params?.row?.id}`}
               hasUpdatePermission={hasUpdatePermission}
             />
           </div>,

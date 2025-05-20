@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useAppSelector } from '../stores/hooks';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 const Search = () => {
   const { t } = useTranslation('common');

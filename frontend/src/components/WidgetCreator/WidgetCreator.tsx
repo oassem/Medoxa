@@ -4,7 +4,7 @@ import { Field, Form, Formik } from 'formik';
 import { ToastContainer, toast } from 'react-toastify';
 import FormField from '../FormField';
 import React from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import {
   aiPrompt,
   setErrorNotification,

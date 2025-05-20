@@ -18,8 +18,7 @@ import { SelectFieldMany } from '../../components/SelectFieldMany';
 import { create } from '../../stores/users/usersSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const initialValues = {
   firstName: '',
@@ -190,11 +189,3 @@ UsersNew.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersNew;
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}

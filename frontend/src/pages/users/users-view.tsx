@@ -1,12 +1,9 @@
 import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/users/usersSlice';
-import { saveFile } from '../../helpers/fileSaver';
 import dataFormatter from '../../helpers/dataFormatter';
 import ImageField from '../../components/ImageField';
 import LayoutAuthenticated from '../../layouts/Authenticated';
@@ -19,8 +16,7 @@ import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
 import { SwitchField } from '../../components/SwitchField';
 import FormField from '../../components/FormField';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 const UsersView = () => {
   const router = useRouter();
@@ -830,11 +826,3 @@ UsersView.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default UsersView;
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}
