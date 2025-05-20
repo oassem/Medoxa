@@ -9,7 +9,6 @@ import HeroImageBg from './designs/HeroImageBg';
 import HeroTextCenter from './designs/HeroTextCenter';
 
 export default function HeroSection({
-  projectName,
   image,
   mainText,
   subTitle,
@@ -17,7 +16,6 @@ export default function HeroSection({
   buttonText,
 }) {
   const textSecondary = useAppSelector((state) => state.style.textSecondary);
-
   const [imageHero, setImages] = useState([]);
   const pexelsQueriesWebSite = image;
 
@@ -37,7 +35,7 @@ export default function HeroSection({
     };
 
     fetchImages();
-  }, [pexelsQueriesWebSite, design]);
+  }, [pexelsQueriesWebSite]);
 
   let DesignComponent;
 

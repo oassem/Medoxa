@@ -119,7 +119,6 @@ export default function WebSite() {
       <WebSiteHeader projectName={'Medoxa'} pages={pages} />
       <main className={`flex-grow    bg-white  rounded-none  `}>
         <HeroSection
-          projectName={'Medoxa'}
           image={['Healthcare management platform interface']}
           mainText={`Revolutionize Healthcare with ${projectName}`}
           subTitle={`Experience seamless healthcare management with ${projectName}, designed to enhance patient care and operational efficiency for clinics and hospitals in Saudi Arabia.`}
