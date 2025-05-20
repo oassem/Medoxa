@@ -58,7 +58,7 @@ export default function HeroSection({
   }
 
   return (
-    <DesignComponent
+    <HeroImageRight
       mainText={mainText}
       subTitle={subTitle}
       buttonText={buttonText}
