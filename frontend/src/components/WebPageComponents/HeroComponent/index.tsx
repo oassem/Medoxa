@@ -23,6 +23,8 @@ export default function HeroSection({
     const fetchImages = async () => {
       try {
         const images = await getMultiplePexelsImages(pexelsQueriesWebSite);
+        console.log('images', images);
+        console.log('pexelsQueriesWebSite', pexelsQueriesWebSite);
         const formattedImages = (images || []).map((image) => ({
           src: image?.src || undefined,
           photographer: image?.photographer || undefined,
