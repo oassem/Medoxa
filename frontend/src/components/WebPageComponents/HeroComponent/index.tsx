@@ -35,7 +35,7 @@ export default function HeroSection({
     };
 
     fetchImages();
-  }, [pexelsQueriesWebSite]);
+  }, [pexelsQueriesWebSite, design]);
 
   let DesignComponent;
 
