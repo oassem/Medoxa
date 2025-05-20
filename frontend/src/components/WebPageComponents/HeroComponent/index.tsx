@@ -23,18 +23,16 @@ export default function HeroSection({
 
   useEffect(() => {
     const fetchImages = async () => {
-      if (design !== HeroDesigns.TEXT_CENTER) {
-        try {
-          const images = await getMultiplePexelsImages(pexelsQueriesWebSite);
-          const formattedImages = (images || []).map((image) => ({
-            src: image?.src || undefined,
-            photographer: image?.photographer || undefined,
-            photographer_url: image?.photographer_url || undefined,
-          }));
-          setImages(formattedImages);
-        } catch (error) {
-          console.error('Error fetching images:', error);
-        }
+      try {
+        const images = await getMultiplePexelsImages(pexelsQueriesWebSite);
+        const formattedImages = (images || []).map((image) => ({
+          src: image?.src || undefined,
+          photographer: image?.photographer || undefined,
+          photographer_url: image?.photographer_url || undefined,
+        }));
+        setImages(formattedImages);
+      } catch (error) {
+        console.error('Error fetching images:', error);
       }
     };
 
