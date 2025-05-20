@@ -18,16 +18,6 @@ const FormWithImage = ({ mainText, subTitle, onSubmit, imageContactForm }) => {
               alt='Contact Us'
               className=' object-cover '
             />
-            <div className='flex justify-center w-full'>
-              <a
-                href={imageContactForm[0]?.photographer_url}
-                className='text-[8px]'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Photo by {imageContactForm[0]?.photographer} on Pexels
-              </a>
-            </div>
           </div>
 
           <div className='flex items-center justify-center'>

@@ -27,11 +27,6 @@ const HeroImageBg = ({
         className='px-4 sm:px-6 py-2 '
       />
     </div>
-    <div className='absolute bottom-2 text-[8px] text-white w-full flex justify-center'>
-      <a href={imageHero[0]?.photographer_url} target='_blank' rel='noreferrer'>
-        Photo by {imageHero[0]?.photographer} on Pexels
-      </a>
-    </div>
   </div>
 );
 

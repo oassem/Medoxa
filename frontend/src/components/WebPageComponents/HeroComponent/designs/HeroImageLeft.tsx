@@ -31,16 +31,6 @@ const HeroImageLeft = ({
         alt='Hero'
         className='w-full h-64 sm:h-full object-cover'
       />
-      <div className='flex justify-center w-full bg-blue-300/20'>
-        <a
-          href={imageHero[0]?.photographer_url}
-          className='text-[8px]'
-          target='_blank'
-          rel='noreferrer'
-        >
-          Photo by {imageHero[0]?.photographer} on Pexels
-        </a>
-      </div>
     </div>
   </div>
 );

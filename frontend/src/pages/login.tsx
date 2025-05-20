@@ -132,18 +132,7 @@ export default function Login() {
         backgroundPosition: 'left center',
         backgroundRepeat: 'no-repeat',
       }}
-    >
-      <div className='flex justify-center w-full bg-blue-300/20'>
-        <a
-          className='text-[8px]'
-          href={image?.photographer_url}
-          target='_blank'
-          rel='noreferrer'
-        >
-          Photo by {image?.photographer} on Pexels
-        </a>
-      </div>
-    </div>
+    ></div>
   );
 
   const videoBlock = (video) => {
@@ -159,16 +148,6 @@ export default function Login() {
             <source src={video.video_files[0]?.link} type='video/mp4' />
             Your browser does not support the video tag.
           </video>
-          <div className='flex justify-center w-full bg-blue-300/20 z-10'>
-            <a
-              className='text-[8px]'
-              href={video.user.url}
-              target='_blank'
-              rel='noreferrer'
-            >
-              Video by {video.user.name} on Pexels
-            </a>
-          </div>
         </div>
       );
     }

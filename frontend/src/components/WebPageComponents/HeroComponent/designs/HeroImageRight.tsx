@@ -18,16 +18,6 @@ const HeroImageRight = ({
         height={400}
         className='w-full h-64 sm:h-full object-cover'
       />
-      <div className='flex justify-center w-full bg-blue-300/20'>
-        <a
-          href={imageHero[0]?.photographer_url}
-          className='text-[8px]'
-          target='_blank'
-          rel='noreferrer'
-        >
-          Photo by {imageHero[0]?.photographer} on Pexels
-        </a>
-      </div>
     </div>
     <div className='flex-1 flex items-center justify-center order-last lg:order-first p-4 sm:p-8'>
       <div className='text-center lg:ml-16 lg:text-left'>

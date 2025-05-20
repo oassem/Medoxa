@@ -28,16 +28,6 @@ const IconsWithImage = ({
                 corners !== 'rounded-full' ? corners : 'rounded-3xl'
               }`}
             />
-            <div className='flex justify-center w-full '>
-              <a
-                href={image[0]?.photographer_url}
-                className='text-[8px]'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Photo by {image[0]?.photographer} on Pexels
-              </a>
-            </div>
           </div>
 
           <div className='w-full md:w-6/12 flex flex-col justify-center '>
