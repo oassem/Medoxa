@@ -56,8 +56,9 @@
                 "videoUnsupported": "متصفحك لا يدعم عنصر الفيديو."
             },
             "footer": {
-                "copyright": "جميع الحقوق محفوظة",
-                "privacy": "سياسة الخصوصية"
+                "copyright": ".جميع الحقوق محفوظة",
+                "privacy": "سياسة الخصوصية",
+                "copyright_ar": "جميع الحقوق محفوظة"
             }
         },
         "users": {
@@ -239,5 +240,83 @@
         "toPlaceholder": "إلى",
         "contains": "يحتوي",
         "containedPlaceholder": "المحتوى"
+    },
+    "appointmentRules": {
+        "pageTitle": "قواعد المواعيد",
+        "title": "قواعد المواعيد",
+        "minHoursBeforeBooking": "الحد الأدنى للساعات قبل الحجز",
+        "maxDaysAdvanceBooking": "الحد الأقصى لأيام الحجز المسبق",
+        "department": "القسم",
+        "newItem": "عنصر جديد",
+        "filter": "تصفية",
+        "downloadCSV": "تنزيل CSV",
+        "uploadCSV": "رفع CSV",
+        "confirm": "تأكيد",
+        "noData": "لا توجد بيانات للعرض",
+        "value": "القيمة",
+        "from": "من",
+        "to": "إلى",
+        "contains": "يحتوي",
+        "action": "إجراء",
+        "delete": "حذف",
+        "apply": "تطبيق",
+        "cancel": "إلغاء",
+        "pleaseConfirm": "يرجى التأكيد",
+        "deleting": "جارٍ الحذف...",
+        "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+        "deleteRows": "حذف الصفوف",
+        "deleteRow": "حذف الصف",
+        "created": "تم إنشاء قاعدة الموعد",
+        "updated": "تم تحديث قاعدة الموعد",
+        "deleted": "تم حذف قاعدة الموعد",
+        "deletedMany": "تم حذف قواعد المواعيد",
+        "uploaded": "تم رفع قواعد المواعيد",
+        "viewTitle": "عرض قاعدة المواعيد",
+        "organizations": "المنظمات",
+        "editTitle": "تعديل قاعدة المواعيد",
+        "newTitle": "قاعدة مواعيد جديدة"
+    },
+    "common": {
+        "edit": "تعديل",
+        "back": "رجوع",
+        "noData": "لا توجد بيانات",
+        "submit": "إرسال",
+        "reset": "إعادة تعيين",
+        "cancel": "إلغاء",
+        "login": "تسجيل الدخول",
+        "loading": "جار التحميل..."
+    },
+    "forgot": {
+        "title": "نسيت كلمة المرور",
+        "emailLabel": "البريد الإلكتروني",
+        "emailHelp": "يرجى إدخال بريدك الإلكتروني",
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "checkEmail": "يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق",
+        "error": "حدث خطأ. حاول مرة أخرى"
+    },
+    "register": {
+        "title": "تسجيل حساب جديد",
+        "organization": "المنظمة",
+        "selectOrganization": "اختر المنظمة...",
+        "email": "البريد الإلكتروني",
+        "emailHelp": "يرجى إدخال بريدك الإلكتروني",
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "password": "كلمة المرور",
+        "passwordHelp": "يرجى إدخال كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "confirm": "تأكيد كلمة المرور",
+        "confirmHelp": "يرجى تأكيد كلمة المرور",
+        "confirmPlaceholder": "أعد إدخال كلمة المرور",
+        "register": "تسجيل",
+        "checkEmail": "يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق",
+        "error": "حدث خطأ. حاول مرة أخرى"
+    },
+    "errorBoundary": {
+        "somethingWentWrong": "حدث خطأ ما",
+        "unexpectedError": "نأسف، لقد واجهنا خطأ غير متوقع.",
+        "showStack": "عرض تتبع الخطأ",
+        "hideStack": "إخفاء تتبع الخطأ",
+        "tryAgain": "حاول مرة أخرى",
+        "goBack": "العودة"
     }
 }

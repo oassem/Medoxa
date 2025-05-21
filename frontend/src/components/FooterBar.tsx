@@ -18,8 +18,8 @@ export default function FooterBar({ children }: Props) {
         <div className='text-center md:text-left mb-6 md:mb-0'>
           <b>
             {isRTL
-              ? `${t('pages.login.footer.copyright')} ${year} ©`
-              : `© ${year} ${t('pages.login.footer.copyright')}`}
+              ? `${year} Medoxa - ${t('pages.login.footer.copyright_ar')} ©`
+              : `© ${year} Medoxa - ${t('pages.login.footer.copyright')}`}
           </b>
           {` `}
           {children}

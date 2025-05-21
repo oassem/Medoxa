@@ -16,6 +16,7 @@ import Select from 'react-select';
 import { useAppDispatch } from '../stores/hooks';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../utils/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const [loading, setLoading] = React.useState(false);
@@ -24,6 +25,8 @@ export default function Register() {
   const [organizations, setOrganizations] = React.useState(null);
   const [selectedOrganization, setSelectedOrganization] = React.useState(null);
   const dispatch = useAppDispatch();
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
   const fetchOrganizations = createAsyncThunk('/org-for-auth', async () => {
     try {
       const response = await axiosInstance.get('/org-for-auth');
@@ -46,26 +49,20 @@ export default function Register() {
   const handleSubmit = async (value) => {
     setLoading(true);
     try {
-      const formData = { ...value, organizationId: selectedOrganization.value };
-
-      const { data: response } = await axiosInstance.post(
-        '/auth/signup',
-        formData,
-      );
       await router.push('/login');
       setLoading(false);
-      notify('success', 'Please check your email for verification link');
+      notify('success', t('register.checkEmail'));
     } catch (error) {
       setLoading(false);
       console.log('error: ', error);
-      notify('error', 'Something was wrong. Try again');
+      notify('error', t('register.error'));
     }
   };
 
   return (
     <>
       <Head>
-        <title>{getPageTitle('Login')}</title>
+        <title>{getPageTitle(t('register.title'))}</title>
       </Head>
 
       <SectionFullScreen bg='violet'>
@@ -78,8 +75,10 @@ export default function Register() {
             }}
             onSubmit={(values) => handleSubmit(values)}
           >
-            <Form>
-              <label className='block font-bold mb-2'>Organization</label>
+            <Form dir={isRTL ? 'rtl' : 'ltr'}>
+              <label className='block font-bold mb-2'>
+                {t('register.organization')}
+              </label>
 
               <Select
                 classNames={{
@@ -88,20 +87,38 @@ export default function Register() {
                 value={selectedOrganization}
                 onChange={setSelectedOrganization}
                 options={options}
-                placeholder='Select organization...'
+                placeholder={t('register.selectOrganization')}
               />
 
-              <FormField label='Email' help='Please enter your email'>
-                <Field type='email' name='email' />
-              </FormField>
-              <FormField label='Password' help='Please enter your password'>
-                <Field type='password' name='password' />
+              <FormField
+                label={t('register.email')}
+                help={t('register.emailHelp')}
+              >
+                <Field
+                  type='email'
+                  name='email'
+                  placeholder={t('register.emailPlaceholder')}
+                />
               </FormField>
               <FormField
-                label='Confirm Password'
-                help='Please confirm your password'
+                label={t('register.password')}
+                help={t('register.passwordHelp')}
               >
-                <Field type='password' name='confirm' />
+                <Field
+                  type='password'
+                  name='password'
+                  placeholder={t('register.passwordPlaceholder')}
+                />
+              </FormField>
+              <FormField
+                label={t('register.confirm')}
+                help={t('register.confirmHelp')}
+              >
+                <Field
+                  type='password'
+                  name='confirm'
+                  placeholder={t('register.confirmPlaceholder')}
+                />
               </FormField>
 
               <BaseDivider />
@@ -109,16 +126,20 @@ export default function Register() {
               <BaseButtons>
                 <BaseButton
                   type='submit'
-                  label={loading ? 'Loading...' : 'Register'}
+                  label={loading ? t('common.loading') : t('register.register')}
                   color='info'
                 />
-                <BaseButton href={'/login'} label={'Login'} color='info' />
+                <BaseButton
+                  href={'/login'}
+                  label={t('common.login')}
+                  color='info'
+                />
               </BaseButtons>
             </Form>
           </Formik>
         </CardBox>
       </SectionFullScreen>
-      <ToastContainer />
+      <ToastContainer rtl={isRTL} />
     </>
   );
 }

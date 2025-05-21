@@ -105,6 +105,7 @@ const TableSampleUsers = ({
     setId(id);
     setIsModalTrashActive(true);
   };
+
   const handleDeleteAction = async () => {
     if (id) {
       await dispatch(deleteItem(id));
@@ -148,7 +149,6 @@ const TableSampleUsers = ({
       setFilterItems(newItems);
     } else {
       loadData(0, '');
-
       setFilterItems(newItems);
     }
   };

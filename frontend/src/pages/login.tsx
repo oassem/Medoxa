@@ -55,6 +55,7 @@ export default function Login() {
   const title = 'Medoxa';
   const [year, setYear] = useState<number | null>(null);
   const [ready, setReady] = useState(false);
+  const isRTL = i18n.language === 'ar';
 
   useEffect(() => {
     if (i18n.isInitialized) setReady(true);
@@ -71,24 +72,28 @@ export default function Login() {
     }
     fetchData();
   }, []);
+
   // Fetch user data
   useEffect(() => {
     if (token) {
       dispatch(findMe());
     }
   }, [token, dispatch]);
+
   // Redirect to dashboard if user is logged in
   useEffect(() => {
     if (currentUser?.id) {
       router.push('/dashboard');
     }
   }, [currentUser?.id, router]);
+
   // Show error message if there is one
   useEffect(() => {
     if (errorMessage) {
       notify('error', errorMessage);
     }
   }, [errorMessage]);
+
   // Show notification if there is one
   useEffect(() => {
     if (notifyState?.showNotification) {
@@ -155,6 +160,8 @@ export default function Login() {
 
   return (
     <div
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={isRTL ? 'rtl' : 'ltr'}
       style={
         contentPosition === 'background'
           ? {
@@ -177,7 +184,13 @@ export default function Login() {
       <SectionFullScreen bg='violet'>
         <div
           className={`flex ${
-            contentPosition === 'right' ? 'flex-row-reverse' : 'flex-row'
+            isRTL
+              ? contentPosition === 'right'
+                ? 'flex-row'
+                : 'flex-row-reverse'
+              : contentPosition === 'right'
+                ? 'flex-row-reverse'
+                : 'flex-row'
           } min-h-screen w-full`}
         >
           {contentType === 'image' && contentPosition !== 'background'
@@ -187,7 +200,11 @@ export default function Login() {
             ? videoBlock(illustrationVideo)
             : null}
           <div className='flex items-center justify-center flex-col space-y-4 w-full lg:w-full'>
-            <CardBox id='loginRoles' className='w-full md:w-3/5 lg:w-2/3'>
+            <CardBox
+              dir='ltr'
+              id='loginRoles'
+              className='w-full md:w-3/5 lg:w-2/3'
+            >
               <Link href={'/home'}>
                 <h2 className='text-4xl font-semibold my-4'> {title}</h2>
               </Link>
@@ -272,7 +289,7 @@ export default function Login() {
                       />
                     </FormField>
                     <div
-                      className='absolute bottom-8 right-0 pr-3 flex items-center cursor-pointer'
+                      className={`absolute bottom-8 ${isRTL ? 'left-0 pl-3' : 'right-0 pr-3'} flex items-center cursor-pointer`}
                       onClick={togglePasswordVisibility}
                     >
                       <BaseIcon
@@ -287,6 +304,7 @@ export default function Login() {
                     <FormCheckRadio
                       type='checkbox'
                       label={t('pages.login.form.remember')}
+                      isRTL={isRTL}
                     >
                       <Field type='checkbox' name='remember' />
                     </FormCheckRadio>
@@ -329,14 +347,18 @@ export default function Login() {
       </SectionFullScreen>
       <div className='bg-black text-white flex flex-col text-center justify-center md:flex-row'>
         <p className='py-6 text-sm'>
-          © {year ?? ''} <span>{title}</span>.{' '}
-          {t('pages.login.footer.copyright')}
+          {isRTL
+            ? `${year} Medoxa - ${t('pages.login.footer.copyright_ar')} ©`
+            : `© ${year} Medoxa - ${t('pages.login.footer.copyright')}`}
         </p>
-        <Link className='py-6 ml-4 text-sm underline' href='/privacy-policy/'>
+        <Link
+          className={`py-6 ${isRTL ? 'mr-4' : 'ml-4'} text-sm underline`}
+          href='/privacy-policy/'
+        >
           {t('pages.login.footer.privacy')}
         </Link>
       </div>
-      <ToastContainer />
+      <ToastContainer rtl={isRTL} />
     </div>
   );
 }

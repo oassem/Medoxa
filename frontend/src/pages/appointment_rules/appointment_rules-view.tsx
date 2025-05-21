@@ -1,14 +1,9 @@
 import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/appointment_rules/appointment_rulesSlice';
-import { saveFile } from '../../helpers/fileSaver';
-import dataFormatter from '../../helpers/dataFormatter';
-import ImageField from '../../components/ImageField';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import { getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
@@ -17,10 +12,7 @@ import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
-import { SwitchField } from '../../components/SwitchField';
-import FormField from '../../components/FormField';
-
-import { hasPermission } from '../../helpers/userPermissions';
+import { useTranslation } from 'react-i18next';
 
 const Appointment_rulesView = () => {
   const router = useRouter();
@@ -29,14 +21,8 @@ const Appointment_rulesView = () => {
     (state) => state.appointment_rules,
   );
 
-  const { currentUser } = useAppSelector((state) => state.auth);
-
   const { id } = router.query;
-
-  function removeLastCharacter(str) {
-    console.log(str, `str`);
-    return str.slice(0, -1);
-  }
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     dispatch(fetch({ id }));
@@ -45,50 +31,59 @@ const Appointment_rulesView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View appointment_rules')}</title>
+        <title>{getPageTitle(t('appointmentRules.viewTitle'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={removeLastCharacter('View appointment_rules')}
+          title={t('appointmentRules.viewTitle')}
           main
         >
           <BaseButton
             color='info'
-            label='Edit'
+            label={t('common.edit')}
             href={`/appointment_rules/appointment_rules-edit/?id=${id}`}
           />
         </SectionTitleLineWithButton>
         <CardBox>
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Department</p>
-
-            <p>{appointment_rules?.department?.name ?? 'No data'}</p>
+          <div className={'mb-8'}>
+            <p className={'block font-bold mb-2'}>
+              {t('appointmentRules.department')}
+            </p>
+            <p>{appointment_rules?.department?.name ?? t('common.noData')}</p>
           </div>
-
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>MinHoursBeforeBooking</p>
-            <p>{appointment_rules?.min_hours_before_booking || 'No data'}</p>
+          <div className={'mb-8'}>
+            <p className={'block font-bold mb-2'}>
+              {t('appointmentRules.minHoursBeforeBooking')}
+            </p>
+            <p>
+              {appointment_rules?.min_hours_before_booking ||
+                t('common.noData')}
+            </p>
           </div>
-
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>MaxDaysAdvanceBooking</p>
-            <p>{appointment_rules?.max_days_advance_booking || 'No data'}</p>
+          <div className={'mb-8'}>
+            <p className={'block font-bold mb-2'}>
+              {t('appointmentRules.maxDaysAdvanceBooking')}
+            </p>
+            <p>
+              {appointment_rules?.max_days_advance_booking ||
+                t('common.noData')}
+            </p>
           </div>
-
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>organizations</p>
-
-            <p>{appointment_rules?.organizations?.name ?? 'No data'}</p>
+          <div className={'mb-8'}>
+            <p className={'block font-bold mb-2'}>
+              {t('appointmentRules.organizations')}
+            </p>
+            <p>
+              {appointment_rules?.organizations?.name ?? t('common.noData')}
+            </p>
           </div>
-
           <BaseDivider />
-
           <BaseButton
             color='info'
-            label='Back'
+            label={t('common.back')}
             onClick={() =>
-              router.push('/appointment_rules/appointment_rules-list')
+              router.push('/appointment_rules/appointment_rules-table')
             }
           />
         </CardBox>

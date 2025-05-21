@@ -35,7 +35,7 @@ export default function WebSiteFooter({
           } flex flex-col text-center justify-between md:flex-row `}
         >
           <p className='py-6 text-sm'>
-            © {currentYear} Flatlogic. All rights reserved
+            © {currentYear} Medoxa - All rights reserved.
           </p>
           {style ? (
             <p className='py-6 font-bold'>{projectName}</p>

@@ -1,9 +1,10 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { mdiAlertCircle } from '@mdi/js';
 import BaseIcon from './BaseIcon';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 // Define the props and state interfaces
-interface ErrorBoundaryProps {
+interface ErrorBoundaryProps extends WithTranslation {
   children?: ReactNode;
 }
 
@@ -136,6 +137,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       const stackTrace =
         errorInfo?.componentStack || error?.stack || 'No stack trace available';
 
+      const { t } = this.props;
+
       return (
         <div className='flex items-center justify-center min-h-screen bg-pavitra-300'>
           <div className='max-w-lg w-full p-8 bg-white rounded-lg shadow-sm'>
@@ -150,10 +153,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
               <div className='space-y-2'>
                 <h2 className='text-xl font-semibold text-pavitra-900'>
-                  Something went wrong
+                  {t('errorBoundary.somethingWentWrong')}
                 </h2>
                 <p className='text-pavitra-800'>
-                  We&apos;re sorry, but we encountered an unexpected error.
+                  {t('errorBoundary.unexpectedError')}
                 </p>
               </div>
 
@@ -167,7 +170,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     onClick={this.toggleStack}
                     className='text-xs text-pavitra-800 flex items-center gap-1'
                   >
-                    <span>{showStack ? 'Hide' : 'Show'} stack trace</span>
+                    <span>
+                      {showStack
+                        ? t('errorBoundary.hideStack')
+                        : t('errorBoundary.showStack')}
+                    </span>
                     <span className='text-xs'>{showStack ? '▲' : '▼'}</span>
                   </button>
 
@@ -184,14 +191,14 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                   className='w-full py-2 px-4 bg-pavitra-blue hover:bg-pavitra-900 text-white rounded-md transition-colors'
                   onClick={this.tryAgain}
                 >
-                  Try Again
+                  {t('errorBoundary.tryAgain')}
                 </button>
 
                 <button
                   className='w-full py-2 px-4 border border-pavitra-600 text-pavitra-800 hover:bg-pavitra-400 rounded-md transition-colors'
                   onClick={this.resetError}
                 >
-                  Go Back
+                  {t('errorBoundary.goBack')}
                 </button>
               </div>
             </div>
@@ -204,4 +211,4 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation('common')(ErrorBoundary);

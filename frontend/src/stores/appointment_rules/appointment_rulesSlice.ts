@@ -177,7 +177,7 @@ export const appointment_rulesSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Appointment_rules has been deleted');
+      fulfilledNotify(state, 'appointmentRules.deletedMany');
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -192,10 +192,7 @@ export const appointment_rulesSlice = createSlice({
 
     builder.addCase(deleteItem.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Appointment_rules'.slice(0, -1)} has been deleted`,
-      );
+      fulfilledNotify(state, 'appointmentRules.deleted');
     });
 
     builder.addCase(deleteItem.rejected, (state, action) => {
@@ -214,10 +211,7 @@ export const appointment_rulesSlice = createSlice({
 
     builder.addCase(create.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Appointment_rules'.slice(0, -1)} has been created`,
-      );
+      fulfilledNotify(state, 'appointmentRules.created');
     });
 
     builder.addCase(update.pending, (state) => {
@@ -226,10 +220,7 @@ export const appointment_rulesSlice = createSlice({
     });
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Appointment_rules'.slice(0, -1)} has been updated`,
-      );
+      fulfilledNotify(state, 'appointmentRules.updated');
     });
     builder.addCase(update.rejected, (state, action) => {
       state.loading = false;
@@ -242,7 +233,7 @@ export const appointment_rulesSlice = createSlice({
     });
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Appointment_rules has been uploaded');
+      fulfilledNotify(state, 'appointmentRules.uploaded');
     });
     builder.addCase(uploadCsv.rejected, (state, action) => {
       state.loading = false;

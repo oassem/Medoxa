@@ -83,7 +83,7 @@ const EditAppointment_rules = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(update({ id: appointment_rulesId, data }));
-    await router.push('/appointment_rules/appointment_rules-list');
+    await router.push('/appointment_rules/appointment_rules-table');
   };
 
   return (
@@ -154,7 +154,7 @@ const EditAppointment_rules = () => {
                   outline
                   label='Cancel'
                   onClick={() =>
-                    router.push('/appointment_rules/appointment_rules-list')
+                    router.push('/appointment_rules/appointment_rules-table')
                   }
                 />
               </BaseButtons>

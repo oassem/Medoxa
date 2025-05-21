@@ -1,9 +1,4 @@
-import {
-  mdiAccount,
-  mdiChartTimelineVariant,
-  mdiMail,
-  mdiUpload,
-} from '@mdi/js';
+import { mdiChartTimelineVariant } from '@mdi/js';
 import Head from 'next/head';
 import React, { ReactElement } from 'react';
 import CardBox from '../../components/CardBox';
@@ -11,26 +6,16 @@ import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import { getPageTitle } from '../../config';
-
 import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
-import FormCheckRadio from '../../components/FormCheckRadio';
-import FormCheckRadioGroup from '../../components/FormCheckRadioGroup';
-import FormFilePicker from '../../components/FormFilePicker';
-import FormImagePicker from '../../components/FormImagePicker';
-import { SwitchField } from '../../components/SwitchField';
-
 import { SelectField } from '../../components/SelectField';
-import { SelectFieldMany } from '../../components/SelectFieldMany';
-import { RichTextField } from '../../components/RichTextField';
-
 import { create } from '../../stores/appointment_rules/appointment_rulesSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 const initialValues = {
   department: '',
@@ -45,20 +30,21 @@ const initialValues = {
 const Appointment_rulesNew = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('common');
 
   const handleSubmit = async (data) => {
     await dispatch(create(data));
-    await router.push('/appointment_rules/appointment_rules-list');
+    await router.push('/appointment_rules/appointment_rules-table');
   };
   return (
     <>
       <Head>
-        <title>{getPageTitle('New Item')}</title>
+        <title>{getPageTitle(t('appointmentRules.newTitle'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New Item'
+          title={t('appointmentRules.newTitle')}
           main
         >
           {''}
@@ -69,7 +55,10 @@ const Appointment_rulesNew = () => {
             onSubmit={(values) => handleSubmit(values)}
           >
             <Form>
-              <FormField label='Department' labelFor='department'>
+              <FormField
+                label={t('appointmentRules.department')}
+                labelFor='department'
+              >
                 <Field
                   name='department'
                   id='department'
@@ -79,23 +68,26 @@ const Appointment_rulesNew = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='MinHoursBeforeBooking'>
+              <FormField label={t('appointmentRules.minHoursBeforeBooking')}>
                 <Field
                   type='number'
                   name='min_hours_before_booking'
-                  placeholder='MinHoursBeforeBooking'
+                  placeholder={t('appointmentRules.minHoursBeforeBooking')}
                 />
               </FormField>
 
-              <FormField label='MaxDaysAdvanceBooking'>
+              <FormField label={t('appointmentRules.maxDaysAdvanceBooking')}>
                 <Field
                   type='number'
                   name='max_days_advance_booking'
-                  placeholder='MaxDaysAdvanceBooking'
+                  placeholder={t('appointmentRules.maxDaysAdvanceBooking')}
                 />
               </FormField>
 
-              <FormField label='organizations' labelFor='organizations'>
+              <FormField
+                label={t('appointmentRules.organizations')}
+                labelFor='organizations'
+              >
                 <Field
                   name='organizations'
                   id='organizations'
@@ -107,15 +99,24 @@ const Appointment_rulesNew = () => {
 
               <BaseDivider />
               <BaseButtons>
-                <BaseButton type='submit' color='info' label='Submit' />
-                <BaseButton type='reset' color='info' outline label='Reset' />
+                <BaseButton
+                  type='submit'
+                  color='info'
+                  label={t('common.submit')}
+                />
+                <BaseButton
+                  type='reset'
+                  color='info'
+                  outline
+                  label={t('common.reset')}
+                />
                 <BaseButton
                   type='reset'
                   color='danger'
                   outline
-                  label='Cancel'
+                  label={t('common.cancel')}
                   onClick={() =>
-                    router.push('/appointment_rules/appointment_rules-list')
+                    router.push('/appointment_rules/appointment_rules-table')
                   }
                 />
               </BaseButtons>

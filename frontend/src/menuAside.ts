@@ -16,7 +16,7 @@ const menuAside: MenuAsideItem[] = [
     permissions: 'READ_USERS',
   },
   {
-    href: '/appointment_rules/appointment_rules-list',
+    href: '/appointment_rules/appointment_rules-table',
     label: 'aside.appointmentRules',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

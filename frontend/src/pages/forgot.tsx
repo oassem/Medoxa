@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import Head from 'next/head';
@@ -13,11 +13,20 @@ import BaseButtons from '../components/BaseButtons';
 import { useRouter } from 'next/router';
 import { getPageTitle } from '../config';
 import axiosInstance from '../utils/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 export default function Forgot() {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
   const notify = (type, msg) => toast(msg, { type });
+  const [ready, setReady] = React.useState(false);
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
+
+  useEffect(() => {
+    if (i18n.isInitialized) setReady(true);
+    else i18n.on('initialized', () => setReady(true));
+  }, [i18n]);
 
   const handleSubmit = async (value) => {
     setLoading(true);
@@ -27,21 +36,23 @@ export default function Forgot() {
         value,
       );
       setLoading(false);
-      notify('success', 'Please check your email for verification link');
+      notify('success', t('forgot.checkEmail'));
       setTimeout(async () => {
         await router.push('/login');
       }, 3000);
     } catch (error) {
       setLoading(false);
       console.log('error: ', error);
-      notify('error', 'Something was wrong. Try again');
+      notify('error', t('forgot.error'));
     }
   };
+
+  if (!ready) return null;
 
   return (
     <>
       <Head>
-        <title>{getPageTitle('Login')}</title>
+        <title>{getPageTitle(t('forgot.title'))}</title>
       </Head>
 
       <SectionFullScreen bg='violet'>
@@ -52,9 +63,16 @@ export default function Forgot() {
             }}
             onSubmit={(values) => handleSubmit(values)}
           >
-            <Form>
-              <FormField label='Email' help='Please enter your email'>
-                <Field name='email' />
+            <Form dir={isRTL ? 'rtl' : 'ltr'}>
+              <FormField
+                label={t('forgot.emailLabel')}
+                help={t('forgot.emailHelp')}
+              >
+                <Field
+                  name='email'
+                  placeholder={t('forgot.emailPlaceholder')}
+                  className='w-full'
+                />
               </FormField>
 
               <BaseDivider />
@@ -62,16 +80,20 @@ export default function Forgot() {
               <BaseButtons>
                 <BaseButton
                   type='submit'
-                  label={loading ? 'Loading...' : 'Submit'}
+                  label={loading ? t('common.loading') : t('common.submit')}
                   color='info'
                 />
-                <BaseButton href={'/login'} label={'Login'} color='info' />
+                <BaseButton
+                  href={'/login'}
+                  label={t('common.login')}
+                  color='info'
+                />
               </BaseButtons>
             </Form>
           </Formik>
         </CardBox>
       </SectionFullScreen>
-      <ToastContainer />
+      <ToastContainer rtl={isRTL} />
     </>
   );
 }

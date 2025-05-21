@@ -113,8 +113,12 @@ export const loadColumns = async (onDelete: Params, user, t) => {
       type: 'singleSelect',
       getOptionValue: (value: any) => value?.id,
       getOptionLabel: (value: any) => value?.name,
-      valueOptions: await callOptionsApi('roles'),
+      valueOptions: (await callOptionsApi('roles')).map((role) => ({
+        id: role.id,
+        name: role.label,
+      })),
       valueGetter: (params: GridValueGetterParams) => params?.value,
+      valueFormatter: (params) => params.value?.name || '',
     },
 
     {

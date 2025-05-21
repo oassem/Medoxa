@@ -267,7 +267,7 @@ const Dashboard = () => {
           )}
 
           {hasPermission(currentUser, 'READ_APPOINTMENT_RULES') && (
-            <Link href={'/appointment_rules/appointment_rules-list'}>
+            <Link href={'/appointment_rules/appointment_rules-table'}>
               <div
                 className={`${
                   corners !== 'rounded-full' ? corners : 'rounded-3xl'

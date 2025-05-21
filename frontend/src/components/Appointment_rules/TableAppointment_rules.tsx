@@ -12,15 +12,16 @@ import {
   deleteItemsByIds,
 } from '../../stores/appointment_rules/appointment_rulesSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { useRouter } from 'next/router';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configureAppointment_rulesCols';
 import _ from 'lodash';
 import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
-
+import { useTranslation } from 'react-i18next';
 import ListAppointment_rules from './ListAppointment_rules';
+import { dataGridStyles_ar } from '../../styles_ar';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const perPage = 10;
 
@@ -30,11 +31,9 @@ const TableSampleAppointment_rules = ({
   filters,
   showGrid,
 }) => {
-  const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
-
+  const notify = (type, msgKey) =>
+    toast(t(msgKey), { type, position: 'bottom-center' });
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
   const pagesList = [];
   const [id, setId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -64,6 +63,9 @@ const TableSampleAppointment_rules = ({
   for (let i = 0; i < numPages; i++) {
     pagesList.push(i);
   }
+
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
 
   const loadData = async (page = currentPage, request = filterRequest) => {
     if (page !== currentPage) setCurrentPage(page);
@@ -107,6 +109,7 @@ const TableSampleAppointment_rules = ({
     setId(id);
     setIsModalTrashActive(true);
   };
+
   const handleDeleteAction = async () => {
     if (id) {
       await dispatch(deleteItem(id));
@@ -150,7 +153,6 @@ const TableSampleAppointment_rules = ({
       setFilterItems(newItems);
     } else {
       loadData(0, '');
-
       setFilterItems(newItems);
     }
   };
@@ -167,7 +169,6 @@ const TableSampleAppointment_rules = ({
       filterItems.map((item) => {
         if (item.id !== id) return item;
         if (name === 'selectedField') return { id, fields: { [name]: value } };
-
         return { id, fields: { ...item.fields, [name]: value } };
       }),
     );
@@ -186,10 +187,14 @@ const TableSampleAppointment_rules = ({
   useEffect(() => {
     if (!currentUser) return;
 
-    loadColumns(handleDeleteModalAction, `appointment_rules`, currentUser).then(
-      (newCols) => setColumns(newCols),
-    );
-  }, [currentUser]);
+    loadColumns(
+      handleDeleteModalAction,
+      `appointment_rules`,
+      currentUser,
+      t,
+      isRTL,
+    ).then((newCols) => setColumns(newCols));
+  }, [currentUser, t, isRTL]);
 
   const handleTableSubmit = async (id: string, data) => {
     if (!_.isEmpty(data)) {
@@ -212,56 +217,67 @@ const TableSampleAppointment_rules = ({
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
-  const dataGrid = (
-    <div className='relative overflow-x-auto'>
-      <DataGrid
-        autoHeight
-        rowHeight={64}
-        sx={dataGridStyles}
-        className={'datagrid--table'}
-        getRowClassName={() => `datagrid--row`}
-        rows={appointment_rules ?? []}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
-        disableRowSelectionOnClick
-        onProcessRowUpdateError={(params) => {
-          console.log('Error', params);
-        }}
-        processRowUpdate={async (newRow, oldRow) => {
-          const data = dataFormatter.dataGridEditFormatter(newRow);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        direction: isRTL ? 'rtl' : 'ltr',
+      }),
+    [isRTL],
+  );
 
-          try {
-            await handleTableSubmit(newRow.id, data);
-            return newRow;
-          } catch {
-            return oldRow;
-          }
-        }}
-        sortingMode={'server'}
-        checkboxSelection
-        onRowSelectionModelChange={(ids) => {
-          setSelectedRows(ids);
-        }}
-        onSortModelChange={(params) => {
-          params.length
-            ? setSortModel(params)
-            : setSortModel([{ field: '', sort: 'desc' }]);
-        }}
-        rowCount={count}
-        pageSizeOptions={[10]}
-        paginationMode={'server'}
-        loading={loading}
-        onPaginationModelChange={(params) => {
-          onPageChange(params.page);
-        }}
-      />
-    </div>
+  const dataGrid = (
+    <ThemeProvider theme={theme}>
+      <div className='relative overflow-x-auto' dir={isRTL ? 'rtl' : 'ltr'}>
+        <DataGrid
+          autoHeight
+          rowHeight={64}
+          sx={isRTL ? dataGridStyles_ar : dataGridStyles}
+          className={'datagrid--table'}
+          getRowClassName={() => `datagrid--row`}
+          rows={appointment_rules ?? []}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          disableRowSelectionOnClick
+          onProcessRowUpdateError={(params) => {
+            console.log('Error', params);
+          }}
+          processRowUpdate={async (newRow, oldRow) => {
+            const data = dataFormatter.dataGridEditFormatter(newRow);
+
+            try {
+              await handleTableSubmit(newRow.id, data);
+              return newRow;
+            } catch {
+              return oldRow;
+            }
+          }}
+          sortingMode={'server'}
+          checkboxSelection
+          onRowSelectionModelChange={(ids) => {
+            setSelectedRows(ids);
+          }}
+          onSortModelChange={(params) => {
+            params.length
+              ? setSortModel(params)
+              : setSortModel([{ field: '', sort: 'desc' }]);
+          }}
+          rowCount={count}
+          pageSizeOptions={[10]}
+          paginationMode={'server'}
+          loading={loading}
+          onPaginationModelChange={(params) => {
+            onPageChange(params.page);
+          }}
+          disableColumnMenu
+        />
+      </div>
+    </ThemeProvider>
   );
 
   return (
@@ -277,17 +293,17 @@ const TableSampleAppointment_rules = ({
             onSubmit={() => null}
           >
             <Form>
-              <>
+              <div dir={isRTL ? 'rtl' : 'ltr'}>
                 {filterItems &&
                   filterItems.map((filterItem) => {
                     return (
                       <div key={filterItem.id} className='flex mb-4'>
-                        <div className='flex flex-col w-full mr-3'>
-                          <div className='  text-gray-500  font-bold'>
-                            Filter
+                        <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('appointmentRules.filter')}
                           </div>
                           <Field
-                            className={controlClasses}
+                            className={`${controlClasses} filter-select`}
                             name='selectedField'
                             id='selectedField'
                             component='select'
@@ -308,8 +324,10 @@ const TableSampleAppointment_rules = ({
                           (filter) =>
                             filter.title === filterItem?.fields?.selectedField,
                         )?.type === 'enum' ? (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='text-gray-500 font-bold'>Value</div>
+                          <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                            <div className='text-gray-500 font-bold'>
+                              {t('appointmentRules.value')}
+                            </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
@@ -338,14 +356,14 @@ const TableSampleAppointment_rules = ({
                               filterItem?.fields?.selectedField,
                           )?.number ? (
                           <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
+                            <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
                               <div className='  text-gray-500  font-bold'>
-                                From
+                                {t('appointmentRules.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('appointmentRules.from')}
                                 id='filterValueFrom'
                                 value={
                                   filterItem?.fields?.filterValueFrom || ''
@@ -353,14 +371,14 @@ const TableSampleAppointment_rules = ({
                                 onChange={handleChange(filterItem.id)}
                               />
                             </div>
-                            <div className='flex flex-col w-full'>
+                            <div className='flex flex-col w-full rtl:ml-3 rtl:mr-0'>
                               <div className='  text-gray-500  font-bold'>
-                                To
+                                {t('appointmentRules.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('appointmentRules.to')}
                                 id='filterValueTo'
                                 value={filterItem?.fields?.filterValueTo || ''}
                                 onChange={handleChange(filterItem.id)}
@@ -373,14 +391,14 @@ const TableSampleAppointment_rules = ({
                               filterItem?.fields?.selectedField,
                           )?.date ? (
                           <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
+                            <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
                               <div className='  text-gray-500  font-bold'>
-                                From
+                                {t('appointmentRules.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('appointmentRules.from')}
                                 id='filterValueFrom'
                                 type='datetime-local'
                                 value={
@@ -389,14 +407,14 @@ const TableSampleAppointment_rules = ({
                                 onChange={handleChange(filterItem.id)}
                               />
                             </div>
-                            <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
+                            <div className='flex flex-col w-full rtl:ml-3 rtl:mr-0'>
+                              <div className='text-gray-500  font-bold'>
+                                {t('appointmentRules.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('appointmentRules.to')}
                                 id='filterValueTo'
                                 type='datetime-local'
                                 value={filterItem?.fields?.filterValueTo || ''}
@@ -405,14 +423,14 @@ const TableSampleAppointment_rules = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='flex flex-col w-full mr-3'>
+                          <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
                             <div className='  text-gray-500  font-bold'>
-                              Contains
+                              {t('appointmentRules.contains')}
                             </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
-                              placeholder='Contained'
+                              placeholder={t('appointmentRules.contains')}
                               id='filterValue'
                               value={filterItem?.fields?.filterValue || ''}
                               onChange={handleChange(filterItem.id)}
@@ -420,14 +438,14 @@ const TableSampleAppointment_rules = ({
                           </div>
                         )}
                         <div className='flex flex-col'>
-                          <div className='  text-gray-500  font-bold'>
-                            Action
+                          <div className='text-gray-500 font-bold invisible'>
+                            {t('appointmentRules.action')}
                           </div>
                           <BaseButton
                             className='my-2'
                             type='reset'
                             color='danger'
-                            label='Delete'
+                            label={t('appointmentRules.delete')}
                             onClick={() => {
                               deleteFilter(filterItem.id);
                             }}
@@ -438,32 +456,36 @@ const TableSampleAppointment_rules = ({
                   })}
                 <div className='flex'>
                   <BaseButton
-                    className='my-2 mr-3'
+                    className='my-2 mr-3 rtl:ml-3 rtl:mr-0'
                     color='success'
-                    label='Apply'
+                    label={t('appointmentRules.apply')}
                     onClick={handleSubmit}
                   />
                   <BaseButton
                     className='my-2'
                     color='info'
-                    label='Cancel'
+                    label={t('appointmentRules.cancel')}
                     onClick={handleReset}
                   />
                 </div>
-              </>
+              </div>
             </Form>
           </Formik>
         </CardBox>
       ) : null}
       <CardBoxModal
-        title='Please confirm'
+        title={t('appointmentRules.pleaseConfirm')}
         buttonColor='info'
-        buttonLabel={loading ? 'Deleting...' : 'Confirm'}
+        buttonLabel={
+          loading
+            ? t('appointmentRules.deleting')
+            : t('appointmentRules.confirm')
+        }
         isActive={isModalTrashActive}
         onConfirm={handleDeleteAction}
         onCancel={handleModalAction}
       >
-        <p>Are you sure you want to delete this item?</p>
+        <p>{t('appointmentRules.deleteConfirm')}</p>
       </CardBoxModal>
 
       {appointment_rules && Array.isArray(appointment_rules) && !showGrid && (
@@ -484,12 +506,18 @@ const TableSampleAppointment_rules = ({
           <BaseButton
             className='me-4'
             color='danger'
-            label={`Delete ${selectedRows.length === 1 ? 'Row' : 'Rows'}`}
+            label={
+              selectedRows.length === 1
+                ? t('appointmentRules.deleteRow')
+                : t('appointmentRules.deleteRows', {
+                    count: selectedRows.length,
+                  })
+            }
             onClick={() => onDeleteRows(selectedRows)}
           />,
           document.getElementById('delete-rows-button'),
         )}
-      <ToastContainer />
+      <ToastContainer rtl={isRTL} />
     </>
   );
 };

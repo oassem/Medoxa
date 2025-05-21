@@ -1,45 +1,30 @@
-import { mdiChartTimelineVariant, mdiUpload } from '@mdi/js';
+import { mdiChartTimelineVariant } from '@mdi/js';
 import Head from 'next/head';
 import React, { ReactElement, useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
-
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import { getPageTitle } from '../../config';
-
 import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
-import FormCheckRadio from '../../components/FormCheckRadio';
-import FormCheckRadioGroup from '../../components/FormCheckRadioGroup';
-import FormFilePicker from '../../components/FormFilePicker';
-import FormImagePicker from '../../components/FormImagePicker';
 import { SelectField } from '../../components/SelectField';
-import { SelectFieldMany } from '../../components/SelectFieldMany';
-import { SwitchField } from '../../components/SwitchField';
-import { RichTextField } from '../../components/RichTextField';
-
 import {
   update,
   fetch,
 } from '../../stores/appointment_rules/appointment_rulesSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import { saveFile } from '../../helpers/fileSaver';
-import dataFormatter from '../../helpers/dataFormatter';
-import ImageField from '../../components/ImageField';
-
-import { hasPermission } from '../../helpers/userPermissions';
+import { useTranslation } from 'react-i18next';
 
 const EditAppointment_rulesPage = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('common');
   const initVals = {
     department: null,
 
@@ -54,8 +39,6 @@ const EditAppointment_rulesPage = () => {
   const { appointment_rules } = useAppSelector(
     (state) => state.appointment_rules,
   );
-
-  const { currentUser } = useAppSelector((state) => state.auth);
 
   const { id } = router.query;
 
@@ -81,18 +64,18 @@ const EditAppointment_rulesPage = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(update({ id: id, data }));
-    await router.push('/appointment_rules/appointment_rules-list');
+    await router.push('/appointment_rules/appointment_rules-table');
   };
 
   return (
     <>
       <Head>
-        <title>{getPageTitle('Edit appointment_rules')}</title>
+        <title>{getPageTitle(t('appointmentRules.editTitle'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={'Edit appointment_rules'}
+          title={t('appointmentRules.editTitle')}
           main
         >
           {''}
@@ -104,7 +87,10 @@ const EditAppointment_rulesPage = () => {
             onSubmit={(values) => handleSubmit(values)}
           >
             <Form>
-              <FormField label='Department' labelFor='department'>
+              <FormField
+                label={t('appointmentRules.department')}
+                labelFor='department'
+              >
                 <Field
                   name='department'
                   id='department'
@@ -115,23 +101,26 @@ const EditAppointment_rulesPage = () => {
                 ></Field>
               </FormField>
 
-              <FormField label='MinHoursBeforeBooking'>
+              <FormField label={t('appointmentRules.minHoursBeforeBooking')}>
                 <Field
                   type='number'
                   name='min_hours_before_booking'
-                  placeholder='MinHoursBeforeBooking'
+                  placeholder={t('appointmentRules.minHoursBeforeBooking')}
                 />
               </FormField>
 
-              <FormField label='MaxDaysAdvanceBooking'>
+              <FormField label={t('appointmentRules.maxDaysAdvanceBooking')}>
                 <Field
                   type='number'
                   name='max_days_advance_booking'
-                  placeholder='MaxDaysAdvanceBooking'
+                  placeholder={t('appointmentRules.maxDaysAdvanceBooking')}
                 />
               </FormField>
 
-              <FormField label='organizations' labelFor='organizations'>
+              <FormField
+                label={t('appointmentRules.organizations')}
+                labelFor='organizations'
+              >
                 <Field
                   name='organizations'
                   id='organizations'
@@ -144,15 +133,27 @@ const EditAppointment_rulesPage = () => {
 
               <BaseDivider />
               <BaseButtons>
-                <BaseButton type='submit' color='info' label='Submit' />
-                <BaseButton type='reset' color='info' outline label='Reset' />
+                <BaseButton
+                  type='submit'
+                  color='info'
+                  label={t('common.submit')}
+                />
+                <BaseButton
+                  type='reset'
+                  color='info'
+                  outline
+                  label={t('common.reset')}
+                  onClick={() => {
+                    setInitialValues(initVals);
+                  }}
+                />
                 <BaseButton
                   type='reset'
                   color='danger'
                   outline
-                  label='Cancel'
+                  label={t('common.cancel')}
                   onClick={() =>
-                    router.push('/appointment_rules/appointment_rules-list')
+                    router.push('/appointment_rules/appointment_rules-table')
                   }
                 />
               </BaseButtons>

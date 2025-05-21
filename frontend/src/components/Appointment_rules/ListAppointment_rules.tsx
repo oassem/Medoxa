@@ -1,14 +1,12 @@
 import React from 'react';
 import CardBox from '../CardBox';
-import ImageField from '../ImageField';
 import dataFormatter from '../../helpers/dataFormatter';
-import { saveFile } from '../../helpers/fileSaver';
 import ListActionsPopover from '../ListActionsPopover';
 import { useAppSelector } from '../../stores/hooks';
 import { Pagination } from '../Pagination';
 import LoadingSpinner from '../LoadingSpinner';
 import Link from 'next/link';
-
+import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../../helpers/userPermissions';
 
 type Props = {
@@ -34,8 +32,7 @@ const ListAppointment_rules = ({
     'UPDATE_APPOINTMENT_RULES',
   );
 
-  const corners = useAppSelector((state) => state.style.corners);
-  const bgColor = useAppSelector((state) => state.style.cardsColor);
+  const { t } = useTranslation('common');
 
   return (
     <>
@@ -55,7 +52,9 @@ const ListAppointment_rules = ({
                     }
                   >
                     <div className={'flex-1 px-3'}>
-                      <p className={'text-xs   text-gray-500 '}>Department</p>
+                      <p className={'text-xs text-gray-500 '}>
+                        {t('appointmentRules.department')}
+                      </p>
                       <p className={'line-clamp-2'}>
                         {dataFormatter.departmentsOneListFormatter(
                           item.department,
@@ -64,8 +63,8 @@ const ListAppointment_rules = ({
                     </div>
 
                     <div className={'flex-1 px-3'}>
-                      <p className={'text-xs   text-gray-500 '}>
-                        MinHoursBeforeBooking
+                      <p className={'text-xs text-gray-500 '}>
+                        {t('appointmentRules.minHoursBeforeBooking')}
                       </p>
                       <p className={'line-clamp-2'}>
                         {item.min_hours_before_booking}
@@ -73,8 +72,8 @@ const ListAppointment_rules = ({
                     </div>
 
                     <div className={'flex-1 px-3'}>
-                      <p className={'text-xs   text-gray-500 '}>
-                        MaxDaysAdvanceBooking
+                      <p className={'text-xs text-gray-500 '}>
+                        {t('appointmentRules.maxDaysAdvanceBooking')}
                       </p>
                       <p className={'line-clamp-2'}>
                         {item.max_days_advance_booking}
@@ -94,7 +93,7 @@ const ListAppointment_rules = ({
           ))}
         {!loading && appointment_rules.length === 0 && (
           <div className='col-span-full flex items-center justify-center h-40'>
-            <p className=''>No data to display</p>
+            <p className=''>{t('appointmentRules.noData')}</p>
           </div>
         )}
       </div>

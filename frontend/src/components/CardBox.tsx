@@ -17,6 +17,7 @@ type Props = {
   isList?: boolean;
   id?: string;
   onClick?: (e: React.MouseEvent) => void;
+  dir?: 'ltr' | 'rtl';
 };
 
 export default function CardBox({
@@ -33,6 +34,7 @@ export default function CardBox({
   footer,
   id = '',
   onClick,
+  dir,
 }: Props) {
   const corners = useAppSelector((state) => state.style.corners);
   const cardsStyle = useAppSelector((state) => state.style.cardsStyle);
@@ -49,9 +51,19 @@ export default function CardBox({
     componentClass.push('hover:shadow-lg transition-shadow duration-500');
   }
 
+  // Build props for the root div
+  const divProps: any = {
+    className: componentClass.join(' '),
+    onClick,
+  };
+
+  if (dir) {
+    divProps.dir = dir;
+  }
+
   return React.createElement(
     'div',
-    { className: componentClass.join(' '), onClick },
+    divProps,
     hasComponentLayout ? (
       children
     ) : (

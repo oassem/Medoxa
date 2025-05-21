@@ -10,7 +10,6 @@ import { getPageTitle } from '../../config';
 import TableAppointment_rules from '../../components/Appointment_rules/TableAppointment_rules';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -18,32 +17,30 @@ import {
   setRefetch,
   uploadCsv,
 } from '../../stores/appointment_rules/appointment_rulesSlice';
-
+import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../../helpers/userPermissions';
 
 const Appointment_rulesTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
+  const { t, i18n } = useTranslation('common');
+  const isRTL = i18n.language === 'ar';
 
   const [filters] = useState([
     {
-      label: 'MinHoursBeforeBooking',
+      label: t('appointmentRules.minHoursBeforeBooking'),
       title: 'min_hours_before_booking',
       number: 'true',
     },
     {
-      label: 'MaxDaysAdvanceBooking',
+      label: t('appointmentRules.maxDaysAdvanceBooking'),
       title: 'max_days_advance_booking',
       number: 'true',
     },
-
-    { label: 'Department', title: 'department' },
+    { label: t('appointmentRules.department'), title: 'department' },
   ]);
 
   const hasCreatePermission =
@@ -93,53 +90,49 @@ const Appointment_rulesTablesPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Appointment_rules')}</title>
+        <title>{getPageTitle(t('appointmentRules.pageTitle'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='Appointment_rules'
+          title={t('appointmentRules.title')}
           main
         >
           {''}
         </SectionTitleLineWithButton>
-        <CardBox className='mb-6' cardBoxClassName='flex flex-wrap'>
+        <CardBox className='mb-6' cardBoxClassName={`flex flex-row`}>
           {hasCreatePermission && (
             <BaseButton
-              className={'mr-3'}
+              className={`${isRTL ? 'ml-3' : 'mr-3'}`}
               href={'/appointment_rules/appointment_rules-new'}
               color='info'
-              label='New Item'
+              label={t('appointmentRules.newItem')}
             />
           )}
 
           <BaseButton
-            className={'mr-3'}
+            className={`${isRTL ? 'ml-3' : 'mr-3'}`}
             color='info'
-            label='Filter'
+            label={t('appointmentRules.filter')}
             onClick={addFilter}
           />
           <BaseButton
-            className={'mr-3'}
+            className={`${isRTL ? 'ml-3' : 'mr-3'}`}
             color='info'
-            label='Download CSV'
+            label={t('appointmentRules.downloadCSV')}
             onClick={getAppointment_rulesCSV}
           />
 
           {hasCreatePermission && (
             <BaseButton
               color='info'
-              label='Upload CSV'
+              label={t('appointmentRules.uploadCSV')}
               onClick={() => setIsModalActive(true)}
             />
           )}
 
           <div className='md:inline-flex items-center ms-auto'>
             <div id='delete-rows-button'></div>
-
-            <Link href={'/appointment_rules/appointment_rules-list'}>
-              Back to <span className='capitalize'>list</span>
-            </Link>
           </div>
         </CardBox>
         <CardBox className='mb-6' hasTable>
@@ -152,10 +145,9 @@ const Appointment_rulesTablesPage = () => {
         </CardBox>
       </SectionMain>
       <CardBoxModal
-        title='Upload CSV'
+        title={t('appointmentRules.uploadCSV')}
         buttonColor='info'
-        buttonLabel={'Confirm'}
-        // buttonLabel={false ? 'Deleting...' : 'Confirm'}
+        buttonLabel={t('appointmentRules.confirm')}
         isActive={isModalActive}
         onConfirm={onModalConfirm}
         onCancel={onModalCancel}
