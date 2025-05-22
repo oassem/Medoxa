@@ -4,7 +4,7 @@ export const hostApi =
     : '';
 export const portApi =
   process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_BACK_API
-    ? 8080
+    ? 3001
     : '';
 export const baseURLApi = `${hostApi}${portApi ? `:${portApi}` : ``}/api`;
 

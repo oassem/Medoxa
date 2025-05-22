@@ -1,14 +1,14 @@
-
-
 version: "3.9"
 services:
   web:
     image: frontend
     build: ../frontend
     stdin_open: true # docker run -i
-    tty: true        # docker run -t
+    tty: true # docker run -t
     ports:
       - "3000:3000"
+    environment:
+      - PORT=3000
   db:
     image: postgres
     volumes:
@@ -16,20 +16,31 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=db_medoxa
+
     ports:
       - "5432:5432"
   backend:
     image: backend
     volumes:
-    - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
-    - ./start-backend.sh:/usr/src/app/start-backend.sh
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+      - ./start-backend.sh:/usr/src/app/start-backend.sh
     build: ../backend
     environment:
-     - DB_HOST=db
+      - DB_HOST=db
+      - PORT=3001
     ports:
-     - "8080:8080"
+      - "3001:3001"
     depends_on:
-     - "db"
+      - "db"
 
-    command: ["bash", "./wait-for-it.sh", "db:5432", "--timeout=0", "--strict", "--", "bash", "./start-backend.sh"]
-
+    command:
+      [
+        "bash",
+        "./wait-for-it.sh",
+        "db:5432",
+        "--timeout=0",
+        "--strict",
+        "--",
+        "bash",
+        "./start-backend.sh",
+      ]
