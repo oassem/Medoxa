@@ -1,14 +1,9 @@
 import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/patient_documents/patient_documentsSlice';
-import { saveFile } from '../../helpers/fileSaver';
-import dataFormatter from '../../helpers/dataFormatter';
-import ImageField from '../../components/ImageField';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import { getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
@@ -17,10 +12,6 @@ import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
-import { SwitchField } from '../../components/SwitchField';
-import FormField from '../../components/FormField';
-
-import { hasPermission } from '../../helpers/userPermissions';
 
 const Patient_documentsView = () => {
   const router = useRouter();
@@ -28,8 +19,6 @@ const Patient_documentsView = () => {
   const { patient_documents } = useAppSelector(
     (state) => state.patient_documents,
   );
-
-  const { currentUser } = useAppSelector((state) => state.auth);
 
   const { id } = router.query;
 
@@ -45,12 +34,12 @@ const Patient_documentsView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View patient_documents')}</title>
+        <title>{getPageTitle('View patient document')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={removeLastCharacter('View patient_documents')}
+          title={removeLastCharacter('View patient documents')}
           main
         >
           <BaseButton
@@ -62,33 +51,37 @@ const Patient_documentsView = () => {
         <CardBox>
           <div className={'mb-4'}>
             <p className={'block font-bold mb-2'}>Patient</p>
-
             <p>{patient_documents?.patient?.full_name_en ?? 'No data'}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>DocumentType</p>
+            <p className={'block font-bold mb-2'}>Document Type</p>
             <p>{patient_documents?.document_type}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>DocumentURL</p>
-            <p>{patient_documents?.document_url}</p>
+            <p className={'block font-bold mb-2'}>Document File</p>
+            {patient_documents?.document_url ? (
+              <a
+                href={`/${patient_documents.document_url.replace(/\\/g, '/')}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-blue-600 underline'
+                download={patient_documents.document_url.split('/').pop()}
+              >
+                Download/View Document
+              </a>
+            ) : (
+              <p>No file uploaded</p>
+            )}
           </div>
-
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>organizations</p>
-
-            <p>{patient_documents?.organizations?.name ?? 'No data'}</p>
-          </div>
-
           <BaseDivider />
 
           <BaseButton
             color='info'
             label='Back'
             onClick={() =>
-              router.push('/patient_documents/patient_documents-list')
+              router.push('/patient_documents/patient_documents-table')
             }
           />
         </CardBox>

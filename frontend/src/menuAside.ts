@@ -181,7 +181,7 @@ const menuAside: MenuAsideItem[] = [
     permissions: 'READ_MEDICATIONS',
   },
   {
-    href: '/patient_documents/patient_documents-list',
+    href: '/patient_documents/patient_documents-table',
     label: 'aside.patientDocuments',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -192,7 +192,7 @@ const menuAside: MenuAsideItem[] = [
     permissions: 'READ_PATIENT_DOCUMENTS',
   },
   {
-    href: '/patients/patients-list',
+    href: '/patients/patients-table',
     label: 'aside.patients',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

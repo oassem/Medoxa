@@ -1,8 +1,5 @@
 const db = require('../models');
-const FileDBApi = require('./file');
-const crypto = require('crypto');
 const Utils = require('../utils');
-
 const Sequelize = db.Sequelize;
 const Op = Sequelize.Op;
 
@@ -14,9 +11,10 @@ module.exports = class PatientsDBApi {
     const patients = await db.patients.create(
       {
         id: data.id || undefined,
-
         full_name_en: data.full_name_en || null,
         full_name_ar: data.full_name_ar || null,
+        phone: data.phone || null,
+        email: data.email || null,
         date_of_birth: data.date_of_birth || null,
         gender: data.gender || null,
         nationality: data.nationality || null,
@@ -36,17 +34,14 @@ module.exports = class PatientsDBApi {
       { transaction },
     );
 
-    await patients.setUser(data.user || null, {
-      transaction,
-    });
+    // await patients.setUser(data.user || null, {
+    //   transaction,
+    // });
 
-    await patients.setOrganization(currentUser.organization.id || null, {
-      transaction,
-    });
-
-    await patients.setOrganizations(data.organizations || null, {
-      transaction,
-    });
+    await patients.setOrganization(
+      currentUser.organization?.id || null,
+      { transaction }
+    );
 
     return patients;
   }
@@ -58,9 +53,10 @@ module.exports = class PatientsDBApi {
     // Prepare data - wrapping individual data transformations in a map() method
     const patientsData = data.map((item, index) => ({
       id: item.id || undefined,
-
       full_name_en: item.full_name_en || null,
       full_name_ar: item.full_name_ar || null,
+      phone: item.phone || null,
+      email: item.email || null,
       date_of_birth: item.date_of_birth || null,
       gender: item.gender || null,
       nationality: item.nationality || null,
@@ -85,17 +81,13 @@ module.exports = class PatientsDBApi {
     });
 
     // For each item created, replace relation files
-
     return patients;
   }
 
   static async update(id, data, options) {
     const currentUser = (options && options.currentUser) || { id: null };
     const transaction = (options && options.transaction) || undefined;
-    const globalAccess = currentUser.app_role?.globalAccess;
-
     const patients = await db.patients.findByPk(id, {}, { transaction });
-
     const updatePayload = {};
 
     if (data.full_name_en !== undefined)
@@ -137,32 +129,15 @@ module.exports = class PatientsDBApi {
     if (data.family_history !== undefined)
       updatePayload.family_history = data.family_history;
 
+    if (data.phone !== undefined)
+      updatePayload.phone = data.phone;
+
+    if (data.email !== undefined)
+      updatePayload.email = data.email;
+
     updatePayload.updatedById = currentUser.id;
 
     await patients.update(updatePayload, { transaction });
-
-    if (data.user !== undefined) {
-      await patients.setUser(
-        data.user,
-
-        { transaction },
-      );
-    }
-
-    if (data.organization !== undefined) {
-      await patients.setOrganization(
-        globalAccess ? data.organization : currentUser.organization.id,
-        { transaction },
-      );
-    }
-
-    if (data.organizations !== undefined) {
-      await patients.setOrganizations(
-        data.organizations,
-
-        { transaction },
-      );
-    }
 
     return patients;
   }
@@ -195,7 +170,6 @@ module.exports = class PatientsDBApi {
   static async remove(id, options) {
     const currentUser = (options && options.currentUser) || { id: null };
     const transaction = (options && options.transaction) || undefined;
-
     const patients = await db.patients.findByPk(id, options);
 
     await patients.update(
@@ -216,7 +190,6 @@ module.exports = class PatientsDBApi {
 
   static async findBy(where, options) {
     const transaction = (options && options.transaction) || undefined;
-
     const patients = await db.patients.findOne({ where }, { transaction });
 
     if (!patients) {
@@ -254,10 +227,6 @@ module.exports = class PatientsDBApi {
       transaction,
     });
 
-    output.organizations = await patients.getOrganizations({
-      transaction,
-    });
-
     return output;
   }
 
@@ -266,57 +235,42 @@ module.exports = class PatientsDBApi {
     let offset = 0;
     let where = {};
     const currentPage = +filter.page;
-
     const user = (options && options.currentUser) || null;
-    const userOrganizations = (user && user.organizations?.id) || null;
+    const userOrganization = (user && user.organization?.id) || null;
 
-    if (userOrganizations) {
-      if (options?.currentUser?.organizationsId) {
-        where.organizationsId = options.currentUser.organizationsId;
+    if (userOrganization) {
+      if (options?.currentUser?.organizationId) {
+        where.organizationId = options.currentUser.organizationId;
       }
     }
 
     offset = currentPage * limit;
 
-    const orderBy = null;
-
-    const transaction = (options && options.transaction) || undefined;
-
     let include = [
       {
         model: db.users,
         as: 'user',
-
+        required: false,
         where: filter.user
           ? {
-              [Op.or]: [
-                {
-                  id: {
-                    [Op.in]: filter.user
-                      .split('|')
-                      .map((term) => Utils.uuid(term)),
-                  },
+            [Op.or]: [
+              {
+                id: {
+                  [Op.in]: filter.user
+                    .split('|')
+                    .map((term) => Utils.uuid(term)),
                 },
-                {
-                  firstName: {
-                    [Op.or]: filter.user
-                      .split('|')
-                      .map((term) => ({ [Op.iLike]: `%${term}%` })),
-                  },
+              },
+              {
+                firstName: {
+                  [Op.or]: filter.user
+                    .split('|')
+                    .map((term) => ({ [Op.iLike]: `%${term}%` })),
                 },
-              ],
-            }
+              },
+            ],
+          }
           : {},
-      },
-
-      {
-        model: db.organizations,
-        as: 'organization',
-      },
-
-      {
-        model: db.organizations,
-        as: 'organizations',
       },
     ];
 
@@ -489,17 +443,6 @@ module.exports = class PatientsDBApi {
         };
       }
 
-      if (filter.organizations) {
-        const listItems = filter.organizations.split('|').map((item) => {
-          return Utils.uuid(item);
-        });
-
-        where = {
-          ...where,
-          organizationsId: { [Op.or]: listItems },
-        };
-      }
-
       if (filter.createdAtRange) {
         const [start, end] = filter.createdAtRange;
 
@@ -523,10 +466,24 @@ module.exports = class PatientsDBApi {
           };
         }
       }
+
+      if (filter.phone) {
+        where = {
+          ...where,
+          [Op.and]: Utils.ilike('patients', 'phone', filter.phone),
+        };
+      }
+
+      if (filter.email) {
+        where = {
+          ...where,
+          [Op.and]: Utils.ilike('patients', 'email', filter.email),
+        };
+      }
     }
 
     if (globalAccess) {
-      delete where.organizationsId;
+      delete where.organizationId;
     }
 
     const queryOptions = {

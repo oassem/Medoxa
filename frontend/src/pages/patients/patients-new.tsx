@@ -1,9 +1,4 @@
-import {
-  mdiAccount,
-  mdiChartTimelineVariant,
-  mdiMail,
-  mdiUpload,
-} from '@mdi/js';
+import { mdiChartTimelineVariant } from '@mdi/js';
 import Head from 'next/head';
 import React, { ReactElement } from 'react';
 import CardBox from '../../components/CardBox';
@@ -11,32 +6,16 @@ import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import { getPageTitle } from '../../config';
-
 import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
-import FormCheckRadio from '../../components/FormCheckRadio';
-import FormCheckRadioGroup from '../../components/FormCheckRadioGroup';
-import FormFilePicker from '../../components/FormFilePicker';
-import FormImagePicker from '../../components/FormImagePicker';
-import { SwitchField } from '../../components/SwitchField';
-
-import { SelectField } from '../../components/SelectField';
-import { SelectFieldMany } from '../../components/SelectFieldMany';
-import { RichTextField } from '../../components/RichTextField';
-
 import { create } from '../../stores/patients/patientsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import moment from 'moment';
 
 const initialValues = {
-  user: '',
-
-  organization: '',
-
   full_name_en: '',
 
   full_name_ar: '',
@@ -47,7 +26,7 @@ const initialValues = {
 
   nationality: '',
 
-  identifier_type: 'NationalID',
+  identifier_type: 'National ID',
 
   identifier: '',
 
@@ -65,7 +44,9 @@ const initialValues = {
 
   family_history: '',
 
-  organizations: '',
+  phone: '',
+
+  email: '',
 };
 
 const PatientsNew = () => {
@@ -74,17 +55,18 @@ const PatientsNew = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(create(data));
-    await router.push('/patients/patients-list');
+    await router.push('/patients/patients-table');
   };
+
   return (
     <>
       <Head>
-        <title>{getPageTitle('New Item')}</title>
+        <title>{getPageTitle('New patient')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New Item'
+          title='New patient'
           main
         >
           {''}
@@ -95,49 +77,26 @@ const PatientsNew = () => {
             onSubmit={(values) => handleSubmit(values)}
           >
             <Form>
-              <FormField label='User' labelFor='user'>
+              <FormField label='Full Name (English)'>
+                <Field name='full_name_en' placeholder='Full Name (English)' />
+              </FormField>
+
+              <FormField label='Full Name (Arabic)'>
+                <Field name='full_name_ar' placeholder='Full Name (Arabic)' />
+              </FormField>
+
+              <FormField label='Date of Birth'>
                 <Field
-                  name='user'
-                  id='user'
-                  component={SelectField}
-                  options={[]}
-                  itemRef={'users'}
-                ></Field>
-              </FormField>
-
-              <FormField label='Organization' labelFor='organization'>
-                <Field
-                  name='organization'
-                  id='organization'
-                  component={SelectField}
-                  options={[]}
-                  itemRef={'organizations'}
-                ></Field>
-              </FormField>
-
-              <FormField label='FullName(English)'>
-                <Field name='full_name_en' placeholder='FullName(English)' />
-              </FormField>
-
-              <FormField label='FullName(Arabic)'>
-                <Field name='full_name_ar' placeholder='FullName(Arabic)' />
-              </FormField>
-
-              <FormField label='DateofBirth'>
-                <Field
-                  type='datetime-local'
+                  type='date'
                   name='date_of_birth'
-                  placeholder='DateofBirth'
+                  placeholder='Date of Birth'
                 />
               </FormField>
 
               <FormField label='Gender' labelFor='gender'>
                 <Field name='gender' id='gender' component='select'>
                   <option value='Male'>Male</option>
-
                   <option value='Female'>Female</option>
-
-                  <option value='Other'>Other</option>
                 </Field>
               </FormField>
 
@@ -145,47 +104,45 @@ const PatientsNew = () => {
                 <Field name='nationality' placeholder='Nationality' />
               </FormField>
 
-              <FormField label='IdentifierType' labelFor='identifier_type'>
+              <FormField label='Identifier Type' labelFor='identifier_type'>
                 <Field
                   name='identifier_type'
                   id='identifier_type'
                   component='select'
                 >
-                  <option value='NationalID'>NationalID</option>
-
+                  <option value='National ID'>National ID</option>
                   <option value='Iqama'>Iqama</option>
-
                   <option value='Passport'>Passport</option>
                 </Field>
               </FormField>
 
-              <FormField label='Identifier'>
-                <Field name='identifier' placeholder='Identifier' />
+              <FormField label='Identifier Number'>
+                <Field name='identifier' placeholder='Identifier Number' />
               </FormField>
 
               <FormField label='Address'>
                 <Field name='address' placeholder='Address' />
               </FormField>
 
-              <FormField label='EmergencyContactName'>
+              <FormField label='Emergency Contact Name'>
                 <Field
                   name='emergency_contact_name'
-                  placeholder='EmergencyContactName'
+                  placeholder='Emergency Contact Name'
                 />
               </FormField>
 
-              <FormField label='EmergencyContactPhone'>
+              <FormField label='Emergency Contact Phone'>
                 <Field
                   name='emergency_contact_phone'
-                  placeholder='EmergencyContactPhone'
+                  placeholder='Emergency Contact Phone'
                 />
               </FormField>
 
-              <FormField label='MedicalHistory' hasTextareaHeight>
+              <FormField label='Medical History' hasTextareaHeight>
                 <Field
                   name='medical_history'
                   as='textarea'
-                  placeholder='MedicalHistory'
+                  placeholder='Medical History'
                 />
               </FormField>
 
@@ -193,30 +150,28 @@ const PatientsNew = () => {
                 <Field name='allergies' as='textarea' placeholder='Allergies' />
               </FormField>
 
-              <FormField label='CurrentMedications' hasTextareaHeight>
+              <FormField label='Current Medications' hasTextareaHeight>
                 <Field
                   name='current_medications'
                   as='textarea'
-                  placeholder='CurrentMedications'
+                  placeholder='Current Medications'
                 />
               </FormField>
 
-              <FormField label='FamilyHistory' hasTextareaHeight>
+              <FormField label='Family History' hasTextareaHeight>
                 <Field
                   name='family_history'
                   as='textarea'
-                  placeholder='FamilyHistory'
+                  placeholder='Family History'
                 />
               </FormField>
 
-              <FormField label='organizations' labelFor='organizations'>
-                <Field
-                  name='organizations'
-                  id='organizations'
-                  component={SelectField}
-                  options={[]}
-                  itemRef={'organizations'}
-                ></Field>
+              <FormField label='Phone'>
+                <Field name='phone' placeholder='Phone' />
+              </FormField>
+
+              <FormField label='Email'>
+                <Field name='email' type='email' placeholder='Email' />
               </FormField>
 
               <BaseDivider />
@@ -228,7 +183,7 @@ const PatientsNew = () => {
                   color='danger'
                   outline
                   label='Cancel'
-                  onClick={() => router.push('/patients/patients-list')}
+                  onClick={() => router.push('/patients/patients-table')}
                 />
               </BaseButtons>
             </Form>

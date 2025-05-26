@@ -1,10 +1,6 @@
 import React from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import {
-  GridActionsCellItem,
-  GridRowParams,
-  GridValueGetterParams,
-} from '@mui/x-data-grid';
+import { GridRowParams, GridValueGetterParams } from '@mui/x-data-grid';
 import ListActionsPopover from '../ListActionsPopover';
 import { hasPermission } from '../../helpers/userPermissions';
 
@@ -13,7 +9,6 @@ type Params = (id: string) => void;
 export const loadColumns = async (
   onDelete: Params,
   entityName: string,
-
   user,
 ) => {
   async function callOptionsApi(entityName: string) {
@@ -32,36 +27,14 @@ export const loadColumns = async (
 
   return [
     {
-      field: 'user',
-      headerName: 'User',
-      flex: 1,
-      minWidth: 120,
-      filterable: false,
-      headerClassName: 'datagrid--header',
-      cellClassName: 'datagrid--cell',
-
-      editable: hasUpdatePermission,
-
-      sortable: false,
-      type: 'singleSelect',
-      getOptionValue: (value: any) => value?.id,
-      getOptionLabel: (value: any) => value?.label,
-      valueOptions: await callOptionsApi('users'),
-      valueGetter: (params: GridValueGetterParams) =>
-        params?.value?.id ?? params?.value,
-    },
-
-    {
       field: 'organization',
       headerName: 'Organization',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
-
       sortable: false,
       type: 'singleSelect',
       getOptionValue: (value: any) => value?.id,
@@ -73,53 +46,70 @@ export const loadColumns = async (
 
     {
       field: 'full_name_en',
-      headerName: 'FullName(English)',
+      headerName: 'Full Name (English)',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'full_name_ar',
-      headerName: 'FullName(Arabic)',
+      headerName: 'Full Name (Arabic)',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
+      editable: hasUpdatePermission,
+    },
 
+    {
+      field: 'phone',
+      headerName: 'Phone',
+      flex: 1,
+      minWidth: 200,
+      filterable: false,
+      headerClassName: 'datagrid--header',
+      cellClassName: 'datagrid--cell',
+      editable: hasUpdatePermission,
+    },
+
+    {
+      field: 'email',
+      headerName: 'Email',
+      flex: 1,
+      minWidth: 200,
+      filterable: false,
+      headerClassName: 'datagrid--header',
+      cellClassName: 'datagrid--cell',
       editable: hasUpdatePermission,
     },
 
     {
       field: 'date_of_birth',
-      headerName: 'DateofBirth',
+      headerName: 'Date of Birth',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
-
-      type: 'dateTime',
+      type: 'date',
       valueGetter: (params: GridValueGetterParams) =>
-        new Date(params.row.date_of_birth),
+        params.row.date_of_birth ? new Date(params.row.date_of_birth) : null,
     },
 
     {
       field: 'gender',
       headerName: 'Gender',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
@@ -127,35 +117,32 @@ export const loadColumns = async (
       field: 'nationality',
       headerName: 'Nationality',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'identifier_type',
-      headerName: 'IdentifierType',
+      headerName: 'Identifier Type',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'identifier',
-      headerName: 'Identifier',
+      headerName: 'Identifier Number',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
@@ -163,47 +150,43 @@ export const loadColumns = async (
       field: 'address',
       headerName: 'Address',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'emergency_contact_name',
-      headerName: 'EmergencyContactName',
+      headerName: 'Emergency Contact Name',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'emergency_contact_phone',
-      headerName: 'EmergencyContactPhone',
+      headerName: 'Emergency Contact Phone',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'medical_history',
-      headerName: 'MedicalHistory',
+      headerName: 'Medical History',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
@@ -211,35 +194,32 @@ export const loadColumns = async (
       field: 'allergies',
       headerName: 'Allergies',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'current_medications',
-      headerName: 'CurrentMedications',
+      headerName: 'Current Medications',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 
     {
       field: 'family_history',
-      headerName: 'FamilyHistory',
+      headerName: 'Family History',
       flex: 1,
-      minWidth: 120,
+      minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 

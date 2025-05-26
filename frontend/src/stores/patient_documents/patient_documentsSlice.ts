@@ -79,7 +79,7 @@ export const create = createAsyncThunk(
   'patient_documents/createPatient_documents',
   async (data: any, { rejectWithValue }) => {
     try {
-      const result = await axiosInstance.post('patient_documents', { data });
+      const result = await axiosInstance.post('patient_documents', data);
       return result.data;
     } catch (error) {
       if (!error.response) {
@@ -126,10 +126,7 @@ export const update = createAsyncThunk(
     try {
       const result = await axiosInstance.put(
         `patient_documents/${payload.id}`,
-        {
-          id: payload.id,
-          data: payload.data,
-        },
+        payload.data,
       );
       return result.data;
     } catch (error) {
@@ -155,6 +152,7 @@ export const patient_documentsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(fetch.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -177,7 +175,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patient_documents has been deleted');
+      fulfilledNotify(state, 'Patient documents has been deleted');
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -194,7 +192,7 @@ export const patient_documentsSlice = createSlice({
       state.loading = false;
       fulfilledNotify(
         state,
-        `${'Patient_documents'.slice(0, -1)} has been deleted`,
+        `${'Patient documents'.slice(0, -1)} has been deleted`,
       );
     });
 
@@ -207,6 +205,7 @@ export const patient_documentsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(create.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -216,7 +215,7 @@ export const patient_documentsSlice = createSlice({
       state.loading = false;
       fulfilledNotify(
         state,
-        `${'Patient_documents'.slice(0, -1)} has been created`,
+        `${'Patient documents'.slice(0, -1)} has been created`,
       );
     });
 
@@ -224,13 +223,15 @@ export const patient_documentsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
       fulfilledNotify(
         state,
-        `${'Patient_documents'.slice(0, -1)} has been updated`,
+        `${'Patient documents'.slice(0, -1)} has been updated`,
       );
     });
+
     builder.addCase(update.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -240,10 +241,12 @@ export const patient_documentsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patient_documents has been uploaded');
+      fulfilledNotify(state, 'Patient documents has been uploaded');
     });
+
     builder.addCase(uploadCsv.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);

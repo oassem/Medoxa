@@ -83,7 +83,7 @@ const EditPatient_documents = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(update({ id: patient_documentsId, data }));
-    await router.push('/patient_documents/patient_documents-list');
+    await router.push('/patient_documents/patient_documents-table');
   };
 
   return (
@@ -146,7 +146,7 @@ const EditPatient_documents = () => {
                   outline
                   label='Cancel'
                   onClick={() =>
-                    router.push('/patient_documents/patient_documents-list')
+                    router.push('/patient_documents/patient_documents-table')
                   }
                 />
               </BaseButtons>

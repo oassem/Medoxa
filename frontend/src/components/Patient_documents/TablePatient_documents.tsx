@@ -19,7 +19,6 @@ import { loadColumns } from './configurePatient_documentsCols';
 import _ from 'lodash';
 import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
-
 import ListPatient_documents from './ListPatient_documents';
 
 const perPage = 10;
@@ -31,10 +30,7 @@ const TableSamplePatient_documents = ({
   showGrid,
 }) => {
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
-
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
   const pagesList = [];
   const [id, setId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -140,6 +136,7 @@ const TableSamplePatient_documents = ({
         }
       }
     });
+
     return request;
   }, [filterItems, filters]);
 
@@ -208,7 +205,7 @@ const TableSamplePatient_documents = ({
   };
 
   const controlClasses =
-    'w-full py-2 px-2 my-2   rounded dark:placeholder-gray-400 ' +
+    'w-full py-2 px-2 my-2 rounded dark:placeholder-gray-400 ' +
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
@@ -260,6 +257,7 @@ const TableSamplePatient_documents = ({
         onPaginationModelChange={(params) => {
           onPageChange(params.page);
         }}
+        disableColumnMenu
       />
     </div>
   );
@@ -420,7 +418,7 @@ const TableSamplePatient_documents = ({
                           </div>
                         )}
                         <div className='flex flex-col'>
-                          <div className='  text-gray-500  font-bold'>
+                          <div className='text-gray-500 invisible font-bold'>
                             Action
                           </div>
                           <BaseButton

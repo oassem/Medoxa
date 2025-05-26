@@ -7,14 +7,18 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
+
+    if (!config.headers['Content-Type'] && !(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+
     return config;
   },
   (error) => Promise.reject(error),
 );
-
-axiosInstance.defaults.headers.common['Content-Type'] = 'application/json';
 
 export default axiosInstance;

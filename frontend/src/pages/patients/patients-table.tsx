@@ -10,7 +10,6 @@ import { getPageTitle } from '../../config';
 import TablePatients from '../../components/Patients/TablePatients';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -21,40 +20,47 @@ const PatientsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
-    { label: 'FullName(English)', title: 'full_name_en' },
-    { label: 'FullName(Arabic)', title: 'full_name_ar' },
+    { label: 'Full Name (English)', title: 'full_name_en' },
+    { label: 'Full Name (Arabic)', title: 'full_name_ar' },
     { label: 'Nationality', title: 'nationality' },
-    { label: 'Identifier', title: 'identifier' },
+    { label: 'Identifier Number', title: 'identifier' },
     { label: 'Address', title: 'address' },
-    { label: 'EmergencyContactName', title: 'emergency_contact_name' },
-    { label: 'EmergencyContactPhone', title: 'emergency_contact_phone' },
-    { label: 'MedicalHistory', title: 'medical_history' },
+    { label: 'Emergency Contact Name', title: 'emergency_contact_name' },
+    { label: 'Emergency Contact Phone', title: 'emergency_contact_phone' },
+    { label: 'Medical History', title: 'medical_history' },
     { label: 'Allergies', title: 'allergies' },
-    { label: 'CurrentMedications', title: 'current_medications' },
-    { label: 'FamilyHistory', title: 'family_history' },
-
-    { label: 'DateofBirth', title: 'date_of_birth', date: 'true' },
-
-    { label: 'User', title: 'user' },
-
+    { label: 'Current Medications', title: 'current_medications' },
+    { label: 'Family History', title: 'family_history' },
+    { label: 'Date of Birth', title: 'date_of_birth', date: 'true' },
     {
       label: 'Gender',
       title: 'gender',
       type: 'enum',
-      options: ['Male', 'Female', 'Other'],
+      options: ['Male', 'Female'],
     },
     {
-      label: 'IdentifierType',
+      label: 'Identifier Type',
       title: 'identifier_type',
       type: 'enum',
-      options: ['NationalID', 'Iqama', 'Passport'],
+      options: ['National ID', 'Iqama', 'Passport'],
+    },
+    {
+      title: 'phone',
+      label: 'Phone',
+      type: 'string',
+    },
+    {
+      title: 'email',
+      label: 'Email',
+      type: 'string',
+    },
+    {
+      title: 'organization',
+      label: 'Organization',
     },
   ]);
 
@@ -81,6 +87,7 @@ const PatientsTablesPage = () => {
       method: 'GET',
       responseType: 'blob',
     });
+
     const type = response.headers['content-type'];
     const blob = new Blob([response.data], { type: type });
     const link = document.createElement('a');
@@ -121,7 +128,7 @@ const PatientsTablesPage = () => {
               className={'mr-3'}
               href={'/patients/patients-new'}
               color='info'
-              label='New Item'
+              label='New Patient'
             />
           )}
 
@@ -131,6 +138,7 @@ const PatientsTablesPage = () => {
             label='Filter'
             onClick={addFilter}
           />
+
           <BaseButton
             className={'mr-3'}
             color='info'
@@ -148,10 +156,6 @@ const PatientsTablesPage = () => {
 
           <div className='md:inline-flex items-center ms-auto'>
             <div id='delete-rows-button'></div>
-
-            <Link href={'/patients/patients-list'}>
-              Back to <span className='capitalize'>list</span>
-            </Link>
           </div>
         </CardBox>
         <CardBox className='mb-6' hasTable>

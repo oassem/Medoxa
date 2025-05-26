@@ -807,7 +807,7 @@ const Dashboard = () => {
           )}
 
           {hasPermission(currentUser, 'READ_PATIENT_DOCUMENTS') && (
-            <Link href={'/patient_documents/patient_documents-list'}>
+            <Link href={'/patient_documents/patient_documents-table'}>
               <div
                 className={`${
                   corners !== 'rounded-full' ? corners : 'rounded-3xl'
@@ -843,7 +843,7 @@ const Dashboard = () => {
           )}
 
           {hasPermission(currentUser, 'READ_PATIENTS') && (
-            <Link href={'/patients/patients-list'}>
+            <Link href={'/patients/patients-table'}>
               <div
                 className={`${
                   corners !== 'rounded-full' ? corners : 'rounded-3xl'

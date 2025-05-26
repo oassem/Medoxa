@@ -12,15 +12,13 @@ import {
   deleteItemsByIds,
 } from '../../stores/patients/patientsSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { useRouter } from 'next/router';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configurePatientsCols';
-import _ from 'lodash';
-import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
-
+import dataFormatter from '../../helpers/dataFormatter';
 import ListPatients from './ListPatients';
+import _ from 'lodash';
 
 const perPage = 10;
 
@@ -31,10 +29,7 @@ const TableSamplePatients = ({
   showGrid,
 }) => {
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
-
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
   const pagesList = [];
   const [id, setId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -104,6 +99,7 @@ const TableSamplePatients = ({
     setId(id);
     setIsModalTrashActive(true);
   };
+
   const handleDeleteAction = async () => {
     if (id) {
       await dispatch(deleteItem(id));
@@ -124,6 +120,7 @@ const TableSamplePatients = ({
       if (isRangeFilter) {
         const from = item.fields.filterValueFrom;
         const to = item.fields.filterValueTo;
+
         if (from) {
           request += `${item.fields.selectedField}Range=${from}&`;
         }
@@ -147,7 +144,6 @@ const TableSamplePatients = ({
       setFilterItems(newItems);
     } else {
       loadData(0, '');
-
       setFilterItems(newItems);
     }
   };
@@ -182,7 +178,6 @@ const TableSamplePatients = ({
 
   useEffect(() => {
     if (!currentUser) return;
-
     loadColumns(handleDeleteModalAction, `patients`, currentUser).then(
       (newCols) => setColumns(newCols),
     );
@@ -205,7 +200,7 @@ const TableSamplePatients = ({
   };
 
   const controlClasses =
-    'w-full py-2 px-2 my-2   rounded dark:placeholder-gray-400 ' +
+    'w-full py-2 px-2 my-2 rounded dark:placeholder-gray-400 ' +
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
@@ -257,6 +252,7 @@ const TableSamplePatients = ({
         onPaginationModelChange={(params) => {
           onPageChange(params.page);
         }}
+        disableColumnMenu
       />
     </div>
   );
@@ -280,9 +276,7 @@ const TableSamplePatients = ({
                     return (
                       <div key={filterItem.id} className='flex mb-4'>
                         <div className='flex flex-col w-full mr-3'>
-                          <div className='  text-gray-500  font-bold'>
-                            Filter
-                          </div>
+                          <div className='text-gray-500 font-bold'>Filter</div>
                           <Field
                             className={controlClasses}
                             name='selectedField'
@@ -336,7 +330,7 @@ const TableSamplePatients = ({
                           )?.number ? (
                           <div className='flex flex-row w-full mr-3'>
                             <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
+                              <div className='text-gray-500 font-bold'>
                                 From
                               </div>
                               <Field
@@ -351,9 +345,7 @@ const TableSamplePatients = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
-                              </div>
+                              <div className='text-gray-500 font-bold'>To</div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
@@ -371,7 +363,7 @@ const TableSamplePatients = ({
                           )?.date ? (
                           <div className='flex flex-row w-full mr-3'>
                             <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
+                              <div className='text-gray-500 font-bold'>
                                 From
                               </div>
                               <Field
@@ -387,9 +379,7 @@ const TableSamplePatients = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
-                              </div>
+                              <div className='text-gray-500 font-bold'>To</div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
@@ -417,7 +407,7 @@ const TableSamplePatients = ({
                           </div>
                         )}
                         <div className='flex flex-col'>
-                          <div className='  text-gray-500  font-bold'>
+                          <div className='text-gray-500 invisible font-bold'>
                             Action
                           </div>
                           <BaseButton

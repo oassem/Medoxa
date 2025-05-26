@@ -1120,7 +1120,7 @@ const PatientsData = [
 
     nationality: 'Saudi',
 
-    identifier_type: 'NationalID',
+    identifier_type: 'National ID',
 
     identifier: '2012345678',
 
@@ -1157,7 +1157,7 @@ const PatientsData = [
 
     nationality: 'Saudi',
 
-    identifier_type: 'NationalID',
+    identifier_type: 'National ID',
 
     identifier: 'A12345678',
 
@@ -1194,7 +1194,7 @@ const PatientsData = [
 
     nationality: 'Saudi',
 
-    identifier_type: 'NationalID',
+    identifier_type: 'National ID',
 
     identifier: '3012345678',
 
@@ -1231,7 +1231,7 @@ const PatientsData = [
 
     nationality: 'Saudi',
 
-    identifier_type: 'NationalID',
+    identifier_type: 'National ID',
 
     identifier: '4012345678',
 

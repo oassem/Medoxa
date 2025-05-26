@@ -1819,7 +1819,7 @@ module.exports = {
         {
           type: Sequelize.DataTypes.ENUM,
 
-          values: ['NationalID', 'Iqama', 'Passport'],
+          values: ['National ID', 'Iqama', 'Passport'],
         },
         { transaction },
       );

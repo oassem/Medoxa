@@ -10,7 +10,6 @@ import { getPageTitle } from '../../config';
 import TablePatient_documents from '../../components/Patient_documents/TablePatient_documents';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -18,23 +17,18 @@ import {
   setRefetch,
   uploadCsv,
 } from '../../stores/patient_documents/patient_documentsSlice';
-
 import { hasPermission } from '../../helpers/userPermissions';
 
 const Patient_documentsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
-    { label: 'DocumentType', title: 'document_type' },
-    { label: 'DocumentURL', title: 'document_url' },
-
+    { label: 'Document Type', title: 'document_type' },
     { label: 'Patient', title: 'patient' },
   ]);
 
@@ -61,6 +55,7 @@ const Patient_documentsTablesPage = () => {
       method: 'GET',
       responseType: 'blob',
     });
+
     const type = response.headers['content-type'];
     const blob = new Blob([response.data], { type: type });
     const link = document.createElement('a');
@@ -85,12 +80,12 @@ const Patient_documentsTablesPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Patient_documents')}</title>
+        <title>{getPageTitle('Patient documents')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='Patient_documents'
+          title='Patient documents'
           main
         >
           {''}
@@ -101,7 +96,7 @@ const Patient_documentsTablesPage = () => {
               className={'mr-3'}
               href={'/patient_documents/patient_documents-new'}
               color='info'
-              label='New Item'
+              label='New Patient Document'
             />
           )}
 
@@ -111,6 +106,7 @@ const Patient_documentsTablesPage = () => {
             label='Filter'
             onClick={addFilter}
           />
+
           <BaseButton
             className={'mr-3'}
             color='info'
@@ -128,10 +124,6 @@ const Patient_documentsTablesPage = () => {
 
           <div className='md:inline-flex items-center ms-auto'>
             <div id='delete-rows-button'></div>
-
-            <Link href={'/patient_documents/patient_documents-list'}>
-              Back to <span className='capitalize'>list</span>
-            </Link>
           </div>
         </CardBox>
         <CardBox className='mb-6' hasTable>

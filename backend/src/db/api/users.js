@@ -17,16 +17,13 @@ module.exports = class UsersDBApi {
     const users = await db.users.create(
       {
         id: data.data.id || undefined,
-
         firstName: data.data.firstName || null,
         lastName: data.data.lastName || null,
         phoneNumber: data.data.phoneNumber || null,
         email: data.data.email || null,
         disabled: data.data.disabled || false,
-
         password: data.data.password || null,
         emailVerified: data.data.emailVerified || true,
-
         emailVerificationToken: data.data.emailVerificationToken || null,
         emailVerificationTokenExpiresAt:
           data.data.emailVerificationTokenExpiresAt || null,
@@ -369,23 +366,23 @@ module.exports = class UsersDBApi {
 
         where: filter.app_role
           ? {
-              [Op.or]: [
-                {
-                  id: {
-                    [Op.in]: filter.app_role
-                      .split('|')
-                      .map((term) => Utils.uuid(term)),
-                  },
+            [Op.or]: [
+              {
+                id: {
+                  [Op.in]: filter.app_role
+                    .split('|')
+                    .map((term) => Utils.uuid(term)),
                 },
-                {
-                  name: {
-                    [Op.or]: filter.app_role
-                      .split('|')
-                      .map((term) => ({ [Op.iLike]: `%${term}%` })),
-                  },
+              },
+              {
+                name: {
+                  [Op.or]: filter.app_role
+                    .split('|')
+                    .map((term) => ({ [Op.iLike]: `%${term}%` })),
                 },
-              ],
-            }
+              },
+            ],
+          }
           : {},
       },
 
@@ -569,21 +566,21 @@ module.exports = class UsersDBApi {
             where:
               searchTerms.length > 0
                 ? {
-                    [Op.or]: [
-                      {
-                        id: {
-                          [Op.in]: searchTerms.map((term) => Utils.uuid(term)),
-                        },
+                  [Op.or]: [
+                    {
+                      id: {
+                        [Op.in]: searchTerms.map((term) => Utils.uuid(term)),
                       },
-                      {
-                        name: {
-                          [Op.or]: searchTerms.map((term) => ({
-                            [Op.iLike]: `%${term}%`,
-                          })),
-                        },
+                    },
+                    {
+                      name: {
+                        [Op.or]: searchTerms.map((term) => ({
+                          [Op.iLike]: `%${term}%`,
+                        })),
                       },
-                    ],
-                  }
+                    },
+                  ],
+                }
                 : undefined,
           },
           ...include,

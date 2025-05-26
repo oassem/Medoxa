@@ -1,9 +1,3 @@
-const config = require('../../config');
-const providers = config.providers;
-const crypto = require('crypto');
-const bcrypt = require('bcrypt');
-const moment = require('moment');
-
 module.exports = function (sequelize, DataTypes) {
   const patients = sequelize.define(
     'patients',
@@ -22,14 +16,26 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.TEXT,
       },
 
+      phone: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
+
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+
       date_of_birth: {
         type: DataTypes.DATE,
       },
 
       gender: {
         type: DataTypes.ENUM,
-
-        values: ['Male', 'Female', 'Other'],
+        values: ['Male', 'Female'],
       },
 
       nationality: {
@@ -38,8 +44,7 @@ module.exports = function (sequelize, DataTypes) {
 
       identifier_type: {
         type: DataTypes.ENUM,
-
-        values: ['NationalID', 'Iqama', 'Passport'],
+        values: ['National ID', 'Iqama', 'Passport'],
       },
 
       identifier: {
@@ -144,14 +149,6 @@ module.exports = function (sequelize, DataTypes) {
       as: 'organization',
       foreignKey: {
         name: 'organizationId',
-      },
-      constraints: false,
-    });
-
-    db.patients.belongsTo(db.organizations, {
-      as: 'organizations',
-      foreignKey: {
-        name: 'organizationsId',
       },
       constraints: false,
     });

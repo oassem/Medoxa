@@ -9,66 +9,37 @@ const db = require('./db/models');
 const config = require('./config');
 const swaggerUI = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
-
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/file');
 const searchRoutes = require('./routes/search');
 const pexelsRoutes = require('./routes/pexels');
-
 const organizationForAuthRoutes = require('./routes/organizationLogin');
-
 const openaiRoutes = require('./routes/openai');
-
 const contactFormRoutes = require('./routes/contactForm');
-
 const usersRoutes = require('./routes/users');
-
 const appointment_rulesRoutes = require('./routes/appointment_rules');
-
 const appointmentsRoutes = require('./routes/appointments');
-
 const departmentsRoutes = require('./routes/departments');
-
 const doctor_availabilitiesRoutes = require('./routes/doctor_availabilities');
-
 const holidaysRoutes = require('./routes/holidays');
-
 const imaging_investigationsRoutes = require('./routes/imaging_investigations');
-
 const imaging_order_itemsRoutes = require('./routes/imaging_order_items');
-
 const imaging_ordersRoutes = require('./routes/imaging_orders');
-
 const insurancesRoutes = require('./routes/insurances');
-
 const invoice_itemsRoutes = require('./routes/invoice_items');
-
 const invoicesRoutes = require('./routes/invoices');
-
 const lab_order_itemsRoutes = require('./routes/lab_order_items');
-
 const lab_ordersRoutes = require('./routes/lab_orders');
-
 const lab_testsRoutes = require('./routes/lab_tests');
-
 const medicationsRoutes = require('./routes/medications');
-
 const patient_documentsRoutes = require('./routes/patient_documents');
-
 const patientsRoutes = require('./routes/patients');
-
 const pharmacy_order_itemsRoutes = require('./routes/pharmacy_order_items');
-
 const pharmacy_ordersRoutes = require('./routes/pharmacy_orders');
-
 const sick_leavesRoutes = require('./routes/sick_leaves');
-
 const visitsRoutes = require('./routes/visits');
-
 const rolesRoutes = require('./routes/roles');
-
 const permissionsRoutes = require('./routes/permissions');
-
 const organizationsRoutes = require('./routes/organizations');
 
 const getBaseUrl = (url) => {
@@ -302,6 +273,8 @@ app.use(
 
 app.use('/api/org-for-auth', organizationForAuthRoutes);
 
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 const publicDir = path.join(__dirname, '../public');
 
 if (fs.existsSync(publicDir)) {
@@ -310,6 +283,11 @@ if (fs.existsSync(publicDir)) {
   app.get('*', function (request, response) {
     response.sendFile(path.resolve(publicDir, 'index.html'));
   });
+}
+
+const uploadDir = path.join(__dirname, '..', 'uploads', 'patient_documents');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 const PORT = process.env.NODE_ENV === 'dev_stage' ? 3000 : 8080;

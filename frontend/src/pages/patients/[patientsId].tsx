@@ -102,7 +102,7 @@ const EditPatients = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(update({ id: patientsId, data }));
-    await router.push('/patients/patients-list');
+    await router.push('/patients/patients-table');
   };
 
   return (
@@ -196,7 +196,7 @@ const EditPatients = () => {
                   id='identifier_type'
                   component='select'
                 >
-                  <option value='NationalID'>NationalID</option>
+                  <option value='National ID'>National ID</option>
 
                   <option value='Iqama'>Iqama</option>
 
@@ -274,7 +274,7 @@ const EditPatients = () => {
                   color='danger'
                   outline
                   label='Cancel'
-                  onClick={() => router.push('/patients/patients-list')}
+                  onClick={() => router.push('/patients/patients-table')}
                 />
               </BaseButtons>
             </Form>

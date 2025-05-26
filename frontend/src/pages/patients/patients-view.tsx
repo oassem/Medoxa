@@ -2,13 +2,10 @@ import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/patients/patientsSlice';
-import { saveFile } from '../../helpers/fileSaver';
 import dataFormatter from '../../helpers/dataFormatter';
-import ImageField from '../../components/ImageField';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import { getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
@@ -16,19 +13,13 @@ import SectionMain from '../../components/SectionMain';
 import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
-import { mdiChartTimelineVariant } from '@mdi/js';
-import { SwitchField } from '../../components/SwitchField';
 import FormField from '../../components/FormField';
-
-import { hasPermission } from '../../helpers/userPermissions';
+import { mdiChartTimelineVariant } from '@mdi/js';
 
 const PatientsView = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { patients } = useAppSelector((state) => state.patients);
-
-  const { currentUser } = useAppSelector((state) => state.auth);
-
   const { id } = router.query;
 
   function removeLastCharacter(str) {
@@ -43,7 +34,7 @@ const PatientsView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View patients')}</title>
+        <title>{getPageTitle('View patient')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
@@ -59,47 +50,38 @@ const PatientsView = () => {
         </SectionTitleLineWithButton>
         <CardBox>
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>User</p>
-
-            <p>{patients?.user?.firstName ?? 'No data'}</p>
-          </div>
-
-          {hasPermission(currentUser, 'READ_ORGANIZATIONS') && (
-            <div className={'mb-4'}>
-              <p className={'block font-bold mb-2'}>Organization</p>
-
-              <p>{patients?.organization?.name ?? 'No data'}</p>
-            </div>
-          )}
-
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>FullName(English)</p>
+            <p className={'block font-bold mb-2'}>Full Name (English)</p>
             <p>{patients?.full_name_en}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>FullName(Arabic)</p>
+            <p className={'block font-bold mb-2'}>Full Name (Arabic)</p>
             <p>{patients?.full_name_ar}</p>
           </div>
 
-          <FormField label='DateofBirth'>
+          <div className={'mb-4'}>
+            <p className={'block font-bold mb-2'}>Phone</p>
+            <p>{patients?.phone ?? 'No data'}</p>
+          </div>
+
+          <div className={'mb-4'}>
+            <p className={'block font-bold mb-2'}>Email</p>
+            <p>{patients?.email ?? 'No data'}</p>
+          </div>
+
+          <FormField label='Date of Birth'>
             {patients.date_of_birth ? (
               <DatePicker
-                dateFormat='yyyy-MM-dd hh:mm'
-                showTimeSelect
+                dateFormat='yyyy-MM-dd'
                 selected={
                   patients.date_of_birth
-                    ? new Date(
-                        dayjs(patients.date_of_birth).format(
-                          'YYYY-MM-DD hh:mm',
-                        ),
-                      )
+                    ? new Date(patients.date_of_birth)
                     : null
                 }
                 disabled
               />
             ) : (
-              <p>No DateofBirth</p>
+              <p>No Date of Birth</p>
             )}
           </FormField>
 
@@ -114,12 +96,12 @@ const PatientsView = () => {
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>IdentifierType</p>
+            <p className={'block font-bold mb-2'}>Identifier Type</p>
             <p>{patients?.identifier_type ?? 'No data'}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Identifier</p>
+            <p className={'block font-bold mb-2'}>Identifier Number</p>
             <p>{patients?.identifier}</p>
           </div>
 
@@ -129,16 +111,16 @@ const PatientsView = () => {
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>EmergencyContactName</p>
+            <p className={'block font-bold mb-2'}>Emergency Contact Name</p>
             <p>{patients?.emergency_contact_name}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>EmergencyContactPhone</p>
+            <p className={'block font-bold mb-2'}>Emergency Contact Phone</p>
             <p>{patients?.emergency_contact_phone}</p>
           </div>
 
-          <FormField label='Multi Text' hasTextareaHeight>
+          <FormField label='Medical History' hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -146,7 +128,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Multi Text' hasTextareaHeight>
+          <FormField label='Allergies' hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -154,7 +136,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Multi Text' hasTextareaHeight>
+          <FormField label='Current Medications' hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -162,7 +144,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Multi Text' hasTextareaHeight>
+          <FormField label='Family History' hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -170,13 +152,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>organizations</p>
-
-            <p>{patients?.organizations?.name ?? 'No data'}</p>
-          </div>
-
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Appointments Patient</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -241,10 +217,10 @@ const PatientsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
           <>
-            <p className={'block font-bold mb-2'}>Insurances Patient</p>
+            <p className={'block font-bold mb-2'}>Patient Insurance</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -253,15 +229,15 @@ const PatientsView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th>ProviderName</th>
+                      <th>Provider Name</th>
 
-                      <th>PolicyNumber</th>
+                      <th>Policy Number</th>
 
-                      <th>CoverageStart</th>
+                      <th>Coverage Start</th>
 
-                      <th>CoverageEnd</th>
+                      <th>Coverage End</th>
 
-                      <th>PlanDetails</th>
+                      <th>Plan Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -306,7 +282,7 @@ const PatientsView = () => {
             </CardBox>
           </>
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Invoices Patient</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -351,10 +327,10 @@ const PatientsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
           <>
-            <p className={'block font-bold mb-2'}>Patient_documents Patient</p>
+            <p className={'block font-bold mb-2'}>Patient Documents</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -363,28 +339,35 @@ const PatientsView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th>DocumentType</th>
+                      <th>Document Type</th>
 
-                      <th>DocumentURL</th>
+                      <th>Document URL</th>
                     </tr>
                   </thead>
                   <tbody>
                     {patients.patient_documents_patient &&
                       Array.isArray(patients.patient_documents_patient) &&
                       patients.patient_documents_patient.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/patient_documents/patient_documents-view/?id=${item.id}`,
-                            )
-                          }
-                        >
+                        <tr key={item.id}>
                           <td data-label='document_type'>
                             {item.document_type}
                           </td>
 
-                          <td data-label='document_url'>{item.document_url}</td>
+                          <td data-label='document_url'>
+                            {item.document_url ? (
+                              <a
+                                href={`/${item.document_url.replace(/\\/g, '/')}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='text-blue-600 underline'
+                                download={item.document_url.split('/').pop()}
+                              >
+                                Download/View document
+                              </a>
+                            ) : (
+                              'No file'
+                            )}
+                          </td>
                         </tr>
                       ))}
                   </tbody>
@@ -396,7 +379,7 @@ const PatientsView = () => {
             </CardBox>
           </>
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Visits Patient</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -445,14 +428,13 @@ const PatientsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
-
+          </> */}
           <BaseDivider />
 
           <BaseButton
             color='info'
             label='Back'
-            onClick={() => router.push('/patients/patients-list')}
+            onClick={() => router.push('/patients/patients-table')}
           />
         </CardBox>
       </SectionMain>

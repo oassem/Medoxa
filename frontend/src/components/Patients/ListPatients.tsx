@@ -1,15 +1,12 @@
 import React from 'react';
 import CardBox from '../CardBox';
-import ImageField from '../ImageField';
 import dataFormatter from '../../helpers/dataFormatter';
-import { saveFile } from '../../helpers/fileSaver';
 import ListActionsPopover from '../ListActionsPopover';
 import { useAppSelector } from '../../stores/hooks';
 import { Pagination } from '../Pagination';
+import { hasPermission } from '../../helpers/userPermissions';
 import LoadingSpinner from '../LoadingSpinner';
 import Link from 'next/link';
-
-import { hasPermission } from '../../helpers/userPermissions';
 
 type Props = {
   patients: any[];
@@ -30,9 +27,6 @@ const ListPatients = ({
 }: Props) => {
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const hasUpdatePermission = hasPermission(currentUser, 'UPDATE_PATIENTS');
-
-  const corners = useAppSelector((state) => state.style.corners);
-  const bgColor = useAppSelector((state) => state.style.cardsColor);
 
   return (
     <>

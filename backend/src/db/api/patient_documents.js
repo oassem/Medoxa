@@ -1,8 +1,7 @@
 const db = require('../models');
-const FileDBApi = require('./file');
-const crypto = require('crypto');
 const Utils = require('../utils');
-
+const fs = require('fs');
+const path = require('path');
 const Sequelize = db.Sequelize;
 const Op = Sequelize.Op;
 
@@ -14,7 +13,6 @@ module.exports = class Patient_documentsDBApi {
     const patient_documents = await db.patient_documents.create(
       {
         id: data.id || undefined,
-
         document_type: data.document_type || null,
         document_url: data.document_url || null,
         importHash: data.importHash || null,
@@ -28,7 +26,7 @@ module.exports = class Patient_documentsDBApi {
       transaction,
     });
 
-    await patient_documents.setOrganizations(data.organizations || null, {
+    await patient_documents.setOrganizations(currentUser.organization?.id || null, {
       transaction,
     });
 
@@ -42,7 +40,6 @@ module.exports = class Patient_documentsDBApi {
     // Prepare data - wrapping individual data transformations in a map() method
     const patient_documentsData = data.map((item, index) => ({
       id: item.id || undefined,
-
       document_type: item.document_type || null,
       document_url: item.document_url || null,
       importHash: item.importHash || null,
@@ -58,14 +55,12 @@ module.exports = class Patient_documentsDBApi {
     );
 
     // For each item created, replace relation files
-
     return patient_documents;
   }
 
   static async update(id, data, options) {
     const currentUser = (options && options.currentUser) || { id: null };
     const transaction = (options && options.transaction) || undefined;
-    const globalAccess = currentUser.app_role?.globalAccess;
 
     const patient_documents = await db.patient_documents.findByPk(
       id,
@@ -88,15 +83,6 @@ module.exports = class Patient_documentsDBApi {
     if (data.patient !== undefined) {
       await patient_documents.setPatient(
         data.patient,
-
-        { transaction },
-      );
-    }
-
-    if (data.organizations !== undefined) {
-      await patient_documents.setOrganizations(
-        data.organizations,
-
         { transaction },
       );
     }
@@ -119,8 +105,18 @@ module.exports = class Patient_documentsDBApi {
 
     await db.sequelize.transaction(async (transaction) => {
       for (const record of patient_documents) {
+        // Delete file from disk if it exists
+        if (record && record.document_url) {
+          try {
+            fs.unlinkSync(path.resolve(record.document_url));
+          } catch (err) {
+            // Log error but don't block deletion
+            console.error('Error deleting file:', err);
+          }
+        }
         await record.update({ deletedBy: currentUser.id }, { transaction });
       }
+
       for (const record of patient_documents) {
         await record.destroy({ transaction });
       }
@@ -135,19 +131,22 @@ module.exports = class Patient_documentsDBApi {
 
     const patient_documents = await db.patient_documents.findByPk(id, options);
 
+    // Delete file from disk if it exists
+    if (patient_documents && patient_documents.document_url) {
+      try {
+        fs.unlinkSync(path.resolve(patient_documents.document_url));
+      } catch (err) {
+        // Log error but don't block deletion
+        console.error('Error deleting file:', err);
+      }
+    }
+
     await patient_documents.update(
-      {
-        deletedBy: currentUser.id,
-      },
-      {
-        transaction,
-      },
+      { deletedBy: currentUser.id },
+      { transaction }
     );
 
-    await patient_documents.destroy({
-      transaction,
-    });
-
+    await patient_documents.destroy({ transaction });
     return patient_documents;
   }
 
@@ -193,34 +192,30 @@ module.exports = class Patient_documentsDBApi {
 
     offset = currentPage * limit;
 
-    const orderBy = null;
-
-    const transaction = (options && options.transaction) || undefined;
-
     let include = [
       {
         model: db.patients,
         as: 'patient',
-
+        required: false,
         where: filter.patient
           ? {
-              [Op.or]: [
-                {
-                  id: {
-                    [Op.in]: filter.patient
-                      .split('|')
-                      .map((term) => Utils.uuid(term)),
-                  },
+            [Op.or]: [
+              {
+                id: {
+                  [Op.in]: filter.patient
+                    .split('|')
+                    .map((term) => Utils.uuid(term)),
                 },
-                {
-                  full_name_en: {
-                    [Op.or]: filter.patient
-                      .split('|')
-                      .map((term) => ({ [Op.iLike]: `%${term}%` })),
-                  },
+              },
+              {
+                full_name_en: {
+                  [Op.or]: filter.patient
+                    .split('|')
+                    .map((term) => ({ [Op.iLike]: `%${term}%` })),
                 },
-              ],
-            }
+              },
+            ],
+          }
           : {},
       },
 

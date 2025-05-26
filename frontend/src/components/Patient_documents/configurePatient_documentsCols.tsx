@@ -1,10 +1,6 @@
 import React from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import {
-  GridActionsCellItem,
-  GridRowParams,
-  GridValueGetterParams,
-} from '@mui/x-data-grid';
+import { GridRowParams, GridValueGetterParams } from '@mui/x-data-grid';
 import ListActionsPopover from '../ListActionsPopover';
 import { hasPermission } from '../../helpers/userPermissions';
 
@@ -13,7 +9,6 @@ type Params = (id: string) => void;
 export const loadColumns = async (
   onDelete: Params,
   entityName: string,
-
   user,
 ) => {
   async function callOptionsApi(entityName: string) {
@@ -39,9 +34,7 @@ export const loadColumns = async (
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
-
       sortable: false,
       type: 'singleSelect',
       getOptionValue: (value: any) => value?.id,
@@ -53,25 +46,12 @@ export const loadColumns = async (
 
     {
       field: 'document_type',
-      headerName: 'DocumentType',
+      headerName: 'Document Type',
       flex: 1,
       minWidth: 120,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
-      editable: hasUpdatePermission,
-    },
-
-    {
-      field: 'document_url',
-      headerName: 'DocumentURL',
-      flex: 1,
-      minWidth: 120,
-      filterable: false,
-      headerClassName: 'datagrid--header',
-      cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
 

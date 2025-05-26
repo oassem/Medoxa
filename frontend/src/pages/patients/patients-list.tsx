@@ -21,10 +21,7 @@ const PatientsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
@@ -54,7 +51,7 @@ const PatientsTablesPage = () => {
       label: 'IdentifierType',
       title: 'identifier_type',
       type: 'enum',
-      options: ['NationalID', 'Iqama', 'Passport'],
+      options: ['National ID', 'Iqama', 'Passport'],
     },
   ]);
 

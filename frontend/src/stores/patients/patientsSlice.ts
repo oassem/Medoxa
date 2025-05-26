@@ -145,6 +145,7 @@ export const patientsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(fetch.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -167,7 +168,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patients has been deleted');
+      fulfilledNotify(state, 'Patients have been deleted');
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -194,6 +195,7 @@ export const patientsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(create.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -208,10 +210,12 @@ export const patientsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
       fulfilledNotify(state, `${'Patients'.slice(0, -1)} has been updated`);
     });
+
     builder.addCase(update.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);
@@ -221,10 +225,12 @@ export const patientsSlice = createSlice({
       state.loading = true;
       resetNotify(state);
     });
+
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patients has been uploaded');
+      fulfilledNotify(state, 'Patients have been uploaded');
     });
+
     builder.addCase(uploadCsv.rejected, (state, action) => {
       state.loading = false;
       rejectNotify(state, action);

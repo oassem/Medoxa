@@ -1,15 +1,9 @@
 const express = require('express');
-
 const PatientsService = require('../services/patients');
 const PatientsDBApi = require('../db/api/patients');
 const wrapAsync = require('../helpers').wrapAsync;
-
-const config = require('../config');
-
 const router = express.Router();
-
 const { parse } = require('json2csv');
-
 const { checkCrudPermissions } = require('../middlewares/check-permissions');
 
 router.use(checkCrudPermissions('patients'));
@@ -21,7 +15,6 @@ router.use(checkCrudPermissions('patients'));
  *      Patients:
  *        type: object
  *        properties:
-
  *          full_name_en:
  *            type: string
  *            default: full_name_en
@@ -55,7 +48,12 @@ router.use(checkCrudPermissions('patients'));
  *          family_history:
  *            type: string
  *            default: family_history
-
+ *          phone:
+ *            type: string
+ *            default: "+123456789"
+ *          email:
+ *            type: string
+ *            default: "example@email.com"
  *          
  *          
  */
@@ -334,13 +332,12 @@ router.get(
   '/',
   wrapAsync(async (req, res) => {
     const filetype = req.query.filetype;
-
     const globalAccess = req.currentUser.app_role.globalAccess;
-
     const currentUser = req.currentUser;
     const payload = await PatientsDBApi.findAll(req.query, globalAccess, {
       currentUser,
     });
+
     if (filetype && filetype === 'csv') {
       const fields = [
         'id',
@@ -355,7 +352,8 @@ router.get(
         'allergies',
         'current_medications',
         'family_history',
-
+        'phone',
+        'email',
         'date_of_birth',
       ];
       const opts = { fields };
@@ -401,7 +399,6 @@ router.get(
   '/count',
   wrapAsync(async (req, res) => {
     const globalAccess = req.currentUser.app_role.globalAccess;
-
     const currentUser = req.currentUser;
     const payload = await PatientsDBApi.findAll(req.query, globalAccess, {
       countOnly: true,
@@ -439,9 +436,7 @@ router.get(
  */
 router.get('/autocomplete', async (req, res) => {
   const globalAccess = req.currentUser.app_role.globalAccess;
-
   const organizationId = req.currentUser.organization?.id;
-
   const payload = await PatientsDBApi.findAllAutocomplete(
     req.query.query,
     req.query.limit,
@@ -489,7 +484,6 @@ router.get(
   '/:id',
   wrapAsync(async (req, res) => {
     const payload = await PatientsDBApi.findBy({ id: req.params.id });
-
     res.status(200).send(payload);
   }),
 );

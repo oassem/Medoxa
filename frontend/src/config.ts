@@ -18,7 +18,6 @@ export const containerMaxW = 'xl:max-w-full xl:mx-auto 2xl:mx-20';
 
 export const appTitle = 'created by Flatlogic generator!';
 
-export const getPageTitle = (currentPageTitle: string) =>
-  `${currentPageTitle} — ${appTitle}`;
+export const getPageTitle = (currentPageTitle: string) => `${currentPageTitle}`;
 
 export const tinyKey = process.env.NEXT_PUBLIC_TINY_KEY || '';
