@@ -1,6 +1,6 @@
 import { Children, cloneElement, ReactElement, ReactNode } from 'react';
-import BaseIcon from './BaseIcon';
 import { useAppSelector } from '../stores/hooks';
+import BaseIcon from './BaseIcon';
 
 type Props = {
   label?: string;
@@ -15,6 +15,7 @@ type Props = {
   borderButtom?: boolean;
   diversity?: boolean;
   websiteBg?: boolean;
+  required?: boolean;
 };
 
 const FormField = ({ icons = [], ...props }: Props) => {
@@ -60,8 +61,10 @@ const FormField = ({ icons = [], ...props }: Props) => {
           }`}
         >
           {props.label}
+          {props.required && <span className='text-red-500 ml-1'>*</span>}
         </label>
       )}
+
       <div className={`${elementWrapperClass}`}>
         {Children.map(props.children, (child: ReactElement, index) => (
           <div className='relative'>

@@ -12,6 +12,7 @@ import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
+import { baseURL } from '../../config';
 
 const Patient_documentsView = () => {
   const router = useRouter();
@@ -63,7 +64,7 @@ const Patient_documentsView = () => {
             <p className={'block font-bold mb-2'}>Document File</p>
             {patient_documents?.document_url ? (
               <a
-                href={`/${patient_documents.document_url.replace(/\\/g, '/')}`}
+                href={`${baseURL}/${patient_documents.document_url.replace(/\\/g, '/')}`}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='text-blue-600 underline'

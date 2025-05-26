@@ -273,7 +273,7 @@ app.use(
 
 app.use('/api/org-for-auth', organizationForAuthRoutes);
 
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const publicDir = path.join(__dirname, '../public');
 

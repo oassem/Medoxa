@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { fetch } from '../../stores/patients/patientsSlice';
 import dataFormatter from '../../helpers/dataFormatter';
 import LayoutAuthenticated from '../../layouts/Authenticated';
-import { getPageTitle } from '../../config';
+import { baseURL, getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import SectionMain from '../../components/SectionMain';
 import CardBox from '../../components/CardBox';
@@ -356,7 +356,7 @@ const PatientsView = () => {
                           <td data-label='document_url'>
                             {item.document_url ? (
                               <a
-                                href={`/${item.document_url.replace(/\\/g, '/')}`}
+                                href={`${baseURL}/${item.document_url.replace(/\\/g, '/')}`}
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='text-blue-600 underline'

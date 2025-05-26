@@ -73,8 +73,21 @@ module.exports = class Patient_documentsDBApi {
     if (data.document_type !== undefined)
       updatePayload.document_type = data.document_type;
 
-    if (data.document_url !== undefined)
+    if (data.document_url !== undefined) {
+      // Delete old file if a new file is being uploaded and the URL is different
+      if (
+        patient_documents.document_url &&
+        data.document_url &&
+        patient_documents.document_url !== data.document_url
+      ) {
+        try {
+          fs.unlinkSync(path.resolve(patient_documents.document_url));
+        } catch (err) {
+          console.error('Error deleting old file:', err);
+        }
+      }
       updatePayload.document_url = data.document_url;
+    }
 
     updatePayload.updatedById = currentUser.id;
 

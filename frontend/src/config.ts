@@ -10,6 +10,8 @@ export const portApi =
 
 export const baseURLApi = `${hostApi}${portApi ? `:${portApi}` : ``}/api`;
 
+export const baseURL = `${hostApi}${portApi ? `:${portApi}` : ``}`;
+
 export const localStorageDarkModeKey = 'darkMode';
 
 export const localStorageStyleKey = 'style';

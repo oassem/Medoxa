@@ -3,7 +3,6 @@ import styleReducer from './styleSlice';
 import mainReducer from './mainSlice';
 import authSlice from './authSlice';
 import openAiSlice from './openAiSlice';
-
 import usersSlice from './users/usersSlice';
 import appointment_rulesSlice from './appointment_rules/appointment_rulesSlice';
 import appointmentsSlice from './appointments/appointmentsSlice';
@@ -36,7 +35,6 @@ export const store = configureStore({
     main: mainReducer,
     auth: authSlice,
     openAi: openAiSlice,
-
     users: usersSlice,
     appointment_rules: appointment_rulesSlice,
     appointments: appointmentsSlice,

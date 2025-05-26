@@ -15,12 +15,32 @@ import { SelectField } from '../../components/SelectField';
 import { create } from '../../stores/patient_documents/patient_documentsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
+import * as Yup from 'yup';
 
 const initialValues = {
   patient: '',
   document_type: '',
   document_file: null,
 };
+
+const validationSchema = Yup.object().shape({
+  patient: Yup.string().required('Patient is required'),
+  document_type: Yup.string().required('Document Type is required'),
+  document_file: Yup.mixed()
+    .required('Document File is required')
+    .test('fileType', 'Unsupported file format', (value) => {
+      if (!value || typeof value !== 'object' || !('type' in value))
+        return false;
+      const allowed = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg',
+        'image/png',
+      ];
+      return allowed.includes((value as File).type);
+    }),
+});
 
 const Patient_documentsNew = () => {
   const router = useRouter();
@@ -52,36 +72,62 @@ const Patient_documentsNew = () => {
         <CardBox>
           <Formik
             initialValues={initialValues}
+            validationSchema={validationSchema}
             onSubmit={(values) => handleSubmit(values)}
           >
-            {({ setFieldValue }) => (
+            {({ setFieldValue, errors, touched }) => (
               <Form>
-                <FormField label='Patient' labelFor='patient'>
-                  <Field
-                    name='patient'
-                    id='patient'
-                    component={SelectField}
-                    options={[]}
-                    itemRef={'patients'}
-                  ></Field>
+                <FormField label='Patient' labelFor='patient' required>
+                  <>
+                    <Field
+                      name='patient'
+                      id='patient'
+                      component={SelectField}
+                      options={[]}
+                      itemRef={'patients'}
+                    />
+                    {touched.patient && errors.patient && (
+                      <div className='text-red-500 text-xs mt-2'>
+                        {errors.patient}
+                      </div>
+                    )}
+                  </>
                 </FormField>
 
-                <FormField label='Document Type'>
-                  <Field name='document_type' placeholder='Document Type' />
+                <FormField label='Document Type' required>
+                  <>
+                    <Field
+                      name='document_type'
+                      placeholder='Document Type'
+                      className='w-full border-1 border-gray-300 rounded-md p-2'
+                    />
+                    {touched.document_type && errors.document_type && (
+                      <div className='text-red-500 text-xs mt-2'>
+                        {errors.document_type}
+                      </div>
+                    )}
+                  </>
                 </FormField>
 
-                <FormField label='Document File'>
-                  <input
-                    name='document_file'
-                    type='file'
-                    accept='.pdf,.doc,.docx,.jpg,.png'
-                    onChange={(event) => {
-                      setFieldValue(
-                        'document_file',
-                        event.currentTarget.files[0],
-                      );
-                    }}
-                  />
+                <FormField label='Document File' required>
+                  <>
+                    <input
+                      name='document_file'
+                      type='file'
+                      accept='.pdf,.doc,.docx,.jpg,.png'
+                      onChange={(event) => {
+                        setFieldValue(
+                          'document_file',
+                          event.currentTarget.files[0],
+                        );
+                      }}
+                    />
+                    {touched.document_file && errors.document_file && (
+                      <div className='text-red-500 text-xs mt-2'>
+                        {errors.document_file}
+                      </div>
+                    )}
+                  </>
                 </FormField>
 
                 <BaseDivider />
