@@ -165,14 +165,7 @@ const EditPatientsPage = () => {
               await handleSubmit(values);
             }}
           >
-            {({
-              errors,
-              touched,
-              setFieldValue,
-              values,
-              validateForm,
-              submitForm,
-            }) => (
+            {({ errors, setFieldValue, values, validateForm, submitForm }) => (
               <Form>
                 <FormField label='Full Name (English)' required>
                   <>
@@ -184,7 +177,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['full_name_en'] = el)
                       }
                     />
-                    {touched.full_name_en && errors.full_name_en && (
+                    {errors.full_name_en && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.full_name_en}
                       </div>
@@ -202,7 +195,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['full_name_ar'] = el)
                       }
                     />
-                    {touched.full_name_ar && errors.full_name_ar && (
+                    {errors.full_name_ar && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.full_name_ar}
                       </div>
@@ -220,7 +213,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['phone'] = el)
                       }
                     />
-                    {touched.phone && errors.phone && (
+                    {errors.phone && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.phone}
                       </div>
@@ -239,7 +232,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['email'] = el)
                       }
                     />
-                    {touched.email && errors.email && (
+                    {errors.email && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.email}
                       </div>
@@ -264,7 +257,7 @@ const EditPatientsPage = () => {
                         className='w-full border-1 border-gray-300 rounded-md p-2'
                       />
                     </div>
-                    {touched.date_of_birth && errors.date_of_birth && (
+                    {errors.date_of_birth && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.date_of_birth}
                       </div>
@@ -286,7 +279,7 @@ const EditPatientsPage = () => {
                       <option value='Male'>Male</option>
                       <option value='Female'>Female</option>
                     </Field>
-                    {touched.gender && errors.gender && (
+                    {errors.gender && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.gender}
                       </div>
@@ -304,7 +297,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['nationality'] = el)
                       }
                     />
-                    {touched.nationality && errors.nationality && (
+                    {errors.nationality && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.nationality}
                       </div>
@@ -331,7 +324,7 @@ const EditPatientsPage = () => {
                       <option value='Iqama'>Iqama</option>
                       <option value='Passport'>Passport</option>
                     </Field>
-                    {touched.identifier_type && errors.identifier_type && (
+                    {errors.identifier_type && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.identifier_type}
                       </div>
@@ -349,7 +342,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['identifier'] = el)
                       }
                     />
-                    {touched.identifier && errors.identifier && (
+                    {errors.identifier && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.identifier}
                       </div>
@@ -367,7 +360,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['address'] = el)
                       }
                     />
-                    {touched.address && errors.address && (
+                    {errors.address && (
                       <div className='text-red-500 text-xs mt-2'>
                         {errors.address}
                       </div>
@@ -385,12 +378,11 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['emergency_contact_name'] = el)
                       }
                     />
-                    {touched.emergency_contact_name &&
-                      errors.emergency_contact_name && (
-                        <div className='text-red-500 text-xs mt-2'>
-                          {errors.emergency_contact_name}
-                        </div>
-                      )}
+                    {errors.emergency_contact_name && (
+                      <div className='text-red-500 text-xs mt-2'>
+                        {errors.emergency_contact_name}
+                      </div>
+                    )}
                   </>
                 </FormField>
 
@@ -404,12 +396,11 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['emergency_contact_phone'] = el)
                       }
                     />
-                    {touched.emergency_contact_phone &&
-                      errors.emergency_contact_phone && (
-                        <div className='text-red-500 text-xs mt-2'>
-                          {errors.emergency_contact_phone}
-                        </div>
-                      )}
+                    {errors.emergency_contact_phone && (
+                      <div className='text-red-500 text-xs mt-2'>
+                        {errors.emergency_contact_phone}
+                      </div>
+                    )}
                   </>
                 </FormField>
 
@@ -424,7 +415,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['medical_history'] = el)
                       }
                     />
-                    {touched.medical_history && errors.medical_history && (
+                    {errors.medical_history && (
                       <div className='text-red-500 text-xs mt-1'>
                         {errors.medical_history}
                       </div>
@@ -443,7 +434,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['allergies'] = el)
                       }
                     />
-                    {touched.allergies && errors.allergies && (
+                    {errors.allergies && (
                       <div className='text-red-500 text-xs mt-1'>
                         {errors.allergies}
                       </div>
@@ -466,12 +457,11 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['current_medications'] = el)
                       }
                     />
-                    {touched.current_medications &&
-                      errors.current_medications && (
-                        <div className='text-red-500 text-xs mt-1'>
-                          {errors.current_medications}
-                        </div>
-                      )}
+                    {errors.current_medications && (
+                      <div className='text-red-500 text-xs mt-1'>
+                        {errors.current_medications}
+                      </div>
+                    )}
                   </>
                 </FormField>
 
@@ -486,7 +476,7 @@ const EditPatientsPage = () => {
                         (fieldRefs.current['family_history'] = el)
                       }
                     />
-                    {touched.family_history && errors.family_history && (
+                    {errors.family_history && (
                       <div className='text-red-500 text-xs mt-1'>
                         {errors.family_history}
                       </div>
