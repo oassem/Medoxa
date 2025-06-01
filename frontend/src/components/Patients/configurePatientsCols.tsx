@@ -10,6 +10,7 @@ export const loadColumns = async (
   onDelete: Params,
   entityName: string,
   user,
+  t: (key: string) => string,
 ) => {
   async function callOptionsApi(entityName: string) {
     if (!hasPermission(user, 'READ_' + entityName.toUpperCase())) return [];
@@ -28,7 +29,7 @@ export const loadColumns = async (
   return [
     {
       field: 'organization',
-      headerName: 'Organization',
+      headerName: t('patients.organization'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -46,7 +47,7 @@ export const loadColumns = async (
 
     {
       field: 'full_name_en',
-      headerName: 'Full Name (English)',
+      headerName: t('patients.full_name_en'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -57,7 +58,7 @@ export const loadColumns = async (
 
     {
       field: 'full_name_ar',
-      headerName: 'Full Name (Arabic)',
+      headerName: t('patients.full_name_ar'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -68,7 +69,7 @@ export const loadColumns = async (
 
     {
       field: 'phone',
-      headerName: 'Phone',
+      headerName: t('patients.phone'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -79,7 +80,7 @@ export const loadColumns = async (
 
     {
       field: 'email',
-      headerName: 'Email',
+      headerName: t('patients.email'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -90,7 +91,7 @@ export const loadColumns = async (
 
     {
       field: 'date_of_birth',
-      headerName: 'Date of Birth',
+      headerName: t('patients.date_of_birth'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -104,18 +105,26 @@ export const loadColumns = async (
 
     {
       field: 'gender',
-      headerName: 'Gender',
+      headerName: t('patients.gender'),
       flex: 1,
       minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
       editable: hasUpdatePermission,
+      type: 'singleSelect',
+      getOptionValue: (option) => option.value,
+      getOptionLabel: (option) => option.label,
+      valueOptions: [
+        { value: 'Male', label: t('patients.male') },
+        { value: 'Female', label: t('patients.female') },
+      ],
+      //renderCell: (params) => t(`patients.${params.value?.toLowerCase?.()}`),
     },
 
     {
       field: 'nationality',
-      headerName: 'Nationality',
+      headerName: t('patients.nationality'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -126,18 +135,28 @@ export const loadColumns = async (
 
     {
       field: 'identifier_type',
-      headerName: 'Identifier Type',
+      headerName: t('patients.identifier_type'),
       flex: 1,
       minWidth: 200,
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
       editable: hasUpdatePermission,
+      type: 'singleSelect',
+      getOptionValue: (option) => option.value,
+      getOptionLabel: (option) => option.label,
+      valueOptions: [
+        { value: 'National ID', label: t('patients.national_id') },
+        { value: 'Iqama', label: t('patients.iqama') },
+        { value: 'Passport', label: t('patients.passport') },
+      ],
+      //renderCell: (params) =>
+      //  t(`patients.${params.value?.replace(/\s+/g, '_').toLowerCase?.()}`),
     },
 
     {
       field: 'identifier',
-      headerName: 'Identifier Number',
+      headerName: t('patients.identifier'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -148,7 +167,7 @@ export const loadColumns = async (
 
     {
       field: 'address',
-      headerName: 'Address',
+      headerName: t('patients.address'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -159,7 +178,7 @@ export const loadColumns = async (
 
     {
       field: 'emergency_contact_name',
-      headerName: 'Emergency Contact Name',
+      headerName: t('patients.emergency_contact_name'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -170,7 +189,7 @@ export const loadColumns = async (
 
     {
       field: 'emergency_contact_phone',
-      headerName: 'Emergency Contact Phone',
+      headerName: t('patients.emergency_contact_phone'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -181,7 +200,7 @@ export const loadColumns = async (
 
     {
       field: 'medical_history',
-      headerName: 'Medical History',
+      headerName: t('patients.medical_history'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -192,7 +211,7 @@ export const loadColumns = async (
 
     {
       field: 'allergies',
-      headerName: 'Allergies',
+      headerName: t('patients.allergies'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -203,7 +222,7 @@ export const loadColumns = async (
 
     {
       field: 'current_medications',
-      headerName: 'Current Medications',
+      headerName: t('patients.current_medications'),
       flex: 1,
       minWidth: 200,
       filterable: false,
@@ -214,7 +233,7 @@ export const loadColumns = async (
 
     {
       field: 'family_history',
-      headerName: 'Family History',
+      headerName: t('patients.family_history'),
       flex: 1,
       minWidth: 200,
       filterable: false,

@@ -15,6 +15,9 @@ import { create } from '../../stores/patients/patientsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const initialValues = {
   full_name_en: '',
@@ -50,72 +53,109 @@ const initialValues = {
   email: '',
 };
 
-// Validation schema using Yup
-const validationSchema = Yup.object().shape({
-  full_name_en: Yup.string().required('Full Name (English) is required'),
-  full_name_ar: Yup.string().required('Full Name (Arabic) is required'),
-  date_of_birth: Yup.date()
-    .required('Date of Birth is required')
-    .max(new Date(), 'Date of Birth cannot be in the future'),
-  gender: Yup.string()
-    .oneOf(['Male', 'Female'], 'Invalid gender')
-    .required('Gender is required'),
-  nationality: Yup.string().required('Nationality is required'),
-  identifier_type: Yup.string()
-    .oneOf(['National ID', 'Iqama', 'Passport'], 'Invalid identifier type')
-    .required('Identifier Type is required'),
-  identifier: Yup.string().required('Identifier Number is required'),
-  address: Yup.string().required('Address is required'),
-  emergency_contact_name: Yup.string().required(
-    'Emergency Contact Name is required',
-  ),
-  emergency_contact_phone: Yup.string()
-    .required('Emergency Contact Phone is required')
-    .matches(/^[0-9+\-\s()]{7,20}$/, 'Invalid phone number'),
-  medical_history: Yup.string().required('Medical History is required'),
-  allergies: Yup.string().required('Allergies is required'),
-  current_medications: Yup.string().required('Current Medications is required'),
-  family_history: Yup.string().required('Family History is required'),
-  phone: Yup.string()
-    .required('Phone is required')
-    .matches(/^[0-9+\-\s()]{7,20}$/, 'Invalid phone number'),
-  email: Yup.string()
-    .email('Invalid email address')
-    .required('Email is required'),
-});
-
-const fieldNames = [
-  'full_name_en',
-  'full_name_ar',
-  'date_of_birth',
-  'gender',
-  'nationality',
-  'identifier_type',
-  'identifier',
-  'address',
-  'emergency_contact_name',
-  'emergency_contact_phone',
-  'medical_history',
-  'allergies',
-  'current_medications',
-  'family_history',
-  'phone',
-  'email',
-];
-
 const PatientsNew = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const fieldRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === 'ar';
+
+  // Validation schema using Yup
+  const validationSchema = Yup.object().shape({
+    full_name_en: Yup.string().required(
+      t('patients.validation.full_name_en_required'),
+    ),
+    full_name_ar: Yup.string().required(
+      t('patients.validation.full_name_ar_required'),
+    ),
+    date_of_birth: Yup.date()
+      .required(t('patients.validation.date_of_birth_required'))
+      .max(new Date(), t('patients.validation.date_of_birth_max')),
+    gender: Yup.string()
+      .oneOf(['Male', 'Female'], t('patients.validation.gender_invalid'))
+      .required(t('patients.validation.gender_required')),
+    nationality: Yup.string().required(
+      t('patients.validation.nationality_required'),
+    ),
+    identifier_type: Yup.string()
+      .oneOf(
+        ['National ID', 'Iqama', 'Passport'],
+        t('patients.validation.identifier_type_invalid'),
+      )
+      .required(t('patients.validation.identifier_type_required')),
+    identifier: Yup.string().required(
+      t('patients.validation.identifier_required'),
+    ),
+    address: Yup.string().required(t('patients.validation.address_required')),
+    emergency_contact_name: Yup.string().required(
+      t('patients.validation.emergency_contact_name_required'),
+    ),
+    emergency_contact_phone: Yup.string()
+      .required(t('patients.validation.emergency_contact_phone_required'))
+      .matches(
+        /^[0-9+\-\s()]{7,20}$/,
+        t('patients.validation.emergency_contact_phone_invalid'),
+      ),
+    medical_history: Yup.string().required(
+      t('patients.validation.medical_history_required'),
+    ),
+    allergies: Yup.string().required(
+      t('patients.validation.allergies_required'),
+    ),
+    current_medications: Yup.string().required(
+      t('patients.validation.current_medications_required'),
+    ),
+    family_history: Yup.string().required(
+      t('patients.validation.family_history_required'),
+    ),
+    phone: Yup.string()
+      .required(t('patients.validation.phone_required'))
+      .matches(/^[0-9+\-\s()]{7,20}$/, t('patients.validation.phone_invalid')),
+    email: Yup.string()
+      .email(t('patients.validation.email_invalid'))
+      .required(t('patients.validation.email_required')),
+  });
+
+  const fieldNames = [
+    'full_name_en',
+    'full_name_ar',
+    'phone',
+    'email',
+    'date_of_birth',
+    'gender',
+    'nationality',
+    'identifier_type',
+    'identifier',
+    'address',
+    'emergency_contact_name',
+    'emergency_contact_phone',
+    'medical_history',
+    'allergies',
+    'current_medications',
+    'family_history',
+  ];
 
   const focusFirstError = (errors: any) => {
     const firstErrorField = fieldNames.find((name) => errors[name]);
-    if (firstErrorField && fieldRefs.current[firstErrorField]) {
-      fieldRefs.current[firstErrorField]?.focus();
-      fieldRefs.current[firstErrorField]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+    let el = fieldRefs.current[firstErrorField];
+
+    // Fallback: try to find the input by name if ref is not set or not focusable
+    if ((!el || typeof el.focus !== 'function') && firstErrorField) {
+      el = document.querySelector(
+        `[name="${firstErrorField}"]`,
+      ) as HTMLElement | null;
+    }
+
+    if (el) {
+      setTimeout(() => {
+        if (typeof el.focus === 'function') el.focus();
+        if (typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        }
+      }, 0);
     }
   };
 
@@ -127,12 +167,12 @@ const PatientsNew = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('New patient')}</title>
+        <title>{getPageTitle(t('patients.newPatient'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New patient'
+          title={t('patients.newPatient')}
           main
         >
           {''}
@@ -141,15 +181,25 @@ const PatientsNew = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values) => handleSubmit(values)}
+            onSubmit={(values) => {
+              handleSubmit(values);
+            }}
           >
-            {({ errors, validateForm, submitForm, touched }) => (
+            {({
+              values,
+              errors,
+              touched,
+              setFieldValue,
+              validateForm,
+              submitForm,
+              setFieldTouched,
+            }) => (
               <Form>
-                <FormField label='Full Name (English)' required>
+                <FormField label={t('patients.full_name_en')} required>
                   <>
                     <Field
                       name='full_name_en'
-                      placeholder='Full Name (English)'
+                      placeholder={t('patients.full_name_en')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['full_name_en'] = el)
@@ -163,11 +213,11 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Full Name (Arabic)' required>
+                <FormField label={t('patients.full_name_ar')} required>
                   <>
                     <Field
                       name='full_name_ar'
-                      placeholder='Full Name (Arabic)'
+                      placeholder={t('patients.full_name_ar')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['full_name_ar'] = el)
@@ -181,11 +231,11 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Phone' required>
+                <FormField label={t('patients.phone')} required>
                   <>
                     <Field
                       name='phone'
-                      placeholder='Phone'
+                      placeholder={t('patients.phone')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['phone'] = el)
@@ -199,12 +249,12 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Email' required>
+                <FormField label={t('patients.email')} required>
                   <>
                     <Field
                       name='email'
                       type='email'
-                      placeholder='Email'
+                      placeholder={t('patients.email')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['email'] = el)
@@ -218,14 +268,39 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Date of Birth' required>
+                <FormField
+                  label={t('patients.date_of_birth')}
+                  required
+                  padding={0}
+                >
                   <>
-                    <Field
-                      type='date'
+                    <DatePicker
                       name='date_of_birth'
-                      placeholder='Date of Birth'
+                      selected={values.date_of_birth}
+                      onChange={(date) => {
+                        setFieldValue('date_of_birth', date);
+                        setFieldTouched('date_of_birth', true, true);
+                      }}
+                      onBlur={() =>
+                        setFieldTouched('date_of_birth', true, true)
+                      }
                       className='w-full border-1 border-gray-300 rounded-md p-2'
-                      innerRef={(el: HTMLInputElement) =>
+                      wrapperClassName='w-full'
+                      placeholderText={t('patients.date_of_birth')}
+                      calendarStartDay={6}
+                      popperPlacement={isArabic ? 'bottom-end' : 'bottom-start'}
+                      popperModifiers={[
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 10],
+                          },
+                        },
+                      ]}
+                      locale={isArabic ? 'ar' : 'en'}
+                      calendarClassName={isArabic ? 'rtl-calendar' : ''}
+                      dateFormat='yyyy-MM-dd'
+                      inputRef={(el) =>
                         (fieldRefs.current['date_of_birth'] = el)
                       }
                     />
@@ -237,19 +312,23 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Gender' labelFor='gender' required>
+                <FormField
+                  label={t('patients.gender')}
+                  labelFor='gender'
+                  required
+                >
                   <>
                     <Field
                       name='gender'
                       id='gender'
                       component='select'
-                      className='w-full border-1 border-gray-300 rounded-md p-2'
+                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isArabic ? 'filter-select' : ''}`}
                       innerRef={(el: HTMLSelectElement) =>
                         (fieldRefs.current['gender'] = el)
                       }
                     >
-                      <option value='Male'>Male</option>
-                      <option value='Female'>Female</option>
+                      <option value='Male'>{t('patients.male')}</option>
+                      <option value='Female'>{t('patients.female')}</option>
                     </Field>
                     {touched.gender && errors.gender && (
                       <div className='text-red-500 text-xs mt-2'>
@@ -259,11 +338,11 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Nationality' required>
+                <FormField label={t('patients.nationality')} required>
                   <>
                     <Field
                       name='nationality'
-                      placeholder='Nationality'
+                      placeholder={t('patients.nationality')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['nationality'] = el)
@@ -278,7 +357,7 @@ const PatientsNew = () => {
                 </FormField>
 
                 <FormField
-                  label='Identifier Type'
+                  label={t('patients.identifier_type')}
                   labelFor='identifier_type'
                   required
                 >
@@ -287,14 +366,16 @@ const PatientsNew = () => {
                       name='identifier_type'
                       id='identifier_type'
                       component='select'
-                      className='w-full border-1 border-gray-300 rounded-md p-2'
+                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isArabic ? 'filter-select' : ''}`}
                       innerRef={(el: HTMLSelectElement) =>
                         (fieldRefs.current['identifier_type'] = el)
                       }
                     >
-                      <option value='National ID'>National ID</option>
-                      <option value='Iqama'>Iqama</option>
-                      <option value='Passport'>Passport</option>
+                      <option value='National ID'>
+                        {t('patients.national_id')}
+                      </option>
+                      <option value='Iqama'>{t('patients.iqama')}</option>
+                      <option value='Passport'>{t('patients.passport')}</option>
                     </Field>
                     {touched.identifier_type && errors.identifier_type && (
                       <div className='text-red-500 text-xs mt-2'>
@@ -304,11 +385,11 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Identifier Number' required>
+                <FormField label={t('patients.identifier')} required>
                   <>
                     <Field
                       name='identifier'
-                      placeholder='Identifier Number'
+                      placeholder={t('patients.identifier')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['identifier'] = el)
@@ -322,11 +403,11 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Address' required>
+                <FormField label={t('patients.address')} required>
                   <>
                     <Field
                       name='address'
-                      placeholder='Address'
+                      placeholder={t('patients.address')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['address'] = el)
@@ -340,11 +421,14 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Emergency Contact Name' required>
+                <FormField
+                  label={t('patients.emergency_contact_name')}
+                  required
+                >
                   <>
                     <Field
                       name='emergency_contact_name'
-                      placeholder='Emergency Contact Name'
+                      placeholder={t('patients.emergency_contact_name')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['emergency_contact_name'] = el)
@@ -359,11 +443,14 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Emergency Contact Phone' required>
+                <FormField
+                  label={t('patients.emergency_contact_phone')}
+                  required
+                >
                   <>
                     <Field
                       name='emergency_contact_phone'
-                      placeholder='Emergency Contact Phone'
+                      placeholder={t('patients.emergency_contact_phone')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLInputElement) =>
                         (fieldRefs.current['emergency_contact_phone'] = el)
@@ -378,12 +465,16 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Medical History' hasTextareaHeight required>
+                <FormField
+                  label={t('patients.medical_history')}
+                  hasTextareaHeight
+                  required
+                >
                   <>
                     <Field
                       name='medical_history'
                       as='textarea'
-                      placeholder='Medical History'
+                      placeholder={t('patients.medical_history')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLTextAreaElement) =>
                         (fieldRefs.current['medical_history'] = el)
@@ -397,12 +488,16 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Allergies' hasTextareaHeight required>
+                <FormField
+                  label={t('patients.allergies')}
+                  hasTextareaHeight
+                  required
+                >
                   <>
                     <Field
                       name='allergies'
                       as='textarea'
-                      placeholder='Allergies'
+                      placeholder={t('patients.allergies')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLTextAreaElement) =>
                         (fieldRefs.current['allergies'] = el)
@@ -417,7 +512,7 @@ const PatientsNew = () => {
                 </FormField>
 
                 <FormField
-                  label='Current Medications'
+                  label={t('patients.current_medications')}
                   hasTextareaHeight
                   required
                 >
@@ -425,7 +520,7 @@ const PatientsNew = () => {
                     <Field
                       name='current_medications'
                       as='textarea'
-                      placeholder='Current Medications'
+                      placeholder={t('patients.current_medications')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLTextAreaElement) =>
                         (fieldRefs.current['current_medications'] = el)
@@ -440,12 +535,16 @@ const PatientsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Family History' hasTextareaHeight required>
+                <FormField
+                  label={t('patients.family_history')}
+                  hasTextareaHeight
+                  required
+                >
                   <>
                     <Field
                       name='family_history'
                       as='textarea'
-                      placeholder='Family History'
+                      placeholder={t('patients.family_history')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                       innerRef={(el: HTMLTextAreaElement) =>
                         (fieldRefs.current['family_history'] = el)
@@ -464,7 +563,7 @@ const PatientsNew = () => {
                   <BaseButton
                     type='button'
                     color='info'
-                    label='Submit'
+                    label={t('actions.submit')}
                     onClick={async () => {
                       const errors = await validateForm();
                       if (Object.keys(errors).length > 0) {
@@ -475,13 +574,18 @@ const PatientsNew = () => {
                     }}
                   />
 
-                  <BaseButton type='reset' color='info' outline label='Reset' />
+                  <BaseButton
+                    type='reset'
+                    color='info'
+                    outline
+                    label={t('actions.reset')}
+                  />
 
                   <BaseButton
                     type='reset'
                     color='danger'
                     outline
-                    label='Cancel'
+                    label={t('actions.cancel')}
                     onClick={() => router.push('/patients/patients-table')}
                   />
                 </BaseButtons>

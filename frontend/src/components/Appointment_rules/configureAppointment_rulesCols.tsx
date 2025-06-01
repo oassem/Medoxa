@@ -10,8 +10,7 @@ export const loadColumns = async (
   onDelete: Params,
   entityName: string,
   user,
-  t: (key: string) => string,
-  isRTL: boolean,
+  t: (key: string) => string
 ) => {
   async function callOptionsApi(entityName: string) {
     if (!hasPermission(user, 'READ_' + entityName.toUpperCase())) return [];

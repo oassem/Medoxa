@@ -16,6 +16,7 @@ type Props = {
   diversity?: boolean;
   websiteBg?: boolean;
   required?: boolean;
+  padding?: number | string;
 };
 
 const FormField = ({ icons = [], ...props }: Props) => {
@@ -33,8 +34,11 @@ const FormField = ({ icons = [], ...props }: Props) => {
       elementWrapperClass = 'grid grid-cols-1 gap-3 md:grid-cols-3';
   }
 
+  const paddingClass =
+    props.padding === 0 || props.padding === '0' ? 'p-0' : 'px-3 py-2';
+
   const controlClassName = [
-    `px-3 py-2 max-w-full border-gray-300 dark:border-dark-700 ${corners} w-full dark:placeholder-gray-400`,
+    `${paddingClass} max-w-full border-gray-300 dark:border-dark-700 ${corners} w-full dark:placeholder-gray-400`,
     `${focusRing}`,
     props.hasTextareaHeight ? 'h-24' : 'h-12',
     props.isBorderless ? 'border-0' : 'border',
@@ -61,7 +65,9 @@ const FormField = ({ icons = [], ...props }: Props) => {
           }`}
         >
           {props.label}
-          {props.required && <span className='text-red-500 ml-1'>*</span>}
+          {props.required && (
+            <span className='text-red-500 rtl:mr-1 ltr:ml-1'>*</span>
+          )}
         </label>
       )}
 

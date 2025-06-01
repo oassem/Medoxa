@@ -192,9 +192,8 @@ const TableSampleAppointment_rules = ({
       `appointment_rules`,
       currentUser,
       t,
-      isRTL,
     ).then((newCols) => setColumns(newCols));
-  }, [currentUser, t, isRTL]);
+  }, [currentUser, t]);
 
   const handleTableSubmit = async (id: string, data) => {
     if (!_.isEmpty(data)) {

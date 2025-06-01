@@ -5,6 +5,7 @@ import {
   rejectNotify,
   resetNotify,
 } from '../../helpers/notifyStateHandler';
+import i18n from '../../i18n';
 
 interface MainState {
   patients: any;
@@ -168,7 +169,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patients have been deleted');
+      fulfilledNotify(state, i18n.t('patients.bulk_deleted'));
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -183,7 +184,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(deleteItem.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Patients'.slice(0, -1)} has been deleted`);
+      fulfilledNotify(state, i18n.t('patients.deleted'));
     });
 
     builder.addCase(deleteItem.rejected, (state, action) => {
@@ -203,7 +204,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(create.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Patients'.slice(0, -1)} has been created`);
+      fulfilledNotify(state, i18n.t('patients.created'));
     });
 
     builder.addCase(update.pending, (state) => {
@@ -213,7 +214,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, `${'Patients'.slice(0, -1)} has been updated`);
+      fulfilledNotify(state, i18n.t('patients.updated'));
     });
 
     builder.addCase(update.rejected, (state, action) => {
@@ -228,7 +229,7 @@ export const patientsSlice = createSlice({
 
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patients have been uploaded');
+      fulfilledNotify(state, i18n.t('patients.uploaded'));
     });
 
     builder.addCase(uploadCsv.rejected, (state, action) => {

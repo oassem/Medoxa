@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import BaseIcon from './BaseIcon';
 import { mdiFileUploadOutline } from '@mdi/js';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   file: File | null;
@@ -12,6 +13,7 @@ const DragDropFilePicker = ({ file, setFile, formats = '' }: Props) => {
   const [highlight, setHighlight] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const fileInput = React.createRef<HTMLInputElement>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!file && fileInput) fileInput.current.value = '';
@@ -26,7 +28,7 @@ const DragDropFilePicker = ({ file, setFile, formats = '' }: Props) => {
         setFile(newFile);
         setErrorMessage('');
       } else {
-        setErrorMessage(`Allowed formats: ${formats}`);
+        setErrorMessage(t('actions.allowedFormats', { formats }));
       }
     }
   }
@@ -42,17 +44,10 @@ const DragDropFilePicker = ({ file, setFile, formats = '' }: Props) => {
 
   function onDrop(e) {
     e.preventDefault();
-
     const files = e.dataTransfer.files;
-
     onFilesAdded(files);
     setHighlight(false);
   }
-
-  const onClear = () => {
-    setFile(null);
-    setErrorMessage('');
-  };
 
   return (
     <div
@@ -97,8 +92,10 @@ const DragDropFilePicker = ({ file, setFile, formats = '' }: Props) => {
           ) : (
             <>
               <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-                <span className='font-semibold'>Click to upload</span> or drag
-                and drop
+                <span className='font-semibold'>
+                  {t('actions.clickToUpload')}
+                </span>{' '}
+                {t('actions.orDragAndDrop')}
               </p>
               {formats && (
                 <p className='text-xs text-gray-500 dark:text-gray-400'>

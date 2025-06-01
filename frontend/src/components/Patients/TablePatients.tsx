@@ -16,6 +16,9 @@ import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configurePatientsCols';
 import { dataGridStyles } from '../../styles';
+import { useTranslation } from 'react-i18next';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { dataGridStyles_ar } from '../../styles_ar';
 import dataFormatter from '../../helpers/dataFormatter';
 import ListPatients from './ListPatients';
 import _ from 'lodash';
@@ -59,6 +62,10 @@ const TableSamplePatients = ({
   for (let i = 0; i < numPages; i++) {
     pagesList.push(i);
   }
+
+  const { t, i18n } = useTranslation();
+  const dir = i18n.dir();
+  const isRTL = dir === 'rtl';
 
   const loadData = async (page = currentPage, request = filterRequest) => {
     if (page !== currentPage) setCurrentPage(page);
@@ -178,10 +185,10 @@ const TableSamplePatients = ({
 
   useEffect(() => {
     if (!currentUser) return;
-    loadColumns(handleDeleteModalAction, `patients`, currentUser).then(
+    loadColumns(handleDeleteModalAction, 'patients', currentUser, t).then(
       (newCols) => setColumns(newCols),
     );
-  }, [currentUser]);
+  }, [currentUser, t]);
 
   const handleTableSubmit = async (id: string, data) => {
     if (!_.isEmpty(data)) {
@@ -204,57 +211,67 @@ const TableSamplePatients = ({
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
-  const dataGrid = (
-    <div className='relative overflow-x-auto'>
-      <DataGrid
-        autoHeight
-        rowHeight={64}
-        sx={dataGridStyles}
-        className={'datagrid--table'}
-        getRowClassName={() => `datagrid--row`}
-        rows={patients ?? []}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
-        disableRowSelectionOnClick
-        onProcessRowUpdateError={(params) => {
-          console.log('Error', params);
-        }}
-        processRowUpdate={async (newRow, oldRow) => {
-          const data = dataFormatter.dataGridEditFormatter(newRow);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        direction: isRTL ? 'rtl' : 'ltr',
+      }),
+    [isRTL],
+  );
 
-          try {
-            await handleTableSubmit(newRow.id, data);
-            return newRow;
-          } catch {
-            return oldRow;
-          }
-        }}
-        sortingMode={'server'}
-        checkboxSelection
-        onRowSelectionModelChange={(ids) => {
-          setSelectedRows(ids);
-        }}
-        onSortModelChange={(params) => {
-          params.length
-            ? setSortModel(params)
-            : setSortModel([{ field: '', sort: 'desc' }]);
-        }}
-        rowCount={count}
-        pageSizeOptions={[10]}
-        paginationMode={'server'}
-        loading={loading}
-        onPaginationModelChange={(params) => {
-          onPageChange(params.page);
-        }}
-        disableColumnMenu
-      />
-    </div>
+  const dataGrid = (
+    <ThemeProvider theme={theme}>
+      <div className='relative overflow-x-auto' dir={isRTL ? 'rtl' : 'ltr'}>
+        <DataGrid
+          autoHeight
+          rowHeight={64}
+          sx={isRTL ? dataGridStyles_ar : dataGridStyles}
+          className={'datagrid--table'}
+          getRowClassName={() => `datagrid--row`}
+          rows={patients ?? []}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          disableRowSelectionOnClick
+          onProcessRowUpdateError={(params) => {
+            console.log('Error', params);
+          }}
+          processRowUpdate={async (newRow, oldRow) => {
+            const data = dataFormatter.dataGridEditFormatter(newRow);
+
+            try {
+              await handleTableSubmit(newRow.id, data);
+              return newRow;
+            } catch {
+              return oldRow;
+            }
+          }}
+          sortingMode={'server'}
+          checkboxSelection
+          onRowSelectionModelChange={(ids) => {
+            setSelectedRows(ids);
+          }}
+          onSortModelChange={(params) => {
+            params.length
+              ? setSortModel(params)
+              : setSortModel([{ field: '', sort: 'desc' }]);
+          }}
+          rowCount={count}
+          pageSizeOptions={[10]}
+          paginationMode={'server'}
+          loading={loading}
+          onPaginationModelChange={(params) => {
+            onPageChange(params.page);
+          }}
+          disableColumnMenu
+        />
+      </div>
+    </ThemeProvider>
   );
 
   return (
@@ -270,187 +287,192 @@ const TableSamplePatients = ({
             onSubmit={() => null}
           >
             <Form>
-              <>
-                {filterItems &&
-                  filterItems.map((filterItem) => {
-                    return (
-                      <div key={filterItem.id} className='flex mb-4'>
-                        <div className='flex flex-col w-full mr-3'>
-                          <div className='text-gray-500 font-bold'>Filter</div>
+              <div dir={dir}>
+                {filterItems.map((filterItem) => (
+                  <div key={filterItem.id} className='flex mb-4'>
+                    <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                      <div className='text-gray-500 font-bold'>
+                        {t('filters.filter')}
+                      </div>
+                      <Field
+                        className={`${controlClasses} filter-select`}
+                        name='selectedField'
+                        id='selectedField'
+                        component='select'
+                        value={filterItem?.fields?.selectedField || ''}
+                        onChange={handleChange(filterItem.id)}
+                      >
+                        {filters.map((selectOption) => (
+                          <option
+                            key={selectOption.title}
+                            value={`${selectOption.title}`}
+                          >
+                            {selectOption.label}
+                          </option>
+                        ))}
+                      </Field>
+                    </div>
+                    {filters.find(
+                      (filter) =>
+                        filter.title === filterItem?.fields?.selectedField,
+                    )?.type === 'enum' ? (
+                      <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                        <div className='text-gray-500 font-bold'>
+                          {t('filters.value')}
+                        </div>
+                        <Field
+                          className={`${controlClasses} filter-select`}
+                          name='filterValue'
+                          id='filterValue'
+                          component='select'
+                          value={filterItem?.fields?.filterValue || ''}
+                          onChange={handleChange(filterItem.id)}
+                        >
+                          <option value=''>{t('filters.selectValue')}</option>
+                          {filters
+                            .find(
+                              (filter) =>
+                                filter.title ===
+                                filterItem?.fields?.selectedField,
+                            )
+                            ?.options?.map((option) =>
+                              typeof option === 'object' ? (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ) : (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ),
+                            )}
+                        </Field>
+                      </div>
+                    ) : filters.find(
+                        (filter) =>
+                          filter.title === filterItem?.fields?.selectedField,
+                      )?.number ? (
+                      <div className='flex flex-row w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                        <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.from')}
+                          </div>
                           <Field
                             className={controlClasses}
-                            name='selectedField'
-                            id='selectedField'
-                            component='select'
-                            value={filterItem?.fields?.selectedField || ''}
+                            name='filterValueFrom'
+                            placeholder={t('filters.fromPlaceholder')}
+                            id='filterValueFrom'
+                            value={filterItem?.fields?.filterValueFrom || ''}
                             onChange={handleChange(filterItem.id)}
-                          >
-                            {filters.map((selectOption) => (
-                              <option
-                                key={selectOption.title}
-                                value={`${selectOption.title}`}
-                              >
-                                {selectOption.label}
-                              </option>
-                            ))}
-                          </Field>
+                          />
                         </div>
-                        {filters.find(
-                          (filter) =>
-                            filter.title === filterItem?.fields?.selectedField,
-                        )?.type === 'enum' ? (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='text-gray-500 font-bold'>Value</div>
-                            <Field
-                              className={controlClasses}
-                              name='filterValue'
-                              id='filterValue'
-                              component='select'
-                              value={filterItem?.fields?.filterValue || ''}
-                              onChange={handleChange(filterItem.id)}
-                            >
-                              <option value=''>Select Value</option>
-                              {filters
-                                .find(
-                                  (filter) =>
-                                    filter.title ===
-                                    filterItem?.fields?.selectedField,
-                                )
-                                ?.options?.map((option) => (
-                                  <option key={option} value={option}>
-                                    {option}
-                                  </option>
-                                ))}
-                            </Field>
+                        <div className='flex flex-col w-full'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.to')}
                           </div>
-                        ) : filters.find(
-                            (filter) =>
-                              filter.title ===
-                              filterItem?.fields?.selectedField,
-                          )?.number ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='text-gray-500 font-bold'>
-                                From
-                              </div>
-                              <Field
-                                className={controlClasses}
-                                name='filterValueFrom'
-                                placeholder='From'
-                                id='filterValueFrom'
-                                value={
-                                  filterItem?.fields?.filterValueFrom || ''
-                                }
-                                onChange={handleChange(filterItem.id)}
-                              />
-                            </div>
-                            <div className='flex flex-col w-full'>
-                              <div className='text-gray-500 font-bold'>To</div>
-                              <Field
-                                className={controlClasses}
-                                name='filterValueTo'
-                                placeholder='to'
-                                id='filterValueTo'
-                                value={filterItem?.fields?.filterValueTo || ''}
-                                onChange={handleChange(filterItem.id)}
-                              />
-                            </div>
-                          </div>
-                        ) : filters.find(
-                            (filter) =>
-                              filter.title ===
-                              filterItem?.fields?.selectedField,
-                          )?.date ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='text-gray-500 font-bold'>
-                                From
-                              </div>
-                              <Field
-                                className={controlClasses}
-                                name='filterValueFrom'
-                                placeholder='From'
-                                id='filterValueFrom'
-                                type='datetime-local'
-                                value={
-                                  filterItem?.fields?.filterValueFrom || ''
-                                }
-                                onChange={handleChange(filterItem.id)}
-                              />
-                            </div>
-                            <div className='flex flex-col w-full'>
-                              <div className='text-gray-500 font-bold'>To</div>
-                              <Field
-                                className={controlClasses}
-                                name='filterValueTo'
-                                placeholder='to'
-                                id='filterValueTo'
-                                type='datetime-local'
-                                value={filterItem?.fields?.filterValueTo || ''}
-                                onChange={handleChange(filterItem.id)}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='  text-gray-500  font-bold'>
-                              Contains
-                            </div>
-                            <Field
-                              className={controlClasses}
-                              name='filterValue'
-                              placeholder='Contained'
-                              id='filterValue'
-                              value={filterItem?.fields?.filterValue || ''}
-                              onChange={handleChange(filterItem.id)}
-                            />
-                          </div>
-                        )}
-                        <div className='flex flex-col'>
-                          <div className='text-gray-500 invisible font-bold'>
-                            Action
-                          </div>
-                          <BaseButton
-                            className='my-2'
-                            type='reset'
-                            color='danger'
-                            label='Delete'
-                            onClick={() => {
-                              deleteFilter(filterItem.id);
-                            }}
+                          <Field
+                            className={controlClasses}
+                            name='filterValueTo'
+                            placeholder={t('filters.toPlaceholder')}
+                            id='filterValueTo'
+                            value={filterItem?.fields?.filterValueTo || ''}
+                            onChange={handleChange(filterItem.id)}
                           />
                         </div>
                       </div>
-                    );
-                  })}
+                    ) : filters.find(
+                        (filter) =>
+                          filter.title === filterItem?.fields?.selectedField,
+                      )?.date ? (
+                      <div className='flex flex-row w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                        <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.from')}
+                          </div>
+                          <Field
+                            className={`${controlClasses} ${dir === 'rtl' ? 'rtl-date-input' : 'ltr-date-input'}`}
+                            name='filterValueFrom'
+                            placeholder={t('filters.fromPlaceholder')}
+                            id='filterValueFrom'
+                            type='date'
+                            value={filterItem?.fields?.filterValueFrom || ''}
+                            onChange={handleChange(filterItem.id)}
+                          />
+                        </div>
+                        <div className='flex flex-col w-full'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.to')}
+                          </div>
+                          <Field
+                            className={controlClasses}
+                            name='filterValueTo'
+                            placeholder={t('filters.toPlaceholder')}
+                            id='filterValueTo'
+                            type='date'
+                            value={filterItem?.fields?.filterValueTo || ''}
+                            onChange={handleChange(filterItem.id)}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='flex flex-col w-full mr-3 rtl:ml-3 rtl:mr-0'>
+                        <div className='text-gray-500 font-bold'>
+                          {t('filters.contains')}
+                        </div>
+                        <Field
+                          className={controlClasses}
+                          name='filterValue'
+                          placeholder={t('filters.containedPlaceholder')}
+                          id='filterValue'
+                          value={filterItem?.fields?.filterValue || ''}
+                          onChange={handleChange(filterItem.id)}
+                        />
+                      </div>
+                    )}
+                    <div className='flex flex-col'>
+                      <div className='text-gray-500 font-bold invisible'>
+                        {t('actions.action')}
+                      </div>
+                      <BaseButton
+                        className='my-2 mr-3 rtl:ml-3 rtl:mr-0'
+                        type='reset'
+                        color='danger'
+                        label={t('actions.delete')}
+                        onClick={() => {
+                          deleteFilter(filterItem.id);
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
                 <div className='flex'>
                   <BaseButton
-                    className='my-2 mr-3'
+                    className='my-2 mr-3 rtl:ml-3 rtl:mr-0'
                     color='success'
-                    label='Apply'
+                    label={t('filters.apply')}
                     onClick={handleSubmit}
                   />
                   <BaseButton
                     className='my-2'
                     color='info'
-                    label='Cancel'
+                    label={t('filters.cancel')}
                     onClick={handleReset}
                   />
                 </div>
-              </>
+              </div>
             </Form>
           </Formik>
         </CardBox>
       ) : null}
       <CardBoxModal
-        title='Please confirm'
+        title={t('actions.pleaseConfirm')}
         buttonColor='info'
-        buttonLabel={loading ? 'Deleting...' : 'Confirm'}
+        buttonLabel={loading ? t('actions.deleting') : t('actions.confirm')}
         isActive={isModalTrashActive}
         onConfirm={handleDeleteAction}
         onCancel={handleModalAction}
       >
-        <p>Are you sure you want to delete this item?</p>
+        <p>{t('actions.deleteConfirm')}</p>
       </CardBoxModal>
 
       {patients && Array.isArray(patients) && !showGrid && (
@@ -471,12 +493,16 @@ const TableSamplePatients = ({
           <BaseButton
             className='me-4'
             color='danger'
-            label={`Delete ${selectedRows.length === 1 ? 'Row' : 'Rows'}`}
+            label={
+              selectedRows.length > 1
+                ? t('actions.deleteRows')
+                : t('actions.deleteRow')
+            }
             onClick={() => onDeleteRows(selectedRows)}
           />,
           document.getElementById('delete-rows-button'),
         )}
-      <ToastContainer />
+      <ToastContainer rtl={i18n.language === 'ar'} />
     </>
   );
 };

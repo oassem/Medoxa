@@ -15,6 +15,7 @@ import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
 import { setRefetch, uploadCsv } from '../../stores/patients/patientsSlice';
 import { hasPermission } from '../../helpers/userPermissions';
+import { useTranslation } from 'react-i18next';
 
 const PatientsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
@@ -22,45 +23,66 @@ const PatientsTablesPage = () => {
   const [isModalActive, setIsModalActive] = useState(false);
   const { currentUser } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const { t, i18n } = useTranslation();
+
+  // Get current direction (ltr/rtl)
+  const dir = i18n.dir();
 
   const [filters] = useState([
-    { label: 'Full Name (English)', title: 'full_name_en' },
-    { label: 'Full Name (Arabic)', title: 'full_name_ar' },
-    { label: 'Nationality', title: 'nationality' },
-    { label: 'Identifier Number', title: 'identifier' },
-    { label: 'Address', title: 'address' },
-    { label: 'Emergency Contact Name', title: 'emergency_contact_name' },
-    { label: 'Emergency Contact Phone', title: 'emergency_contact_phone' },
-    { label: 'Medical History', title: 'medical_history' },
-    { label: 'Allergies', title: 'allergies' },
-    { label: 'Current Medications', title: 'current_medications' },
-    { label: 'Family History', title: 'family_history' },
-    { label: 'Date of Birth', title: 'date_of_birth', date: 'true' },
+    { label: t('patients.full_name_en'), title: 'full_name_en' },
+    { label: t('patients.full_name_ar'), title: 'full_name_ar' },
+    { label: t('patients.nationality'), title: 'nationality' },
+    { label: t('patients.identifier'), title: 'identifier' },
+    { label: t('patients.address'), title: 'address' },
     {
-      label: 'Gender',
-      title: 'gender',
-      type: 'enum',
-      options: ['Male', 'Female'],
+      label: t('patients.emergency_contact_name'),
+      title: 'emergency_contact_name',
     },
     {
-      label: 'Identifier Type',
+      label: t('patients.emergency_contact_phone'),
+      title: 'emergency_contact_phone',
+    },
+    { label: t('patients.medical_history'), title: 'medical_history' },
+    { label: t('patients.allergies'), title: 'allergies' },
+    { label: t('patients.current_medications'), title: 'current_medications' },
+    { label: t('patients.family_history'), title: 'family_history' },
+    {
+      label: t('patients.date_of_birth'),
+      title: 'date_of_birth',
+      date: 'true',
+    },
+    {
+      label: t('patients.gender'),
+      title: 'gender',
+      type: 'enum',
+      options: [
+        { value: 'Male', label: t('patients.male') },
+        { value: 'Female', label: t('patients.female') },
+      ],
+    },
+    {
+      label: t('patients.identifier_type'),
       title: 'identifier_type',
       type: 'enum',
-      options: ['National ID', 'Iqama', 'Passport'],
+      options: [
+        { value: 'National ID', label: t('patients.national_id') },
+        { value: 'Iqama', label: t('patients.iqama') },
+        { value: 'Passport', label: t('patients.passport') },
+      ],
     },
     {
       title: 'phone',
-      label: 'Phone',
+      label: t('patients.phone'),
       type: 'string',
     },
     {
       title: 'email',
-      label: 'Email',
+      label: t('patients.email'),
       type: 'string',
     },
     {
       title: 'organization',
-      label: 'Organization',
+      label: t('patients.organization'),
     },
   ]);
 
@@ -112,12 +134,12 @@ const PatientsTablesPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Patients')}</title>
+        <title>{getPageTitle(t('patients.title'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='Patients'
+          title={t('patients.title')}
           main
         >
           {''}
@@ -125,31 +147,31 @@ const PatientsTablesPage = () => {
         <CardBox className='mb-6' cardBoxClassName='flex flex-wrap'>
           {hasCreatePermission && (
             <BaseButton
-              className={'mr-3'}
+              className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
               href={'/patients/patients-new'}
               color='info'
-              label='New Patient'
+              label={t('patients.newPatient')}
             />
           )}
 
           <BaseButton
-            className={'mr-3'}
+            className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
             color='info'
-            label='Filter'
+            label={t('actions.filter')}
             onClick={addFilter}
           />
 
           <BaseButton
-            className={'mr-3'}
+            className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
             color='info'
-            label='Download CSV'
+            label={t('actions.downloadCSV')}
             onClick={getPatientsCSV}
           />
 
           {hasCreatePermission && (
             <BaseButton
               color='info'
-              label='Upload CSV'
+              label={t('actions.uploadCSV')}
               onClick={() => setIsModalActive(true)}
             />
           )}
@@ -168,10 +190,9 @@ const PatientsTablesPage = () => {
         </CardBox>
       </SectionMain>
       <CardBoxModal
-        title='Upload CSV'
+        title={t('actions.uploadCSV')}
         buttonColor='info'
-        buttonLabel={'Confirm'}
-        // buttonLabel={false ? 'Deleting...' : 'Confirm'}
+        buttonLabel={t('actions.confirm')}
         isActive={isModalActive}
         onConfirm={onModalConfirm}
         onCancel={onModalCancel}

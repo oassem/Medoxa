@@ -15,17 +15,15 @@ import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import FormField from '../../components/FormField';
 import { mdiChartTimelineVariant } from '@mdi/js';
+import { useTranslation } from 'react-i18next';
 
 const PatientsView = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { patients } = useAppSelector((state) => state.patients);
   const { id } = router.query;
-
-  function removeLastCharacter(str) {
-    console.log(str, `str`);
-    return str.slice(0, -1);
-  }
+  const { t, i18n } = useTranslation();
+  const dir = i18n.dir();
 
   useEffect(() => {
     dispatch(fetch({ id }));
@@ -34,42 +32,46 @@ const PatientsView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View patient')}</title>
+        <title>{getPageTitle(t('patients.viewPatient'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={removeLastCharacter('View patients')}
+          title={t('patients.viewPatient')}
           main
         >
           <BaseButton
             color='info'
-            label='Edit'
+            label={t('actions.edit')}
             href={`/patients/patients-edit/?id=${id}`}
           />
         </SectionTitleLineWithButton>
         <CardBox>
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Full Name (English)</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.full_name_en')}
+            </p>
             <p>{patients?.full_name_en}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Full Name (Arabic)</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.full_name_ar')}
+            </p>
             <p>{patients?.full_name_ar}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Phone</p>
-            <p>{patients?.phone ?? 'No data'}</p>
+            <p className={'block font-bold mb-2'}>{t('patients.phone')}</p>
+            <p>{patients?.phone ?? t('patients.noData')}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Email</p>
-            <p>{patients?.email ?? 'No data'}</p>
+            <p className={'block font-bold mb-2'}>{t('patients.email')}</p>
+            <p>{patients?.email ?? t('patients.noData')}</p>
           </div>
 
-          <FormField label='Date of Birth'>
+          <FormField label={t('patients.date_of_birth')}>
             {patients.date_of_birth ? (
               <DatePicker
                 dateFormat='yyyy-MM-dd'
@@ -81,46 +83,66 @@ const PatientsView = () => {
                 disabled
               />
             ) : (
-              <p>No Date of Birth</p>
+              <p>{t('patients.noDateOfBirth')}</p>
             )}
           </FormField>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Gender</p>
-            <p>{patients?.gender ?? 'No data'}</p>
+            <p className={'block font-bold mb-2'}>{t('patients.gender')}</p>
+            <p>
+              {patients?.gender
+                ? t(`patients.${patients.gender.toLowerCase()}`)
+                : t('patients.noData')}
+            </p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Nationality</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.nationality')}
+            </p>
             <p>{patients?.nationality}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Identifier Type</p>
-            <p>{patients?.identifier_type ?? 'No data'}</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.identifier_type')}
+            </p>
+            <p>
+              {patients?.identifier_type
+                ? t(
+                    `patients.${patients.identifier_type
+                      .replace(/\s+/g, '_')
+                      .toLowerCase()}`,
+                  )
+                : t('patients.noData')}
+            </p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Identifier Number</p>
+            <p className={'block font-bold mb-2'}>{t('patients.identifier')}</p>
             <p>{patients?.identifier}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Address</p>
+            <p className={'block font-bold mb-2'}>{t('patients.address')}</p>
             <p>{patients?.address}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Emergency Contact Name</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.emergency_contact_name')}
+            </p>
             <p>{patients?.emergency_contact_name}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Emergency Contact Phone</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.emergency_contact_phone')}
+            </p>
             <p>{patients?.emergency_contact_phone}</p>
           </div>
 
-          <FormField label='Medical History' hasTextareaHeight>
+          <FormField label={t('patients.medical_history')} hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -128,7 +150,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Allergies' hasTextareaHeight>
+          <FormField label={t('patients.allergies')} hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -136,7 +158,10 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Current Medications' hasTextareaHeight>
+          <FormField
+            label={t('patients.current_medications')}
+            hasTextareaHeight
+          >
             <textarea
               className={'w-full'}
               disabled
@@ -144,7 +169,7 @@ const PatientsView = () => {
             />
           </FormField>
 
-          <FormField label='Family History' hasTextareaHeight>
+          <FormField label={t('patients.family_history')} hasTextareaHeight>
             <textarea
               className={'w-full'}
               disabled
@@ -220,7 +245,9 @@ const PatientsView = () => {
           </> */}
 
           <>
-            <p className={'block font-bold mb-2'}>Patient Insurance</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.patientInsurance')}
+            </p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -229,15 +256,35 @@ const PatientsView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th>Provider Name</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.provider_name')}
+                      </th>
 
-                      <th>Policy Number</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.policy_number')}
+                      </th>
 
-                      <th>Coverage Start</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.coverage_start')}
+                      </th>
 
-                      <th>Coverage End</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.coverage_end')}
+                      </th>
 
-                      <th>Plan Details</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.plan_details')}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -252,32 +299,59 @@ const PatientsView = () => {
                             )
                           }
                         >
-                          <td data-label='provider_name'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label='provider_name'
+                          >
                             {item.provider_name}
                           </td>
 
-                          <td data-label='policy_number'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label='policy_number'
+                          >
                             {item.policy_number}
                           </td>
 
-                          <td data-label='coverage_start'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label='coverage_start'
+                          >
                             {dataFormatter.dateTimeFormatter(
                               item.coverage_start,
                             )}
                           </td>
 
-                          <td data-label='coverage_end'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label='coverage_end'
+                          >
                             {dataFormatter.dateTimeFormatter(item.coverage_end)}
                           </td>
 
-                          <td data-label='plan_details'>{item.plan_details}</td>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label='plan_details'
+                          >
+                            {item.plan_details}
+                          </td>
                         </tr>
                       ))}
                   </tbody>
                 </table>
               </div>
               {!patients?.insurances_patient?.length && (
-                <div className={'text-center py-4'}>No data</div>
+                <div className={'text-center py-4'}>{t('patients.noData')}</div>
               )}
             </CardBox>
           </>
@@ -330,7 +404,9 @@ const PatientsView = () => {
           </> */}
 
           <>
-            <p className={'block font-bold mb-2'}>Patient Documents</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patients.patientDocuments')}
+            </p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -339,9 +415,16 @@ const PatientsView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th>Document Type</th>
-
-                      <th>Document URL</th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.document_type')}
+                      </th>
+                      <th
+                        className={dir === 'rtl' ? 'text-right' : 'text-left'}
+                      >
+                        {t('patients.document_url')}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -349,11 +432,20 @@ const PatientsView = () => {
                       Array.isArray(patients.patient_documents_patient) &&
                       patients.patient_documents_patient.map((item: any) => (
                         <tr key={item.id}>
-                          <td data-label='document_type'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label={t('patients.document_type')}
+                          >
                             {item.document_type}
                           </td>
-
-                          <td data-label='document_url'>
+                          <td
+                            className={
+                              dir === 'rtl' ? 'text-right' : 'text-left'
+                            }
+                            data-label={t('patients.document_url')}
+                          >
                             {item.document_url ? (
                               <a
                                 href={`${baseURL}/${item.document_url.replace(/\\/g, '/')}`}
@@ -362,10 +454,10 @@ const PatientsView = () => {
                                 className='text-blue-600 underline'
                                 download={item.document_url.split('/').pop()}
                               >
-                                Download/View document
+                                {t('patients.downloadViewDocument')}
                               </a>
                             ) : (
-                              'No file'
+                              t('patients.noFile')
                             )}
                           </td>
                         </tr>
@@ -374,7 +466,7 @@ const PatientsView = () => {
                 </table>
               </div>
               {!patients?.patient_documents_patient?.length && (
-                <div className={'text-center py-4'}>No data</div>
+                <div className={'text-center py-4'}>{t('patients.noData')}</div>
               )}
             </CardBox>
           </>
@@ -433,7 +525,7 @@ const PatientsView = () => {
 
           <BaseButton
             color='info'
-            label='Back'
+            label={t('actions.back')}
             onClick={() => router.push('/patients/patients-table')}
           />
         </CardBox>
