@@ -539,7 +539,7 @@ module.exports = class PatientsDBApi {
     }
 
     const records = await db.patients.findAll({
-      attributes: ['id', 'full_name_en'],
+      attributes: ['id', 'full_name_en', 'full_name_ar'],
       where,
       limit: limit ? Number(limit) : undefined,
       offset: offset ? Number(offset) : undefined,
@@ -549,6 +549,7 @@ module.exports = class PatientsDBApi {
     return records.map((record) => ({
       id: record.id,
       label: record.full_name_en,
+      label_ar: record.full_name_ar,
     }));
   }
 };

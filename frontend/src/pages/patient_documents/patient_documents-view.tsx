@@ -13,8 +13,10 @@ import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import { mdiChartTimelineVariant } from '@mdi/js';
 import { baseURL } from '../../config';
+import { useTranslation } from 'react-i18next';
 
 const Patient_documentsView = () => {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { patient_documents } = useAppSelector(
@@ -23,11 +25,6 @@ const Patient_documentsView = () => {
 
   const { id } = router.query;
 
-  function removeLastCharacter(str) {
-    console.log(str, `str`);
-    return str.slice(0, -1);
-  }
-
   useEffect(() => {
     dispatch(fetch({ id }));
   }, [dispatch, id]);
@@ -35,33 +32,46 @@ const Patient_documentsView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View patient document')}</title>
+        <title>
+          {getPageTitle(t('patient_documents.view_patient_document'))}
+        </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={removeLastCharacter('View patient documents')}
+          title={t('patient_documents.view_patient_document')}
           main
         >
           <BaseButton
             color='info'
-            label='Edit'
+            label={t('common.edit')}
             href={`/patient_documents/patient_documents-edit/?id=${id}`}
           />
         </SectionTitleLineWithButton>
         <CardBox>
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Patient</p>
-            <p>{patient_documents?.patient?.full_name_en ?? 'No data'}</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patient_documents.patient')}
+            </p>
+            <p>
+              {i18n.dir() === 'rtl'
+                ? patient_documents?.patient?.full_name_ar
+                : (patient_documents?.patient?.full_name_en ??
+                  t('patient_documents.no_data'))}
+            </p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Document Type</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patient_documents.document_type')}
+            </p>
             <p>{patient_documents?.document_type}</p>
           </div>
 
           <div className={'mb-4'}>
-            <p className={'block font-bold mb-2'}>Document File</p>
+            <p className={'block font-bold mb-2'}>
+              {t('patient_documents.document_file')}
+            </p>
             {patient_documents?.document_url ? (
               <a
                 href={`${baseURL}/${patient_documents.document_url.replace(/\\/g, '/')}`}
@@ -70,17 +80,17 @@ const Patient_documentsView = () => {
                 className='text-blue-600 underline'
                 download={patient_documents.document_url.split('/').pop()}
               >
-                Download/View Document
+                {t('patient_documents.download_view_document')}
               </a>
             ) : (
-              <p>No file uploaded</p>
+              <p>{t('patient_documents.no_file_uploaded')}</p>
             )}
           </div>
           <BaseDivider />
 
           <BaseButton
             color='info'
-            label='Back'
+            label={t('common.back')}
             onClick={() =>
               router.push('/patient_documents/patient_documents-table')
             }

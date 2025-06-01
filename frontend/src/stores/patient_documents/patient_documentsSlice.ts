@@ -5,6 +5,7 @@ import {
   rejectNotify,
   resetNotify,
 } from '../../helpers/notifyStateHandler';
+import i18n from '../../i18n';
 
 interface MainState {
   patient_documents: any;
@@ -175,7 +176,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(deleteItemsByIds.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patient documents has been deleted');
+      fulfilledNotify(state, i18n.t('patient_documents.deleted_plural'));
     });
 
     builder.addCase(deleteItemsByIds.rejected, (state, action) => {
@@ -190,10 +191,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(deleteItem.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Patient documents'.slice(0, -1)} has been deleted`,
-      );
+      fulfilledNotify(state, i18n.t('patient_documents.deleted'));
     });
 
     builder.addCase(deleteItem.rejected, (state, action) => {
@@ -213,10 +211,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(create.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Patient documents'.slice(0, -1)} has been created`,
-      );
+      fulfilledNotify(state, i18n.t('patient_documents.created'));
     });
 
     builder.addCase(update.pending, (state) => {
@@ -226,10 +221,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(update.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(
-        state,
-        `${'Patient documents'.slice(0, -1)} has been updated`,
-      );
+      fulfilledNotify(state, i18n.t('patient_documents.updated'));
     });
 
     builder.addCase(update.rejected, (state, action) => {
@@ -244,7 +236,7 @@ export const patient_documentsSlice = createSlice({
 
     builder.addCase(uploadCsv.fulfilled, (state) => {
       state.loading = false;
-      fulfilledNotify(state, 'Patient documents has been uploaded');
+      fulfilledNotify(state, i18n.t('patient_documents.uploaded'));
     });
 
     builder.addCase(uploadCsv.rejected, (state, action) => {

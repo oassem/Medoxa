@@ -227,6 +227,13 @@ module.exports = class Patient_documentsDBApi {
                     .map((term) => ({ [Op.iLike]: `%${term}%` })),
                 },
               },
+              {
+                full_name_ar: {
+                  [Op.or]: filter.patient
+                    .split('|')
+                    .map((term) => ({ [Op.iLike]: `%${term}%` })),
+                },
+              },
             ],
           }
           : {},
@@ -308,6 +315,19 @@ module.exports = class Patient_documentsDBApi {
             },
           };
         }
+      }
+
+      if (filter.patient) {
+        where = {
+          ...where,
+          patientId: {
+            [Op.in]: Sequelize.literal(`(
+              SELECT id FROM patients
+              WHERE full_name_en ILIKE '%${filter.patient}%'
+                 OR full_name_ar ILIKE '%${filter.patient}%'
+            )`)
+          }
+        };
       }
     }
 

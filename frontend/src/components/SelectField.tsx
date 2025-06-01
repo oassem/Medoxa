@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useState } from 'react';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import axiosInstance from '../utils/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 export const SelectField = ({
   options,
@@ -10,6 +11,7 @@ export const SelectField = ({
   showField,
   disabled,
 }) => {
+  const { i18n, t } = useTranslation();
   const [value, setValue] = useState(null);
   const PAGE_SIZE = 100;
 
@@ -24,7 +26,7 @@ export const SelectField = ({
 
   const mapResponseToValuesAndLabels = (data) => ({
     value: data.id,
-    label: data.label,
+    label: i18n.language === 'ar' && data.label_ar ? data.label_ar : data.label,
   });
   const handleChange = (option) => {
     form.setFieldValue(field.name, option?.value || null);
@@ -55,6 +57,7 @@ export const SelectField = ({
       defaultOptions
       isDisabled={disabled}
       isClearable
+      placeholder={t('actions.select')}
     />
   );
 };

@@ -10,6 +10,8 @@ export const loadColumns = async (
   onDelete: Params,
   entityName: string,
   user,
+  t: any,
+  dir: string,
 ) => {
   async function callOptionsApi(entityName: string) {
     if (!hasPermission(user, 'READ_' + entityName.toUpperCase())) return [];
@@ -28,7 +30,7 @@ export const loadColumns = async (
   return [
     {
       field: 'patient',
-      headerName: 'Patient',
+      headerName: t('patient_documents.patient'),
       flex: 1,
       minWidth: 120,
       filterable: false,
@@ -38,7 +40,8 @@ export const loadColumns = async (
       sortable: false,
       type: 'singleSelect',
       getOptionValue: (value: any) => value?.id,
-      getOptionLabel: (value: any) => value?.label,
+      getOptionLabel: (value: any) =>
+        dir === 'rtl' ? value?.label_ar : value?.label,
       valueOptions: await callOptionsApi('patients'),
       valueGetter: (params: GridValueGetterParams) =>
         params?.value?.id ?? params?.value,
@@ -46,7 +49,7 @@ export const loadColumns = async (
 
     {
       field: 'document_type',
-      headerName: 'Document Type',
+      headerName: t('patient_documents.document_type'),
       flex: 1,
       minWidth: 120,
       filterable: false,

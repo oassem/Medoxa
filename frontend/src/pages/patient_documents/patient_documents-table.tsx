@@ -18,18 +18,21 @@ import {
   uploadCsv,
 } from '../../stores/patient_documents/patient_documentsSlice';
 import { hasPermission } from '../../helpers/userPermissions';
+import { useTranslation } from 'react-i18next';
 
 const Patient_documentsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
   const { currentUser } = useAppSelector((state) => state.auth);
+  const { t, i18n } = useTranslation();
+  const dir = i18n.dir();
 
   const dispatch = useAppDispatch();
 
   const [filters] = useState([
-    { label: 'Document Type', title: 'document_type' },
-    { label: 'Patient', title: 'patient' },
+    { label: t('patient_documents.document_type'), title: 'document_type' },
+    { label: t('patient_documents.patient'), title: 'patient' },
   ]);
 
   const hasCreatePermission =
@@ -80,12 +83,12 @@ const Patient_documentsTablesPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Patient documents')}</title>
+        <title>{getPageTitle(t('patient_documents.title'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='Patient documents'
+          title={t('patient_documents.title')}
           main
         >
           {''}
@@ -93,31 +96,31 @@ const Patient_documentsTablesPage = () => {
         <CardBox className='mb-6' cardBoxClassName='flex flex-wrap'>
           {hasCreatePermission && (
             <BaseButton
-              className={'mr-3'}
+              className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
               href={'/patient_documents/patient_documents-new'}
               color='info'
-              label='New Patient Document'
+              label={t('patient_documents.newPatientDocument')}
             />
           )}
 
           <BaseButton
-            className={'mr-3'}
+            className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
             color='info'
-            label='Filter'
+            label={t('actions.filter')}
             onClick={addFilter}
           />
 
           <BaseButton
-            className={'mr-3'}
+            className={dir === 'rtl' ? 'ml-3' : 'mr-3'}
             color='info'
-            label='Download CSV'
+            label={t('actions.downloadCSV')}
             onClick={getPatient_documentsCSV}
           />
 
           {hasCreatePermission && (
             <BaseButton
               color='info'
-              label='Upload CSV'
+              label={t('actions.uploadCSV')}
               onClick={() => setIsModalActive(true)}
             />
           )}
@@ -136,10 +139,9 @@ const Patient_documentsTablesPage = () => {
         </CardBox>
       </SectionMain>
       <CardBoxModal
-        title='Upload CSV'
+        title={t('actions.uploadCSV')}
         buttonColor='info'
-        buttonLabel={'Confirm'}
-        // buttonLabel={false ? 'Deleting...' : 'Confirm'}
+        buttonLabel={t('actions.confirm')}
         isActive={isModalActive}
         onConfirm={onModalConfirm}
         onCancel={onModalCancel}

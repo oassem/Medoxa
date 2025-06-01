@@ -100,7 +100,8 @@ export const dataGridStyles_ar = {
     borderEndStartRadius: 7,
     borderEndEndRadius: 7,
     direction: 'ltr', // Fix the pagination numbers direction
-    justifyContent: 'flex-start', // Optional: align them visually for RTL
+    justifyContent: 'flex-between',
+    flexDirection: 'row-reverse', // Optional: align them visually for RTL
   },
   '& .MuiDataGrid-root': {
     border: 'none',

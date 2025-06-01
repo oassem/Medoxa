@@ -238,7 +238,9 @@
     "visit_datetime": "Visit DateTime",
     "symptoms": "Symptoms",
     "diagnosis": "Diagnosis",
-    "notes": "Notes"
+    "notes": "Notes",
+    "rows_selected": "{{count}} row selected",
+    "rows_selected_plural": "{{count}} rows selected"
   },
   "fields": {
     "firstName": "First Name",
@@ -315,7 +317,8 @@
     "deleteRows": "Delete Rows",
     "clickToUpload": "Click to upload",
     "orDragAndDrop": "or drag and drop",
-    "allowedFormats": "Allowed formats: {{formats}}"
+    "allowedFormats": "Allowed formats: {{formats}}",
+    "select": "Select..."
   },
   "messages": {
     "noAvatar": "No Avatar",
@@ -418,5 +421,31 @@
     "hideStack": "Hide stack trace",
     "tryAgain": "Try Again",
     "goBack": "Go Back"
+  },
+  "patient_documents": {
+    "title": "Patient Documents",
+    "newPatientDocument": "New Patient Document",
+    "document_type": "Document Type",
+    "patient": "Patient",
+    "document_url": "Document URL",
+    "no_data_to_display": "No data to display",
+    "rows_selected": "{{count}} row selected",
+    "rows_selected_plural": "{{count}} rows selected",
+    "deleted": "Patient document has been deleted",
+    "deleted_plural": "Patient documents have been deleted",
+    "created": "Patient document has been created",
+    "updated": "Patient document has been updated",
+    "uploaded": "Patient documents have been uploaded",
+    "document_file": "Document File",
+    "patient_required": "Patient is required",
+    "document_type_required": "Document Type is required",
+    "document_file_required": "Document File is required",
+    "unsupported_file_format": "Unsupported file format",
+    "view_patient_document": "View patient document",
+    "no_data": "No data",
+    "download_view_document": "Download/View Document",
+    "no_file_uploaded": "No file uploaded",
+    "edit_patient_document": "Edit patient document",
+    "download_view_current_document": "Download/View Current Document"
   }
 }

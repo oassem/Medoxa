@@ -12,7 +12,6 @@ import {
   deleteItemsByIds,
 } from '../../stores/patient_documents/patient_documentsSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { useRouter } from 'next/router';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configurePatient_documentsCols';
@@ -20,7 +19,9 @@ import _ from 'lodash';
 import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
 import ListPatient_documents from './ListPatient_documents';
-
+import { useTranslation } from 'react-i18next';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { dataGridStyles_ar } from '../../styles_ar';
 const perPage = 10;
 
 const TableSamplePatient_documents = ({
@@ -29,6 +30,9 @@ const TableSamplePatient_documents = ({
   filters,
   showGrid,
 }) => {
+  const { t, i18n } = useTranslation();
+  const dir = i18n.dir();
+
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
   const dispatch = useAppDispatch();
   const pagesList = [];
@@ -103,6 +107,7 @@ const TableSamplePatient_documents = ({
     setId(id);
     setIsModalTrashActive(true);
   };
+
   const handleDeleteAction = async () => {
     if (id) {
       await dispatch(deleteItem(id));
@@ -183,10 +188,14 @@ const TableSamplePatient_documents = ({
   useEffect(() => {
     if (!currentUser) return;
 
-    loadColumns(handleDeleteModalAction, `patient_documents`, currentUser).then(
-      (newCols) => setColumns(newCols),
-    );
-  }, [currentUser]);
+    loadColumns(
+      handleDeleteModalAction,
+      `patient_documents`,
+      currentUser,
+      t,
+      dir,
+    ).then((newCols) => setColumns(newCols));
+  }, [currentUser, t, dir]);
 
   const handleTableSubmit = async (id: string, data) => {
     if (!_.isEmpty(data)) {
@@ -209,57 +218,77 @@ const TableSamplePatient_documents = ({
     ` ${bgColor} ${focusRing} ${corners} ` +
     'dark:bg-slate-800 border';
 
-  const dataGrid = (
-    <div className='relative overflow-x-auto'>
-      <DataGrid
-        autoHeight
-        rowHeight={64}
-        sx={dataGridStyles}
-        className={'datagrid--table'}
-        getRowClassName={() => `datagrid--row`}
-        rows={patient_documents ?? []}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
-        disableRowSelectionOnClick
-        onProcessRowUpdateError={(params) => {
-          console.log('Error', params);
-        }}
-        processRowUpdate={async (newRow, oldRow) => {
-          const data = dataFormatter.dataGridEditFormatter(newRow);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        direction: dir === 'rtl' ? 'rtl' : 'ltr',
+      }),
+    [dir],
+  );
 
-          try {
-            await handleTableSubmit(newRow.id, data);
-            return newRow;
-          } catch {
-            return oldRow;
-          }
-        }}
-        sortingMode={'server'}
-        checkboxSelection
-        onRowSelectionModelChange={(ids) => {
-          setSelectedRows(ids);
-        }}
-        onSortModelChange={(params) => {
-          params.length
-            ? setSortModel(params)
-            : setSortModel([{ field: '', sort: 'desc' }]);
-        }}
-        rowCount={count}
-        pageSizeOptions={[10]}
-        paginationMode={'server'}
-        loading={loading}
-        onPaginationModelChange={(params) => {
-          onPageChange(params.page);
-        }}
-        disableColumnMenu
-      />
-    </div>
+  const dataGrid = (
+    <ThemeProvider theme={theme}>
+      <div
+        className='relative overflow-x-auto'
+        dir={dir === 'rtl' ? 'rtl' : 'ltr'}
+      >
+        <DataGrid
+          autoHeight
+          rowHeight={64}
+          sx={dir === 'rtl' ? dataGridStyles_ar : dataGridStyles}
+          className={'datagrid--table'}
+          getRowClassName={() => `datagrid--row`}
+          rows={patient_documents ?? []}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          disableRowSelectionOnClick
+          onProcessRowUpdateError={(params) => {
+            console.log('Error', params);
+          }}
+          processRowUpdate={async (newRow, oldRow) => {
+            const data = dataFormatter.dataGridEditFormatter(newRow);
+
+            try {
+              await handleTableSubmit(newRow.id, data);
+              return newRow;
+            } catch {
+              return oldRow;
+            }
+          }}
+          sortingMode={'server'}
+          checkboxSelection
+          onRowSelectionModelChange={(ids) => {
+            setSelectedRows(ids);
+          }}
+          onSortModelChange={(params) => {
+            params.length
+              ? setSortModel(params)
+              : setSortModel([{ field: '', sort: 'desc' }]);
+          }}
+          rowCount={count}
+          pageSizeOptions={[10]}
+          paginationMode={'server'}
+          loading={loading}
+          onPaginationModelChange={(params) => {
+            onPageChange(params.page);
+          }}
+          disableColumnMenu
+          localeText={{
+            ...(dir === 'rtl' ? {} : {}),
+            footerRowSelected: (count) =>
+              count === 1
+                ? t('patient_documents.rows_selected', { count })
+                : t('patient_documents.rows_selected_plural', { count }),
+          }}
+        />
+      </div>
+    </ThemeProvider>
   );
 
   return (
@@ -280,12 +309,12 @@ const TableSamplePatient_documents = ({
                   filterItems.map((filterItem) => {
                     return (
                       <div key={filterItem.id} className='flex mb-4'>
-                        <div className='flex flex-col w-full mr-3'>
-                          <div className='  text-gray-500  font-bold'>
-                            Filter
+                        <div className='flex flex-col w-full rtl:ml-3 ltr:mr-3'>
+                          <div className='text-gray-500 font-bold'>
+                            {t('filters.filter')}
                           </div>
                           <Field
-                            className={controlClasses}
+                            className={`${controlClasses} ${dir === 'rtl' ? 'filter-select' : ''}`}
                             name='selectedField'
                             id='selectedField'
                             component='select'
@@ -306,8 +335,10 @@ const TableSamplePatient_documents = ({
                           (filter) =>
                             filter.title === filterItem?.fields?.selectedField,
                         )?.type === 'enum' ? (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='text-gray-500 font-bold'>Value</div>
+                          <div className='flex flex-col w-full rtl:ml-3 ltr:mr-3'>
+                            <div className='text-gray-500 font-bold'>
+                              {t('filters.value')}
+                            </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
@@ -316,7 +347,9 @@ const TableSamplePatient_documents = ({
                               value={filterItem?.fields?.filterValue || ''}
                               onChange={handleChange(filterItem.id)}
                             >
-                              <option value=''>Select Value</option>
+                              <option value=''>
+                                {t('filters.selectValue')}
+                              </option>
                               {filters
                                 .find(
                                   (filter) =>
@@ -335,15 +368,15 @@ const TableSamplePatient_documents = ({
                               filter.title ===
                               filterItem?.fields?.selectedField,
                           )?.number ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
-                                From
+                          <div className='flex flex-row w-full rtl:ml-3 ltr:mr-3'>
+                            <div className='flex flex-col w-full rtl:ml-3 ltr:mr-3'>
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('filters.fromPlaceholder')}
                                 id='filterValueFrom'
                                 value={
                                   filterItem?.fields?.filterValueFrom || ''
@@ -352,13 +385,13 @@ const TableSamplePatient_documents = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('filters.toPlaceholder')}
                                 id='filterValueTo'
                                 value={filterItem?.fields?.filterValueTo || ''}
                                 onChange={handleChange(filterItem.id)}
@@ -370,15 +403,15 @@ const TableSamplePatient_documents = ({
                               filter.title ===
                               filterItem?.fields?.selectedField,
                           )?.date ? (
-                          <div className='flex flex-row w-full mr-3'>
-                            <div className='flex flex-col w-full mr-3'>
-                              <div className='  text-gray-500  font-bold'>
-                                From
+                          <div className='flex flex-row w-full rtl:ml-3 ltr:mr-3'>
+                            <div className='flex flex-col w-full rtl:ml-3 ltr:mr-3'>
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.from')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueFrom'
-                                placeholder='From'
+                                placeholder={t('filters.fromPlaceholder')}
                                 id='filterValueFrom'
                                 type='datetime-local'
                                 value={
@@ -388,13 +421,13 @@ const TableSamplePatient_documents = ({
                               />
                             </div>
                             <div className='flex flex-col w-full'>
-                              <div className='  text-gray-500  font-bold'>
-                                To
+                              <div className='text-gray-500 font-bold'>
+                                {t('filters.to')}
                               </div>
                               <Field
                                 className={controlClasses}
                                 name='filterValueTo'
-                                placeholder='to'
+                                placeholder={t('filters.toPlaceholder')}
                                 id='filterValueTo'
                                 type='datetime-local'
                                 value={filterItem?.fields?.filterValueTo || ''}
@@ -403,14 +436,14 @@ const TableSamplePatient_documents = ({
                             </div>
                           </div>
                         ) : (
-                          <div className='flex flex-col w-full mr-3'>
-                            <div className='  text-gray-500  font-bold'>
-                              Contains
+                          <div className='flex flex-col w-full rtl:ml-3 ltr:mr-3'>
+                            <div className='text-gray-500 font-bold'>
+                              {t('filters.contains')}
                             </div>
                             <Field
                               className={controlClasses}
                               name='filterValue'
-                              placeholder='Contained'
+                              placeholder={t('filters.containedPlaceholder')}
                               id='filterValue'
                               value={filterItem?.fields?.filterValue || ''}
                               onChange={handleChange(filterItem.id)}
@@ -419,13 +452,13 @@ const TableSamplePatient_documents = ({
                         )}
                         <div className='flex flex-col'>
                           <div className='text-gray-500 invisible font-bold'>
-                            Action
+                            {t('actions.action')}
                           </div>
                           <BaseButton
                             className='my-2'
                             type='reset'
                             color='danger'
-                            label='Delete'
+                            label={t('actions.delete')}
                             onClick={() => {
                               deleteFilter(filterItem.id);
                             }}
@@ -436,15 +469,15 @@ const TableSamplePatient_documents = ({
                   })}
                 <div className='flex'>
                   <BaseButton
-                    className='my-2 mr-3'
+                    className='my-2 rtl:ml-3 ltr:mr-3'
                     color='success'
-                    label='Apply'
+                    label={t('filters.apply')}
                     onClick={handleSubmit}
                   />
                   <BaseButton
                     className='my-2'
                     color='info'
-                    label='Cancel'
+                    label={t('filters.cancel')}
                     onClick={handleReset}
                   />
                 </div>
@@ -454,14 +487,14 @@ const TableSamplePatient_documents = ({
         </CardBox>
       ) : null}
       <CardBoxModal
-        title='Please confirm'
+        title={t('actions.pleaseConfirm')}
         buttonColor='info'
-        buttonLabel={loading ? 'Deleting...' : 'Confirm'}
+        buttonLabel={loading ? t('actions.deleting') : t('actions.confirm')}
         isActive={isModalTrashActive}
         onConfirm={handleDeleteAction}
         onCancel={handleModalAction}
       >
-        <p>Are you sure you want to delete this item?</p>
+        <p>{t('actions.deleteConfirm')}</p>
       </CardBoxModal>
 
       {patient_documents && Array.isArray(patient_documents) && !showGrid && (
@@ -482,12 +515,16 @@ const TableSamplePatient_documents = ({
           <BaseButton
             className='me-4'
             color='danger'
-            label={`Delete ${selectedRows.length === 1 ? 'Row' : 'Rows'}`}
+            label={
+              selectedRows.length > 1
+                ? t('actions.deleteRows')
+                : t('actions.deleteRow')
+            }
             onClick={() => onDeleteRows(selectedRows)}
           />,
           document.getElementById('delete-rows-button'),
         )}
-      <ToastContainer />
+      <ToastContainer rtl={dir === 'rtl'} />
     </>
   );
 };

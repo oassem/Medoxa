@@ -269,6 +269,13 @@ const TableSamplePatients = ({
             onPageChange(params.page);
           }}
           disableColumnMenu
+          localeText={{
+            ...(dir === 'rtl' ? {} : {}),
+            footerRowSelected: (count) =>
+              count === 1
+                ? t('patients.rows_selected', { count })
+                : t('patients.rows_selected_plural', { count }),
+          }}
         />
       </div>
     </ThemeProvider>

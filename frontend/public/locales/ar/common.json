@@ -26,7 +26,7 @@
             "labOrders": "طلبات المختبر",
             "labTests": "اختبارات المختبر",
             "medications": "الأدوية",
-            "patientDocuments": "وثائق المريض",
+            "patientDocuments": "مستندات المرضى",
             "patients": "المرضى",
             "pharmacyOrderItems": "عناصر طلب الصيدلية",
             "pharmacyOrders": "طلبات الصيدلية",
@@ -99,7 +99,7 @@
         "labOrders": "طلبات المختبر",
         "labTests": "اختبارات المختبر",
         "medications": "الأدوية",
-        "patientDocuments": "وثائق المريض",
+        "patientDocuments": "مستندات المرضى",
         "patients": "المرضى",
         "pharmacyOrderItems": "عناصر طلب الصيدلية",
         "pharmacyOrders": "طلبات الصيدلية",
@@ -238,7 +238,9 @@
         "visit_datetime": "تاريخ ووقت الزيارة",
         "symptoms": "الأعراض",
         "diagnosis": "التشخيص",
-        "notes": "ملاحظات"
+        "notes": "ملاحظات",
+        "rows_selected": "تم تحديد صف واحد",
+        "rows_selected_plural": "تم تحديد {{count}} صفوف"
     },
     "fields": {
         "firstName": "الاسم الأول",
@@ -315,7 +317,8 @@
         "deleteRows": "حذف الصفوف",
         "clickToUpload": "انقر للرفع",
         "orDragAndDrop": "أو اسحب وأسقط الملف",
-        "allowedFormats": "الصيغ المسموحة: {{formats}}"
+        "allowedFormats": "الصيغ المسموحة: {{formats}}",
+        "select": "اختر..."
     },
     "messages": {
         "noAvatar": "لا توجد صورة رمزية",
@@ -418,5 +421,31 @@
         "hideStack": "إخفاء تتبع الخطأ",
         "tryAgain": "حاول مرة أخرى",
         "goBack": "العودة"
+    },
+    "patient_documents": {
+        "title": "مستندات المرضى",
+        "newPatientDocument": "مستند مريض جديد",
+        "document_type": "نوع المستند",
+        "patient": "المريض",
+        "document_url": "رابط المستند",
+        "no_data_to_display": "لا توجد بيانات للعرض",
+        "rows_selected": "تم تحديد صف واحد",
+        "rows_selected_plural": "تم تحديد {{count}} صفوف",
+        "deleted": "تم حذف مستند المريض",
+        "deleted_plural": "تم حذف مستندات المرضى",
+        "created": "تم إنشاء مستند المريض",
+        "updated": "تم تحديث مستند المريض",
+        "uploaded": "تم رفع مستندات المرضى",
+        "document_file": "ملف المستند",
+        "patient_required": "المريض مطلوب",
+        "document_type_required": "نوع المستند مطلوب",
+        "document_file_required": "ملف المستند مطلوب",
+        "unsupported_file_format": "صيغة الملف غير مدعومة",
+        "view_patient_document": "عرض مستند المريض",
+        "no_data": "لا توجد بيانات",
+        "download_view_document": "تحميل/عرض المستند",
+        "no_file_uploaded": "لا يوجد ملف مرفوع",
+        "edit_patient_document": "تعديل مستند المريض",
+        "download_view_current_document": "تحميل/عرض المستند الحالي"
     }
 }

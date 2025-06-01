@@ -1,6 +1,6 @@
 import { mdiChartTimelineVariant } from '@mdi/js';
 import Head from 'next/head';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState, useMemo } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
@@ -19,30 +19,35 @@ import {
 } from '../../stores/patient_documents/patient_documentsSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 
-const validationSchema = Yup.object().shape({
-  patient: Yup.string().required('Patient is required'),
-  document_type: Yup.string().required('Document Type is required'),
-  document_file: Yup.mixed().test(
-    'fileType',
-    'Unsupported file format',
-    (value) => {
-      if (!value) return true; // No new file selected, skip validation
-      if (typeof value !== 'object' || !('type' in value)) return false;
-      const allowed = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'image/jpeg',
-        'image/png',
-      ];
-      return allowed.includes((value as File).type);
-    },
-  ),
-});
+export const getValidationSchema = (t) =>
+  Yup.object().shape({
+    patient: Yup.string().required(t('patient_documents.patient_required')),
+    document_type: Yup.string().required(
+      t('patient_documents.document_type_required'),
+    ),
+    document_file: Yup.mixed().test(
+      'fileType',
+      t('patient_documents.unsupported_file_format'),
+      (value) => {
+        if (!value) return true; // No new file selected, skip validation
+        if (typeof value !== 'object' || !('type' in value)) return false;
+        const allowed = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'image/jpeg',
+          'image/png',
+        ];
+        return allowed.includes((value as File).type);
+      },
+    ),
+  });
 
 const EditPatient_documentsPage = () => {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const initVals = {
@@ -78,6 +83,12 @@ const EditPatient_documentsPage = () => {
     }
   }, [patient_documents]);
 
+  // Regenerate schema when language changes
+  const validationSchema = useMemo(
+    () => getValidationSchema(t),
+    [t, i18n.language],
+  );
+
   const handleSubmit = async (data) => {
     const formData = new FormData();
     formData.append('patient', data.patient);
@@ -93,12 +104,14 @@ const EditPatient_documentsPage = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('Edit patient document')}</title>
+        <title>
+          {getPageTitle(t('patient_documents.edit_patient_document'))}
+        </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={'Edit patient document'}
+          title={t('patient_documents.edit_patient_document')}
           main
         >
           {''}
@@ -112,7 +125,11 @@ const EditPatient_documentsPage = () => {
           >
             {({ setFieldValue, errors, touched }) => (
               <Form>
-                <FormField label='Patient' labelFor='patient' required>
+                <FormField
+                  label={t('patient_documents.patient')}
+                  labelFor='patient'
+                  required
+                >
                   <>
                     <Field
                       name='patient'
@@ -120,7 +137,9 @@ const EditPatient_documentsPage = () => {
                       component={SelectField}
                       options={initialValues.patient}
                       itemRef={'patients'}
-                      showField={'full_name_en'}
+                      showField={
+                        i18n.language === 'ar' ? 'full_name_ar' : 'full_name_en'
+                      }
                     />
                     {touched.patient && errors.patient && (
                       <div className='text-red-500 text-xs mt-2'>
@@ -130,11 +149,14 @@ const EditPatient_documentsPage = () => {
                   </>
                 </FormField>
 
-                <FormField label='Document Type' required>
+                <FormField
+                  label={t('patient_documents.document_type')}
+                  required
+                >
                   <>
                     <Field
                       name='document_type'
-                      placeholder='Document Type'
+                      placeholder={t('patient_documents.document_type')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                     />
                     {touched.document_type && errors.document_type && (
@@ -145,7 +167,10 @@ const EditPatient_documentsPage = () => {
                   </>
                 </FormField>
 
-                <FormField label='Document File' required>
+                <FormField
+                  label={t('patient_documents.document_file')}
+                  required
+                >
                   <>
                     <div className='mb-2 flex items-center gap-4'>
                       <input
@@ -169,7 +194,9 @@ const EditPatient_documentsPage = () => {
                             .split('/')
                             .pop()}
                         >
-                          Download/View Current Document
+                          {t(
+                            'patient_documents.download_view_current_document',
+                          )}
                         </a>
                       )}
                     </div>
@@ -183,19 +210,17 @@ const EditPatient_documentsPage = () => {
 
                 <BaseDivider />
                 <BaseButtons>
-                  <BaseButton type='submit' color='info' label='Submit' />
                   <BaseButton
-                    type='reset'
+                    type='submit'
                     color='info'
-                    outline
-                    label='Reset'
-                    onClick={() => setInitialValues(initVals)}
+                    label={t('actions.submit')}
                   />
+
                   <BaseButton
                     type='reset'
                     color='danger'
                     outline
-                    label='Cancel'
+                    label={t('actions.cancel')}
                     onClick={() =>
                       router.push('/patient_documents/patient_documents-table')
                     }

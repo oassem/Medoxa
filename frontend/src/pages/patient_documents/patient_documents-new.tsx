@@ -16,35 +16,40 @@ import { create } from '../../stores/patient_documents/patient_documentsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
-const initialValues = {
-  patient: '',
-  document_type: '',
-  document_file: null,
-};
-
-const validationSchema = Yup.object().shape({
-  patient: Yup.string().required('Patient is required'),
-  document_type: Yup.string().required('Document Type is required'),
-  document_file: Yup.mixed()
-    .required('Document File is required')
-    .test('fileType', 'Unsupported file format', (value) => {
-      if (!value || typeof value !== 'object' || !('type' in value))
-        return false;
-      const allowed = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'image/jpeg',
-        'image/png',
-      ];
-      return allowed.includes((value as File).type);
-    }),
-});
+export const getValidationSchema = (t) =>
+  Yup.object().shape({
+    patient: Yup.string().required(t('patient_documents.patient_required')),
+    document_type: Yup.string().required(t('patient_documents.document_type_required')),
+    document_file: Yup.mixed()
+      .required(t('patient_documents.document_file_required'))
+      .test('fileType', t('patient_documents.unsupported_file_format'), (value) => {
+        if (!value || typeof value !== 'object' || !('type' in value))
+          return false;
+        const allowed = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'image/jpeg',
+          'image/png',
+        ];
+        return allowed.includes((value as File).type);
+      }),
+  });
 
 const Patient_documentsNew = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const initialValues = {
+    patient: '',
+    document_type: '',
+    document_file: null,
+  };
+
+  const validationSchema = getValidationSchema(t);
 
   const handleSubmit = async (data) => {
     const formData = new FormData();
@@ -59,12 +64,12 @@ const Patient_documentsNew = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('New patient document')}</title>
+        <title>{getPageTitle(t('patient_documents.newPatientDocument'))}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New patient document'
+          title={t('patient_documents.newPatientDocument')}
           main
         >
           {''}
@@ -77,7 +82,7 @@ const Patient_documentsNew = () => {
           >
             {({ setFieldValue, errors, touched }) => (
               <Form>
-                <FormField label='Patient' labelFor='patient' required>
+                <FormField label={t('patient_documents.patient')} labelFor='patient' required>
                   <>
                     <Field
                       name='patient'
@@ -94,11 +99,11 @@ const Patient_documentsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Document Type' required>
+                <FormField label={t('patient_documents.document_type')} required>
                   <>
                     <Field
                       name='document_type'
-                      placeholder='Document Type'
+                      placeholder={t('patient_documents.document_type')}
                       className='w-full border-1 border-gray-300 rounded-md p-2'
                     />
                     {touched.document_type && errors.document_type && (
@@ -109,7 +114,7 @@ const Patient_documentsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label='Document File' required>
+                <FormField label={t('patient_documents.document_file')} required>
                   <>
                     <input
                       name='document_file'
@@ -132,13 +137,13 @@ const Patient_documentsNew = () => {
 
                 <BaseDivider />
                 <BaseButtons>
-                  <BaseButton type='submit' color='info' label='Submit' />
-                  <BaseButton type='reset' color='info' outline label='Reset' />
+                  <BaseButton type='submit' color='info' label={t('actions.submit')} />
+                  <BaseButton type='reset' color='info' outline label={t('actions.reset')} />
                   <BaseButton
                     type='reset'
                     color='danger'
                     outline
-                    label='Cancel'
+                    label={t('actions.cancel')}
                     onClick={() =>
                       router.push('/patient_documents/patient_documents-table')
                     }
