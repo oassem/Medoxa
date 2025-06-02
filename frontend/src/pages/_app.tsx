@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
@@ -18,6 +18,8 @@ import {
   usersSteps,
   rolesSteps,
 } from '../stores/introSteps';
+import UniversalLoader from '../components/UniversalLoader';
+import Router from 'next/router';
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -37,6 +39,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [stepsEnabled, setStepsEnabled] = React.useState(false);
   const [stepName, setStepName] = React.useState('');
   const [steps, setSteps] = React.useState([]);
+  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     // Read language from localStorage
@@ -110,6 +113,27 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     setStepsEnabled(false);
   };
 
+  useEffect(() => {
+    const start = () => setLoading(true);
+    const end = () => setLoading(false);
+
+    Router.events.on('routeChangeStart', start);
+    Router.events.on('routeChangeComplete', end);
+    Router.events.on('routeChangeError', end);
+
+    // For full page reloads (F5, etc.)
+    window.addEventListener('beforeunload', start);
+    window.addEventListener('load', end);
+
+    return () => {
+      Router.events.off('routeChangeStart', start);
+      Router.events.off('routeChangeComplete', end);
+      Router.events.off('routeChangeError', end);
+      window.removeEventListener('beforeunload', start);
+      window.removeEventListener('load', end);
+    };
+  }, []);
+
   const title = 'Medoxa';
   const url = 'https://flatlogic.com/';
   const image = `https://flatlogic.com/logo.svg`;
@@ -137,6 +161,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <link rel='icon' href='/favicon.svg' />
           </Head>
 
+          {loading && <UniversalLoader />}
           <ErrorBoundary>
             <Component {...pageProps} />
           </ErrorBoundary>
