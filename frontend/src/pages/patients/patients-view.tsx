@@ -5,17 +5,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/patients/patientsSlice';
+import { baseURL, getPageTitle } from '../../config';
+import { mdiChartTimelineVariant } from '@mdi/js';
+import { useTranslation } from 'react-i18next';
 import dataFormatter from '../../helpers/dataFormatter';
 import LayoutAuthenticated from '../../layouts/Authenticated';
-import { baseURL, getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import SectionMain from '../../components/SectionMain';
 import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
 import FormField from '../../components/FormField';
-import { mdiChartTimelineVariant } from '@mdi/js';
-import { useTranslation } from 'react-i18next';
 
 const PatientsView = () => {
   const router = useRouter();
@@ -74,7 +74,7 @@ const PatientsView = () => {
           <FormField label={t('patients.date_of_birth')}>
             {patients.date_of_birth ? (
               <DatePicker
-                dateFormat='yyyy-MM-dd'
+                dateFormat='dd/MM/yyyy'
                 selected={
                   patients.date_of_birth
                     ? new Date(patients.date_of_birth)

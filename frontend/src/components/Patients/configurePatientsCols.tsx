@@ -119,7 +119,6 @@ export const loadColumns = async (
         { value: 'Male', label: t('patients.male') },
         { value: 'Female', label: t('patients.female') },
       ],
-      //renderCell: (params) => t(`patients.${params.value?.toLowerCase?.()}`),
     },
 
     {
@@ -150,8 +149,6 @@ export const loadColumns = async (
         { value: 'Iqama', label: t('patients.iqama') },
         { value: 'Passport', label: t('patients.passport') },
       ],
-      //renderCell: (params) =>
-      //  t(`patients.${params.value?.replace(/\s+/g, '_').toLowerCase?.()}`),
     },
 
     {

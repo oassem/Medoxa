@@ -15,13 +15,14 @@ import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configurePatient_documentsCols';
-import _ from 'lodash';
-import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
-import ListPatient_documents from './ListPatient_documents';
 import { useTranslation } from 'react-i18next';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { dataGridStyles_ar } from '../../styles_ar';
+import dataFormatter from '../../helpers/dataFormatter';
+import ListPatient_documents from './ListPatient_documents';
+import _ from 'lodash';
+
 const perPage = 10;
 
 const TableSamplePatient_documents = ({

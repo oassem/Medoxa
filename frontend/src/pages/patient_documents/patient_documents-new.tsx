@@ -5,37 +5,43 @@ import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
-import { getPageTitle } from '../../config';
-import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
+import { getPageTitle } from '../../config';
+import { Field, Form, Formik } from 'formik';
 import { SelectField } from '../../components/SelectField';
 import { create } from '../../stores/patient_documents/patient_documentsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 
 export const getValidationSchema = (t) =>
   Yup.object().shape({
     patient: Yup.string().required(t('patient_documents.patient_required')),
-    document_type: Yup.string().required(t('patient_documents.document_type_required')),
+    document_type: Yup.string().required(
+      t('patient_documents.document_type_required'),
+    ),
     document_file: Yup.mixed()
       .required(t('patient_documents.document_file_required'))
-      .test('fileType', t('patient_documents.unsupported_file_format'), (value) => {
-        if (!value || typeof value !== 'object' || !('type' in value))
-          return false;
-        const allowed = [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'image/jpeg',
-          'image/png',
-        ];
-        return allowed.includes((value as File).type);
-      }),
+      .test(
+        'fileType',
+        t('patient_documents.unsupported_file_format'),
+        (value) => {
+          if (!value || typeof value !== 'object' || !('type' in value))
+            return false;
+          const allowed = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/jpeg',
+            'image/png',
+          ];
+          return allowed.includes((value as File).type);
+        },
+      ),
   });
 
 const Patient_documentsNew = () => {
@@ -82,7 +88,11 @@ const Patient_documentsNew = () => {
           >
             {({ setFieldValue, errors, touched }) => (
               <Form>
-                <FormField label={t('patient_documents.patient')} labelFor='patient' required>
+                <FormField
+                  label={t('patient_documents.patient')}
+                  labelFor='patient'
+                  required
+                >
                   <>
                     <Field
                       name='patient'
@@ -99,7 +109,10 @@ const Patient_documentsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label={t('patient_documents.document_type')} required>
+                <FormField
+                  label={t('patient_documents.document_type')}
+                  required
+                >
                   <>
                     <Field
                       name='document_type'
@@ -114,7 +127,10 @@ const Patient_documentsNew = () => {
                   </>
                 </FormField>
 
-                <FormField label={t('patient_documents.document_file')} required>
+                <FormField
+                  label={t('patient_documents.document_file')}
+                  required
+                >
                   <>
                     <input
                       name='document_file'
@@ -137,8 +153,17 @@ const Patient_documentsNew = () => {
 
                 <BaseDivider />
                 <BaseButtons>
-                  <BaseButton type='submit' color='info' label={t('actions.submit')} />
-                  <BaseButton type='reset' color='info' outline label={t('actions.reset')} />
+                  <BaseButton
+                    type='submit'
+                    color='info'
+                    label={t('actions.submit')}
+                  />
+                  <BaseButton
+                    type='reset'
+                    color='info'
+                    outline
+                    label={t('actions.reset')}
+                  />
                   <BaseButton
                     type='reset'
                     color='danger'

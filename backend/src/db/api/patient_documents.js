@@ -86,6 +86,7 @@ module.exports = class Patient_documentsDBApi {
           console.error('Error deleting old file:', err);
         }
       }
+
       updatePayload.document_url = data.document_url;
     }
 
@@ -127,6 +128,7 @@ module.exports = class Patient_documentsDBApi {
             console.error('Error deleting file:', err);
           }
         }
+
         await record.update({ deletedBy: currentUser.id }, { transaction });
       }
 

@@ -83,12 +83,6 @@ const EditPatient_documentsPage = () => {
     }
   }, [patient_documents]);
 
-  // Regenerate schema when language changes
-  const validationSchema = useMemo(
-    () => getValidationSchema(t),
-    [t, i18n.language],
-  );
-
   const handleSubmit = async (data) => {
     const formData = new FormData();
     formData.append('patient', data.patient);
@@ -120,7 +114,7 @@ const EditPatient_documentsPage = () => {
           <Formik
             enableReinitialize
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            validationSchema={getValidationSchema(t)}
             onSubmit={(values) => handleSubmit(values)}
           >
             {({ setFieldValue, errors, touched }) => (

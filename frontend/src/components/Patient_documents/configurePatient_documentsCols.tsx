@@ -1,7 +1,7 @@
 import React from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import { GridRowParams, GridValueGetterParams } from '@mui/x-data-grid';
 import ListActionsPopover from '../ListActionsPopover';
+import { GridRowParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { hasPermission } from '../../helpers/userPermissions';
 
 type Params = (id: string) => void;

@@ -29,7 +29,6 @@ const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation('common');
   const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState<LanguageOption>(LANGS[0]);
-  const [reloading, setReloading] = useState(false);
 
   useEffect(() => {
     setMounted(true);

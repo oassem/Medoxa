@@ -28,6 +28,7 @@ export const SelectField = ({
     value: data.id,
     label: i18n.language === 'ar' && data.label_ar ? data.label_ar : data.label,
   });
+
   const handleChange = (option) => {
     form.setFieldValue(field.name, option?.value || null);
     setValue(option);

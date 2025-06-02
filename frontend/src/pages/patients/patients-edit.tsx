@@ -16,8 +16,8 @@ import BaseButton from '../../components/BaseButton';
 import { update, fetch } from '../../stores/patients/patientsSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 
 // Validation schema using Yup
 const getValidationSchema = (t: any) =>
@@ -279,7 +279,7 @@ const EditPatientsPage = () => {
                     <>
                       <div ref={datePickerRef}>
                         <DatePicker
-                          dateFormat='yyyy-MM-dd'
+                          dateFormat='dd/MM/yyyy'
                           showTimeSelect={false}
                           selected={
                             values.date_of_birth

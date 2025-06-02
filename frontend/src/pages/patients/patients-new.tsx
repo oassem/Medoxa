@@ -58,7 +58,7 @@ const PatientsNew = () => {
   const dispatch = useAppDispatch();
   const fieldRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const { t, i18n } = useTranslation();
-  const isArabic = i18n.language === 'ar';
+  const isRTL = i18n.language === 'ar';
 
   // Validation schema using Yup
   const validationSchema = Yup.object().shape({
@@ -288,7 +288,7 @@ const PatientsNew = () => {
                       wrapperClassName='w-full'
                       placeholderText={t('patients.date_of_birth')}
                       calendarStartDay={6}
-                      popperPlacement={isArabic ? 'bottom-end' : 'bottom-start'}
+                      popperPlacement={isRTL ? 'bottom-end' : 'bottom-start'}
                       popperModifiers={[
                         {
                           name: 'offset',
@@ -297,9 +297,9 @@ const PatientsNew = () => {
                           },
                         },
                       ]}
-                      locale={isArabic ? 'ar' : 'en'}
-                      calendarClassName={isArabic ? 'rtl-calendar' : ''}
-                      dateFormat='yyyy-MM-dd'
+                      locale={isRTL ? 'ar' : 'en'}
+                      calendarClassName={isRTL ? 'rtl-calendar' : ''}
+                      dateFormat='dd/MM/yyyy'
                       inputRef={(el) =>
                         (fieldRefs.current['date_of_birth'] = el)
                       }
@@ -322,7 +322,7 @@ const PatientsNew = () => {
                       name='gender'
                       id='gender'
                       component='select'
-                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isArabic ? 'filter-select' : ''}`}
+                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isRTL ? 'filter-select' : ''}`}
                       innerRef={(el: HTMLSelectElement) =>
                         (fieldRefs.current['gender'] = el)
                       }
@@ -366,7 +366,7 @@ const PatientsNew = () => {
                       name='identifier_type'
                       id='identifier_type'
                       component='select'
-                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isArabic ? 'filter-select' : ''}`}
+                      className={`w-full border-1 border-gray-300 rounded-md p-2 ${isRTL ? 'filter-select' : ''}`}
                       innerRef={(el: HTMLSelectElement) =>
                         (fieldRefs.current['identifier_type'] = el)
                       }

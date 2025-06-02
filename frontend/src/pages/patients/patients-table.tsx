@@ -22,8 +22,8 @@ const PatientsTablesPage = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
   const { currentUser } = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
+  const dispatch = useAppDispatch();
 
   // Get current direction (ltr/rtl)
   const dir = i18n.dir();

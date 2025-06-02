@@ -54,7 +54,7 @@ const Patient_documentsView = () => {
               {t('patient_documents.patient')}
             </p>
             <p>
-              {i18n.dir() === 'rtl'
+              {i18n.language === 'ar'
                 ? patient_documents?.patient?.full_name_ar
                 : (patient_documents?.patient?.full_name_en ??
                   t('patient_documents.no_data'))}
