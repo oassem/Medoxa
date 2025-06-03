@@ -38,7 +38,7 @@ const menuAside: MenuAsideItem[] = [
     permissions: 'READ_APPOINTMENTS',
   },
   {
-    href: '/departments/departments-list',
+    href: '/departments/departments-table',
     label: 'aside.departments',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

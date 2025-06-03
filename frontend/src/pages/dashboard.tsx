@@ -7,8 +7,8 @@ import LayoutAuthenticated from '../layouts/Authenticated';
 import SectionMain from '../components/SectionMain';
 import SectionTitleLineWithButton from '../components/SectionTitleLineWithButton';
 import BaseIcon from '../components/BaseIcon';
-import { getPageTitle } from '../config';
 import Link from 'next/link';
+import { getPageTitle } from '../config';
 import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../helpers/userPermissions';
 import { fetchWidgets } from '../stores/roles/rolesSlice';
@@ -95,6 +95,7 @@ const Dashboard = () => {
       'permissions',
       'organizations',
     ];
+
     const fns = [
       setUsers,
       setAppointment_rules,
@@ -339,7 +340,7 @@ const Dashboard = () => {
           )}
 
           {hasPermission(currentUser, 'READ_DEPARTMENTS') && (
-            <Link href={'/departments/departments-list'}>
+            <Link href={'/departments/departments-table'}>
               <div
                 className={`${
                   corners !== 'rounded-full' ? corners : 'rounded-3xl'

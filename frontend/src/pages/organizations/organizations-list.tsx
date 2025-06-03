@@ -1,36 +1,34 @@
 import { mdiChartTimelineVariant } from '@mdi/js';
-import Head from 'next/head';
 import { uniqueId } from 'lodash';
+import Head from 'next/head';
 import React, { ReactElement, useState } from 'react';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
-import { getPageTitle } from '../../config';
 import TableOrganizations from '../../components/Organizations/TableOrganizations';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
+import { getPageTitle } from '../../config';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import {
   setRefetch,
   uploadCsv,
 } from '../../stores/organizations/organizationsSlice';
-
 import { hasPermission } from '../../helpers/userPermissions';
 
 const OrganizationsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
+  const [filters] = useState([
+    { label: 'Name', title: 'name' },
+    { label: 'Description', title: 'description' },
+  ]);
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
-
-  const [filters] = useState([{ label: 'Name', title: 'name' }]);
 
   const hasCreatePermission =
     currentUser && hasPermission(currentUser, 'CREATE_ORGANIZATIONS');
@@ -95,7 +93,7 @@ const OrganizationsTablesPage = () => {
               className={'mr-3'}
               href={'/organizations/organizations-new'}
               color='info'
-              label='New Item'
+              label='New Organization'
             />
           )}
 
@@ -105,6 +103,7 @@ const OrganizationsTablesPage = () => {
             label='Filter'
             onClick={addFilter}
           />
+
           <BaseButton
             className={'mr-3'}
             color='info'

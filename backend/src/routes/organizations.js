@@ -3,13 +3,8 @@ const express = require('express');
 const OrganizationsService = require('../services/organizations');
 const OrganizationsDBApi = require('../db/api/organizations');
 const wrapAsync = require('../helpers').wrapAsync;
-
-const config = require('../config');
-
 const router = express.Router();
-
 const { parse } = require('json2csv');
-
 const { checkCrudPermissions } = require('../middlewares/check-permissions');
 
 router.use(checkCrudPermissions('organizations'));
@@ -21,11 +16,12 @@ router.use(checkCrudPermissions('organizations'));
  *      Organizations:
  *        type: object
  *        properties:
-
  *          name:
  *            type: string
  *            default: name
-
+ *          description:
+ *            type: string
+ *            default: ""
  */
 
 /**
@@ -306,15 +302,14 @@ router.get(
   '/',
   wrapAsync(async (req, res) => {
     const filetype = req.query.filetype;
-
     const globalAccess = req.currentUser.app_role.globalAccess;
-
     const currentUser = req.currentUser;
     const payload = await OrganizationsDBApi.findAll(req.query, globalAccess, {
       currentUser,
     });
+
     if (filetype && filetype === 'csv') {
-      const fields = ['id', 'name'];
+      const fields = ['id', 'name', 'description'];
       const opts = { fields };
       try {
         const csv = parse(payload.rows, opts);
@@ -396,7 +391,6 @@ router.get(
  */
 router.get('/autocomplete', async (req, res) => {
   const globalAccess = req.currentUser.app_role.globalAccess;
-
   const organizationId = req.currentUser.organization?.id;
 
   const payload = await OrganizationsDBApi.findAllAutocomplete(

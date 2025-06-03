@@ -1,9 +1,3 @@
-const config = require('../../config');
-const providers = config.providers;
-const crypto = require('crypto');
-const bcrypt = require('bcrypt');
-const moment = require('moment');
-
 module.exports = function (sequelize, DataTypes) {
   const organizations = sequelize.define(
     'organizations',
@@ -16,6 +10,11 @@ module.exports = function (sequelize, DataTypes) {
 
       name: {
         type: DataTypes.TEXT,
+      },
+
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
 
       importHash: {
@@ -206,14 +205,6 @@ module.exports = function (sequelize, DataTypes) {
       as: 'patients_organization',
       foreignKey: {
         name: 'organizationId',
-      },
-      constraints: false,
-    });
-
-    db.organizations.hasMany(db.patients, {
-      as: 'patients_organizations',
-      foreignKey: {
-        name: 'organizationsId',
       },
       constraints: false,
     });

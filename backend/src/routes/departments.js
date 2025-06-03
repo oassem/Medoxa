@@ -3,13 +3,8 @@ const express = require('express');
 const DepartmentsService = require('../services/departments');
 const DepartmentsDBApi = require('../db/api/departments');
 const wrapAsync = require('../helpers').wrapAsync;
-
-const config = require('../config');
-
 const router = express.Router();
-
 const { parse } = require('json2csv');
-
 const { checkCrudPermissions } = require('../middlewares/check-permissions');
 
 router.use(checkCrudPermissions('departments'));
@@ -309,9 +304,7 @@ router.get(
   '/',
   wrapAsync(async (req, res) => {
     const filetype = req.query.filetype;
-
     const globalAccess = req.currentUser.app_role.globalAccess;
-
     const currentUser = req.currentUser;
     const payload = await DepartmentsDBApi.findAll(req.query, globalAccess, {
       currentUser,
@@ -399,7 +392,6 @@ router.get(
  */
 router.get('/autocomplete', async (req, res) => {
   const globalAccess = req.currentUser.app_role.globalAccess;
-
   const organizationId = req.currentUser.organization?.id;
 
   const payload = await DepartmentsDBApi.findAllAutocomplete(
@@ -449,7 +441,6 @@ router.get(
   '/:id',
   wrapAsync(async (req, res) => {
     const payload = await DepartmentsDBApi.findBy({ id: req.params.id });
-
     res.status(200).send(payload);
   }),
 );

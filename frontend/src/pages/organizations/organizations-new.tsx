@@ -1,9 +1,4 @@
-import {
-  mdiAccount,
-  mdiChartTimelineVariant,
-  mdiMail,
-  mdiUpload,
-} from '@mdi/js';
+import { mdiChartTimelineVariant } from '@mdi/js';
 import Head from 'next/head';
 import React, { ReactElement } from 'react';
 import CardBox from '../../components/CardBox';
@@ -11,29 +6,18 @@ import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import { getPageTitle } from '../../config';
-
 import { Field, Form, Formik } from 'formik';
 import FormField from '../../components/FormField';
 import BaseDivider from '../../components/BaseDivider';
 import BaseButtons from '../../components/BaseButtons';
 import BaseButton from '../../components/BaseButton';
-import FormCheckRadio from '../../components/FormCheckRadio';
-import FormCheckRadioGroup from '../../components/FormCheckRadioGroup';
-import FormFilePicker from '../../components/FormFilePicker';
-import FormImagePicker from '../../components/FormImagePicker';
-import { SwitchField } from '../../components/SwitchField';
-
-import { SelectField } from '../../components/SelectField';
-import { SelectFieldMany } from '../../components/SelectFieldMany';
-import { RichTextField } from '../../components/RichTextField';
-
 import { create } from '../../stores/organizations/organizationsSlice';
 import { useAppDispatch } from '../../stores/hooks';
 import { useRouter } from 'next/router';
-import moment from 'moment';
 
 const initialValues = {
   name: '',
+  description: '',
 };
 
 const OrganizationsNew = () => {
@@ -44,15 +28,16 @@ const OrganizationsNew = () => {
     await dispatch(create(data));
     await router.push('/organizations/organizations-list');
   };
+
   return (
     <>
       <Head>
-        <title>{getPageTitle('New Item')}</title>
+        <title>{getPageTitle('New organization')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title='New Item'
+          title='New organization'
           main
         >
           {''}
@@ -65,6 +50,10 @@ const OrganizationsNew = () => {
             <Form>
               <FormField label='Name'>
                 <Field name='name' placeholder='Name' />
+              </FormField>
+
+              <FormField label='Description'>
+                <Field name='description' as='textarea' placeholder='Description' />
               </FormField>
 
               <BaseDivider />

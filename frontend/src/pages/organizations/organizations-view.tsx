@@ -1,34 +1,23 @@
 import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { useRouter } from 'next/router';
 import { fetch } from '../../stores/organizations/organizationsSlice';
-import { saveFile } from '../../helpers/fileSaver';
-import dataFormatter from '../../helpers/dataFormatter';
-import ImageField from '../../components/ImageField';
-import LayoutAuthenticated from '../../layouts/Authenticated';
 import { getPageTitle } from '../../config';
+import { mdiChartTimelineVariant } from '@mdi/js';
+import dataFormatter from '../../helpers/dataFormatter';
+import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import SectionMain from '../../components/SectionMain';
 import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
-import { mdiChartTimelineVariant } from '@mdi/js';
-import { SwitchField } from '../../components/SwitchField';
-import FormField from '../../components/FormField';
-
-import { hasPermission } from '../../helpers/userPermissions';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const OrganizationsView = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { organizations } = useAppSelector((state) => state.organizations);
-
-  const { currentUser } = useAppSelector((state) => state.auth);
-
   const { id } = router.query;
 
   function removeLastCharacter(str) {
@@ -43,7 +32,7 @@ const OrganizationsView = () => {
   return (
     <>
       <Head>
-        <title>{getPageTitle('View organizations')}</title>
+        <title>{getPageTitle('View organization')}</title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
@@ -63,8 +52,13 @@ const OrganizationsView = () => {
             <p>{organizations?.name}</p>
           </div>
 
+          <div className={'mb-4'}>
+            <p className={'block font-bold mb-2'}>Description</p>
+            <p>{organizations?.description}</p>
+          </div>
+
           <>
-            <p className={'block font-bold mb-2'}>Users Organizations</p>
+            <p className={'block font-bold mb-4'}>Users</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -117,9 +111,7 @@ const OrganizationsView = () => {
           </>
 
           <>
-            <p className={'block font-bold mb-2'}>
-              Appointment_rules organizations
-            </p>
+            <p className={'block font-bold mb-4'}>Appointment Rules</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -128,9 +120,9 @@ const OrganizationsView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th>MinHoursBeforeBooking</th>
+                      <th>Min. Hours Before Booking</th>
 
-                      <th>MaxDaysAdvanceBooking</th>
+                      <th>Max. Days Advance Booking</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -167,7 +159,7 @@ const OrganizationsView = () => {
             </CardBox>
           </>
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Appointments Organization</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -236,9 +228,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Appointments organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -307,10 +299,10 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
           <>
-            <p className={'block font-bold mb-2'}>Departments Organization</p>
+            <p className={'block font-bold mb-4'}>Departments</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
               hasTable
@@ -352,50 +344,7 @@ const OrganizationsView = () => {
             </CardBox>
           </>
 
-          <>
-            <p className={'block font-bold mb-2'}>Departments organizations</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {organizations.departments_organizations &&
-                      Array.isArray(organizations.departments_organizations) &&
-                      organizations.departments_organizations.map(
-                        (item: any) => (
-                          <tr
-                            key={item.id}
-                            onClick={() =>
-                              router.push(
-                                `/departments/departments-view/?id=${item.id}`,
-                              )
-                            }
-                          >
-                            <td data-label='name'>{item.name}</td>
-
-                            <td data-label='description'>{item.description}</td>
-                          </tr>
-                        ),
-                      )}
-                  </tbody>
-                </table>
-              </div>
-              {!organizations?.departments_organizations?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Doctor_availabilities organizations
             </p>
@@ -480,9 +429,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Holidays Organization</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -529,9 +478,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Holidays organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -578,9 +527,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Imaging_investigations organizations
             </p>
@@ -629,9 +578,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Imaging_order_items organizations
             </p>
@@ -668,9 +617,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Imaging_orders organizations
             </p>
@@ -717,9 +666,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Insurances organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -786,9 +735,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Invoice_items organizations
             </p>
@@ -833,9 +782,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Invoices Organization</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -880,9 +829,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Invoices organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -927,9 +876,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Lab_order_items organizations
             </p>
@@ -966,9 +915,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Lab_orders organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1011,9 +960,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Lab_tests organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1056,9 +1005,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Medications organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1103,9 +1052,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Patient_documents organizations
             </p>
@@ -1154,9 +1103,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Patients Organization</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1259,114 +1208,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
-            <p className={'block font-bold mb-2'}>Patients organizations</p>
-            <CardBox
-              className='mb-6 border border-gray-300 rounded overflow-hidden'
-              hasTable
-            >
-              <div className='overflow-x-auto'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>FullName(English)</th>
-
-                      <th>FullName(Arabic)</th>
-
-                      <th>DateofBirth</th>
-
-                      <th>Gender</th>
-
-                      <th>Nationality</th>
-
-                      <th>IdentifierType</th>
-
-                      <th>Identifier</th>
-
-                      <th>Address</th>
-
-                      <th>EmergencyContactName</th>
-
-                      <th>EmergencyContactPhone</th>
-
-                      <th>MedicalHistory</th>
-
-                      <th>Allergies</th>
-
-                      <th>CurrentMedications</th>
-
-                      <th>FamilyHistory</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {organizations.patients_organizations &&
-                      Array.isArray(organizations.patients_organizations) &&
-                      organizations.patients_organizations.map((item: any) => (
-                        <tr
-                          key={item.id}
-                          onClick={() =>
-                            router.push(
-                              `/patients/patients-view/?id=${item.id}`,
-                            )
-                          }
-                        >
-                          <td data-label='full_name_en'>{item.full_name_en}</td>
-
-                          <td data-label='full_name_ar'>{item.full_name_ar}</td>
-
-                          <td data-label='date_of_birth'>
-                            {dataFormatter.dateTimeFormatter(
-                              item.date_of_birth,
-                            )}
-                          </td>
-
-                          <td data-label='gender'>{item.gender}</td>
-
-                          <td data-label='nationality'>{item.nationality}</td>
-
-                          <td data-label='identifier_type'>
-                            {item.identifier_type}
-                          </td>
-
-                          <td data-label='identifier'>{item.identifier}</td>
-
-                          <td data-label='address'>{item.address}</td>
-
-                          <td data-label='emergency_contact_name'>
-                            {item.emergency_contact_name}
-                          </td>
-
-                          <td data-label='emergency_contact_phone'>
-                            {item.emergency_contact_phone}
-                          </td>
-
-                          <td data-label='medical_history'>
-                            {item.medical_history}
-                          </td>
-
-                          <td data-label='allergies'>{item.allergies}</td>
-
-                          <td data-label='current_medications'>
-                            {item.current_medications}
-                          </td>
-
-                          <td data-label='family_history'>
-                            {item.family_history}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {!organizations?.patients_organizations?.length && (
-                <div className={'text-center py-4'}>No data</div>
-              )}
-            </CardBox>
-          </>
-
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Pharmacy_order_items organizations
             </p>
@@ -1407,9 +1251,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>
               Pharmacy_orders organizations
             </p>
@@ -1456,9 +1300,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Sick_leaves organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1519,9 +1363,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Visits Organization</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1570,9 +1414,9 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
-          <>
+          {/* <>
             <p className={'block font-bold mb-2'}>Visits organizations</p>
             <CardBox
               className='mb-6 border border-gray-300 rounded overflow-hidden'
@@ -1621,7 +1465,7 @@ const OrganizationsView = () => {
                 <div className={'text-center py-4'}>No data</div>
               )}
             </CardBox>
-          </>
+          </> */}
 
           <BaseDivider />
 

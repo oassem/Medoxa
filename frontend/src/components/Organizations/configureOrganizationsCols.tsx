@@ -1,11 +1,6 @@
 import React from 'react';
-import axiosInstance from '../../utils/axiosInstance';
-import {
-  GridActionsCellItem,
-  GridRowParams,
-  GridValueGetterParams,
-} from '@mui/x-data-grid';
 import ListActionsPopover from '../ListActionsPopover';
+import { GridRowParams } from '@mui/x-data-grid';
 import { hasPermission } from '../../helpers/userPermissions';
 
 type Params = (id: string) => void;
@@ -13,21 +8,8 @@ type Params = (id: string) => void;
 export const loadColumns = async (
   onDelete: Params,
   entityName: string,
-
   user,
 ) => {
-  async function callOptionsApi(entityName: string) {
-    if (!hasPermission(user, 'READ_' + entityName.toUpperCase())) return [];
-
-    try {
-      const data = await axiosInstance(`/${entityName}/autocomplete?limit=100`);
-      return data.data;
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
-  }
-
   const hasUpdatePermission = hasPermission(user, 'UPDATE_ORGANIZATIONS');
 
   return [
@@ -39,10 +21,18 @@ export const loadColumns = async (
       filterable: false,
       headerClassName: 'datagrid--header',
       cellClassName: 'datagrid--cell',
-
       editable: hasUpdatePermission,
     },
-
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 1,
+      minWidth: 120,
+      filterable: false,
+      headerClassName: 'datagrid--header',
+      cellClassName: 'datagrid--cell',
+      editable: hasUpdatePermission,
+    },
     {
       field: 'actions',
       type: 'actions',

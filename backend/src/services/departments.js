@@ -3,8 +3,6 @@ const DepartmentsDBApi = require('../db/api/departments');
 const processFile = require('../middlewares/upload');
 const ValidationError = require('./notifications/errors/validation');
 const csv = require('csv-parser');
-const axios = require('axios');
-const config = require('../config');
 const stream = require('stream');
 
 module.exports = class DepartmentsService {

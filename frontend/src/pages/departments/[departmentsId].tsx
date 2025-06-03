@@ -78,7 +78,7 @@ const EditDepartments = () => {
 
   const handleSubmit = async (data) => {
     await dispatch(update({ id: departmentsId, data }));
-    await router.push('/departments/departments-list');
+    await router.push('/departments/departments-table');
   };
 
   return (
@@ -142,7 +142,7 @@ const EditDepartments = () => {
                   color='danger'
                   outline
                   label='Cancel'
-                  onClick={() => router.push('/departments/departments-list')}
+                  onClick={() => router.push('/departments/departments-table')}
                 />
               </BaseButtons>
             </Form>

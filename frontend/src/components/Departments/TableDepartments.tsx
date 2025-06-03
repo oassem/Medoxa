@@ -12,15 +12,13 @@ import {
   deleteItemsByIds,
 } from '../../stores/departments/departmentsSlice';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { useRouter } from 'next/router';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configureDepartmentsCols';
-import _ from 'lodash';
-import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
-
+import dataFormatter from '../../helpers/dataFormatter';
 import ListDepartments from './ListDepartments';
+import _ from 'lodash';
 
 const perPage = 10;
 
@@ -33,7 +31,6 @@ const TableSampleDepartments = ({
   const notify = (type, msg) => toast(msg, { type, position: 'bottom-center' });
 
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
   const pagesList = [];
   const [id, setId] = useState(null);
@@ -69,7 +66,6 @@ const TableSampleDepartments = ({
     if (page !== currentPage) setCurrentPage(page);
     if (request !== filterRequest) setFilterRequest(request);
     const { sort, field } = sortModel[0];
-
     const query = `?page=${page}&limit=${perPage}${request}&sort=${sort}&field=${field}`;
     dispatch(fetch({ limit: perPage, page, query }));
   };
@@ -107,6 +103,7 @@ const TableSampleDepartments = ({
     setId(id);
     setIsModalTrashActive(true);
   };
+
   const handleDeleteAction = async () => {
     if (id) {
       await dispatch(deleteItem(id));
@@ -150,7 +147,6 @@ const TableSampleDepartments = ({
       setFilterItems(newItems);
     } else {
       loadData(0, '');
-
       setFilterItems(newItems);
     }
   };
@@ -260,6 +256,7 @@ const TableSampleDepartments = ({
         onPaginationModelChange={(params) => {
           onPageChange(params.page);
         }}
+        disableColumnMenu
       />
     </div>
   );
@@ -420,7 +417,7 @@ const TableSampleDepartments = ({
                           </div>
                         )}
                         <div className='flex flex-col'>
-                          <div className='  text-gray-500  font-bold'>
+                          <div className='text-gray-500 invisible font-bold'>
                             Action
                           </div>
                           <BaseButton

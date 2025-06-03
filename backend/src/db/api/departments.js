@@ -1,8 +1,5 @@
 const db = require('../models');
-const FileDBApi = require('./file');
-const crypto = require('crypto');
 const Utils = require('../utils');
-
 const Sequelize = db.Sequelize;
 const Op = Sequelize.Op;
 
@@ -14,7 +11,6 @@ module.exports = class DepartmentsDBApi {
     const departments = await db.departments.create(
       {
         id: data.id || undefined,
-
         name: data.name || null,
         description: data.description || null,
         importHash: data.importHash || null,
@@ -24,11 +20,7 @@ module.exports = class DepartmentsDBApi {
       { transaction },
     );
 
-    await departments.setOrganization(currentUser.organization.id || null, {
-      transaction,
-    });
-
-    await departments.setOrganizations(data.organizations || null, {
+    await departments.setOrganization(currentUser.organizationsId || null, {
       transaction,
     });
 
@@ -42,7 +34,6 @@ module.exports = class DepartmentsDBApi {
     // Prepare data - wrapping individual data transformations in a map() method
     const departmentsData = data.map((item, index) => ({
       id: item.id || undefined,
-
       name: item.name || null,
       description: item.description || null,
       importHash: item.importHash || null,
@@ -57,17 +48,13 @@ module.exports = class DepartmentsDBApi {
     });
 
     // For each item created, replace relation files
-
     return departments;
   }
 
   static async update(id, data, options) {
     const currentUser = (options && options.currentUser) || { id: null };
     const transaction = (options && options.transaction) || undefined;
-    const globalAccess = currentUser.app_role?.globalAccess;
-
     const departments = await db.departments.findByPk(id, {}, { transaction });
-
     const updatePayload = {};
 
     if (data.name !== undefined) updatePayload.name = data.name;
@@ -78,22 +65,6 @@ module.exports = class DepartmentsDBApi {
     updatePayload.updatedById = currentUser.id;
 
     await departments.update(updatePayload, { transaction });
-
-    if (data.organization !== undefined) {
-      await departments.setOrganization(
-        globalAccess ? data.organization : currentUser.organization.id,
-        { transaction },
-      );
-    }
-
-    if (data.organizations !== undefined) {
-      await departments.setOrganizations(
-        data.organizations,
-
-        { transaction },
-      );
-    }
-
     return departments;
   }
 
@@ -114,6 +85,7 @@ module.exports = class DepartmentsDBApi {
       for (const record of departments) {
         await record.update({ deletedBy: currentUser.id }, { transaction });
       }
+
       for (const record of departments) {
         await record.destroy({ transaction });
       }
@@ -180,10 +152,6 @@ module.exports = class DepartmentsDBApi {
       transaction,
     });
 
-    output.organizations = await departments.getOrganizations({
-      transaction,
-    });
-
     return output;
   }
 
@@ -194,29 +162,18 @@ module.exports = class DepartmentsDBApi {
     const currentPage = +filter.page;
 
     const user = (options && options.currentUser) || null;
-    const userOrganizations = (user && user.organizations?.id) || null;
+    const userOrganization = (user && user.organizationsId) || null;
 
-    if (userOrganizations) {
-      if (options?.currentUser?.organizationsId) {
-        where.organizationsId = options.currentUser.organizationsId;
-      }
+    if (userOrganization) {
+      where.organizationId = userOrganization;
     }
 
     offset = currentPage * limit;
-
-    const orderBy = null;
-
-    const transaction = (options && options.transaction) || undefined;
 
     let include = [
       {
         model: db.organizations,
         as: 'organization',
-      },
-
-      {
-        model: db.organizations,
-        as: 'organizations',
       },
     ];
 
@@ -254,25 +211,17 @@ module.exports = class DepartmentsDBApi {
       }
 
       if (filter.organization) {
-        const listItems = filter.organization.split('|').map((item) => {
-          return Utils.uuid(item);
+        const listItems = filter.organization.split('|');
+        include.push({
+          model: db.organizations,
+          as: 'organization',
+          where: {
+            [Op.or]: listItems.map((item) => ({
+              name: { [Op.iLike]: `%${item}%` },
+            })),
+          },
+          required: true,
         });
-
-        where = {
-          ...where,
-          organizationId: { [Op.or]: listItems },
-        };
-      }
-
-      if (filter.organizations) {
-        const listItems = filter.organizations.split('|').map((item) => {
-          return Utils.uuid(item);
-        });
-
-        where = {
-          ...where,
-          organizationsId: { [Op.or]: listItems },
-        };
       }
 
       if (filter.createdAtRange) {
@@ -301,7 +250,7 @@ module.exports = class DepartmentsDBApi {
     }
 
     if (globalAccess) {
-      delete where.organizationsId;
+      delete where.organizationId;
     }
 
     const queryOptions = {
@@ -359,7 +308,7 @@ module.exports = class DepartmentsDBApi {
     }
 
     const records = await db.departments.findAll({
-      attributes: ['id', 'name'],
+      attributes: ['id', 'name', 'description'],
       where,
       limit: limit ? Number(limit) : undefined,
       offset: offset ? Number(offset) : undefined,

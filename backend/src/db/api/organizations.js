@@ -1,8 +1,5 @@
 const db = require('../models');
-const FileDBApi = require('./file');
-const crypto = require('crypto');
 const Utils = require('../utils');
-
 const Sequelize = db.Sequelize;
 const Op = Sequelize.Op;
 
@@ -14,8 +11,8 @@ module.exports = class OrganizationsDBApi {
     const organizations = await db.organizations.create(
       {
         id: data.id || undefined,
-
         name: data.name || null,
+        description: data.description || null,
         importHash: data.importHash || null,
         createdById: currentUser.id,
         updatedById: currentUser.id,
@@ -33,8 +30,8 @@ module.exports = class OrganizationsDBApi {
     // Prepare data - wrapping individual data transformations in a map() method
     const organizationsData = data.map((item, index) => ({
       id: item.id || undefined,
-
       name: item.name || null,
+      description: item.description || null,
       importHash: item.importHash || null,
       createdById: currentUser.id,
       updatedById: currentUser.id,
@@ -47,14 +44,12 @@ module.exports = class OrganizationsDBApi {
     });
 
     // For each item created, replace relation files
-
     return organizations;
   }
 
   static async update(id, data, options) {
     const currentUser = (options && options.currentUser) || { id: null };
     const transaction = (options && options.transaction) || undefined;
-    const globalAccess = currentUser.app_role?.globalAccess;
 
     const organizations = await db.organizations.findByPk(
       id,
@@ -65,11 +60,11 @@ module.exports = class OrganizationsDBApi {
     const updatePayload = {};
 
     if (data.name !== undefined) updatePayload.name = data.name;
+    if (data.description !== undefined) updatePayload.description = data.description;
 
     updatePayload.updatedById = currentUser.id;
 
     await organizations.update(updatePayload, { transaction });
-
     return organizations;
   }
 
@@ -246,11 +241,6 @@ module.exports = class OrganizationsDBApi {
       },
     );
 
-    output.patients_organizations =
-      await organizations.getPatients_organizations({
-        transaction,
-      });
-
     output.pharmacy_order_items_organizations =
       await organizations.getPharmacy_order_items_organizations({
         transaction,
@@ -282,7 +272,6 @@ module.exports = class OrganizationsDBApi {
     let offset = 0;
     let where = {};
     const currentPage = +filter.page;
-
     const user = (options && options.currentUser) || null;
     const userOrganizations = (user && user.organizations?.id) || null;
 
@@ -293,10 +282,6 @@ module.exports = class OrganizationsDBApi {
     }
 
     offset = currentPage * limit;
-
-    const orderBy = null;
-
-    const transaction = (options && options.transaction) || undefined;
 
     let include = [];
 
@@ -344,6 +329,13 @@ module.exports = class OrganizationsDBApi {
             },
           };
         }
+      }
+
+      if (filter.description) {
+        where = {
+          ...where,
+          [Op.and]: Utils.ilike('organizations', 'description', filter.description),
+        };
       }
     }
 
@@ -406,7 +398,7 @@ module.exports = class OrganizationsDBApi {
     }
 
     const records = await db.organizations.findAll({
-      attributes: ['id', 'name'],
+      attributes: ['id', 'name', 'description'],
       where,
       limit: limit ? Number(limit) : undefined,
       offset: offset ? Number(offset) : undefined,

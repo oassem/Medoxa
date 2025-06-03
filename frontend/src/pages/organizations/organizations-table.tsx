@@ -24,13 +24,12 @@ const OrganizationsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
+  const [filters] = useState([
+    { label: 'Name', title: 'name' },
+    { label: 'Description', title: 'description' },
+  ]);
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
-
-  const [filters] = useState([{ label: 'Name', title: 'name' }]);
 
   const hasCreatePermission =
     currentUser && hasPermission(currentUser, 'CREATE_ORGANIZATIONS');
@@ -95,7 +94,7 @@ const OrganizationsTablesPage = () => {
               className={'mr-3'}
               href={'/organizations/organizations-new'}
               color='info'
-              label='New Item'
+              label='New Organization'
             />
           )}
 

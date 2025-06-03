@@ -1,6 +1,6 @@
 import { mdiChartTimelineVariant } from '@mdi/js';
-import Head from 'next/head';
 import { uniqueId } from 'lodash';
+import Head from 'next/head';
 import React, { ReactElement, useState } from 'react';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
@@ -10,7 +10,6 @@ import { getPageTitle } from '../../config';
 import TableDepartments from '../../components/Departments/TableDepartments';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
@@ -25,16 +24,18 @@ const DepartmentsTablesPage = () => {
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [showTableView, setShowTableView] = useState(false);
-
   const { currentUser } = useAppSelector((state) => state.auth);
-
   const dispatch = useAppDispatch();
 
-  const [filters] = useState([
+  const globalAccess = currentUser?.app_role?.globalAccess;
+
+  const filtersArray = [
+    ...(globalAccess ? [{ label: 'Organization', title: 'organization' }] : []),
     { label: 'Name', title: 'name' },
     { label: 'Description', title: 'description' },
-  ]);
+  ];
+
+  const [filters] = useState(filtersArray);
 
   const hasCreatePermission =
     currentUser && hasPermission(currentUser, 'CREATE_DEPARTMENTS');
@@ -99,7 +100,7 @@ const DepartmentsTablesPage = () => {
               className={'mr-3'}
               href={'/departments/departments-new'}
               color='info'
-              label='New Item'
+              label='New Department'
             />
           )}
 
@@ -126,10 +127,6 @@ const DepartmentsTablesPage = () => {
 
           <div className='md:inline-flex items-center ms-auto'>
             <div id='delete-rows-button'></div>
-
-            <Link href={'/departments/departments-list'}>
-              Back to <span className='capitalize'>list</span>
-            </Link>
           </div>
         </CardBox>
         <CardBox className='mb-6' hasTable>

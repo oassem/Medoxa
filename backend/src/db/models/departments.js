@@ -1,9 +1,3 @@
-const config = require('../../config');
-const providers = config.providers;
-const crypto = require('crypto');
-const bcrypt = require('bcrypt');
-const moment = require('moment');
-
 module.exports = function (sequelize, DataTypes) {
   const departments = sequelize.define(
     'departments',
@@ -76,14 +70,6 @@ module.exports = function (sequelize, DataTypes) {
       as: 'organization',
       foreignKey: {
         name: 'organizationId',
-      },
-      constraints: false,
-    });
-
-    db.departments.belongsTo(db.organizations, {
-      as: 'organizations',
-      foreignKey: {
-        name: 'organizationsId',
       },
       constraints: false,
     });
