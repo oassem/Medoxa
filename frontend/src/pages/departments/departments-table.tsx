@@ -101,6 +101,7 @@ const DepartmentsTablesPage = () => {
               href={'/departments/departments-new'}
               color='info'
               label='New Department'
+              disabled={currentUser?.app_role?.globalAccess}
             />
           )}
 

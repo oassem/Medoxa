@@ -127,16 +127,19 @@ const EditUsers = () => {
                 <Field name='email' placeholder={t('profile.email')} disabled />
               </FormField>
 
-              <FormField label={t('profile.appRole')} labelFor='app_role'>
-                <Field
-                  name='app_role'
-                  id='app_role'
-                  component={SelectField}
-                  options={initialValues.app_role}
-                  itemRef={'roles'}
-                  showField={'name'}
-                ></Field>
-              </FormField>
+              {currentUser?.app_role?.globalAccess && (
+                <FormField label={t('profile.appRole')} labelFor='app_role'>
+                  <Field
+                    name='app_role'
+                    id='app_role'
+                    component={SelectField}
+                    options={initialValues.app_role}
+                    itemRef={'roles'}
+                    showField={'name'}
+                    disabled
+                  ></Field>
+                </FormField>
+              )}
 
               <FormField label={t('profile.disabled')} labelFor='disabled'>
                 <Field

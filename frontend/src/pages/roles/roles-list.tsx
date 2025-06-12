@@ -96,7 +96,7 @@ const RolesTablesPage = () => {
               className={'mr-3'}
               href={'/roles/roles-new'}
               color='info'
-              label='New Item'
+              label='New Role'
             />
           )}
 

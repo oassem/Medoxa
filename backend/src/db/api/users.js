@@ -186,7 +186,7 @@ module.exports = class UsersDBApi {
 
     if (data.app_role !== undefined) {
       await users.setApp_role(
-        data.app_role,
+        data.app_role?.id ? data.app_role.id : data.app_role,
         { transaction },
       );
     }
