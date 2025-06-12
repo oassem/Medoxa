@@ -7,24 +7,24 @@ import { fetch } from '../../stores/users/usersSlice';
 import dataFormatter from '../../helpers/dataFormatter';
 import ImageField from '../../components/ImageField';
 import LayoutAuthenticated from '../../layouts/Authenticated';
-import { getPageTitle } from '../../config';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
 import SectionMain from '../../components/SectionMain';
 import CardBox from '../../components/CardBox';
 import BaseButton from '../../components/BaseButton';
 import BaseDivider from '../../components/BaseDivider';
+import FormField from '../../components/FormField';
+import { getPageTitle } from '../../config';
 import { mdiChartTimelineVariant } from '@mdi/js';
 import { SwitchField } from '../../components/SwitchField';
-import FormField from '../../components/FormField';
 import { useTranslation } from 'react-i18next';
 
 const UsersView = () => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { users } = useAppSelector((state) => state.users);
+  const { currentUser } = useAppSelector((state) => state.auth);
   const { id } = router.query;
-  const { t, i18n } = useTranslation('common');
-  const isRTL = i18n.language === 'ar';
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     dispatch(fetch({ id }));
@@ -35,14 +35,14 @@ const UsersView = () => {
       <Head>
         <title>
           {getPageTitle(
-            t('pages.users.viewTitle', { defaultValue: 'View users' }),
+            t('pages.users.viewTitle', { defaultValue: 'View user' }),
           )}
         </title>
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton
           icon={mdiChartTimelineVariant}
-          title={t('pages.users.viewTitle', { defaultValue: 'View users' })}
+          title={t('pages.users.viewTitle', { defaultValue: 'View user' })}
           main
         >
           <BaseButton
@@ -80,7 +80,7 @@ const UsersView = () => {
             />
           </FormField>
 
-          <div className={'mb-4'}>
+          <div className={'mb-6'}>
             <p className={'block font-bold mb-2'}>{t('fields.avatar')}</p>
             {users?.avatar?.length ? (
               <ImageField
@@ -93,14 +93,26 @@ const UsersView = () => {
             )}
           </div>
 
-          <div className={'mb-8'}>
+          <div className={'mb-4'}>
             <p className={'block font-bold mb-2'}>{t('fields.appRole')}</p>
             <p>{users?.app_role?.name ?? t('messages.noData')}</p>
           </div>
 
-          <div className='my-8' />
+          <div className={'mb-4'}>
+            <p className={'block font-bold mb-2'}>Department</p>
+            <p>{users?.department?.name ?? t('messages.noData')}</p>
+          </div>
 
-          <h2 className='text-2xl font-extrabold'>
+          {currentUser?.app_role?.globalAccess && (
+            <div className={'mb-4'}>
+              <p className={'block font-bold mb-2'}>
+                {t('fields.organizations')}
+              </p>
+              <p>{users?.organizations?.name ?? t('messages.noData')}</p>
+            </div>
+          )}
+
+          <h2 className='block font-bold mb-2 mt-8'>
             {t('fields.customPermissions')}
           </h2>
           <CardBox
@@ -146,14 +158,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
-            {t('fields.organizations')}
-          </h2>
-          <p>{users?.organizations?.name ?? t('messages.noData')}</p>
-
-          <div className='my-8' />
-
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.appointmentsDoctor')}
           </h2>
           <CardBox
@@ -246,7 +251,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.doctor_availabilities_doctor')}
           </h2>
           <CardBox
@@ -354,7 +359,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.holidays_doctor')}
           </h2>
           <CardBox
@@ -411,7 +416,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.imaging_orders_imaging_technician')}
           </h2>
           <CardBox
@@ -466,7 +471,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.lab_orders_lab_technician')}
           </h2>
           <CardBox
@@ -521,168 +526,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
-            {t('fields.patients_user')}
-          </h2>
-          <CardBox
-            className='mb-6 border border-gray-300 rounded overflow-hidden'
-            hasTable
-          >
-            <div className='overflow-x-auto'>
-              <table>
-                <thead>
-                  <tr>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.full_name_en')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.full_name_ar')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.date_of_birth')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.gender')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.nationality')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.identifier_type')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.identifier')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.address')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.emergency_contact_name')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.emergency_contact_phone')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.medical_history')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.allergies')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.current_medications')}
-                    </th>
-                    <th className='text-left rtl:text-right'>
-                      {t('fields.family_history')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.patients_user &&
-                    Array.isArray(users.patients_user) &&
-                    users.patients_user.map((item: any) => (
-                      <tr
-                        key={item.id}
-                        onClick={() =>
-                          router.push(`/patients/patients-view/?id=${item.id}`)
-                        }
-                      >
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='full_name_en'
-                        >
-                          {item.full_name_en}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='full_name_ar'
-                        >
-                          {item.full_name_ar}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='date_of_birth'
-                        >
-                          {dataFormatter.dateTimeFormatter(item.date_of_birth)}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='gender'
-                        >
-                          {item.gender}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='nationality'
-                        >
-                          {item.nationality}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='identifier_type'
-                        >
-                          {item.identifier_type}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='identifier'
-                        >
-                          {item.identifier}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='address'
-                        >
-                          {item.address}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='emergency_contact_name'
-                        >
-                          {item.emergency_contact_name}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='emergency_contact_phone'
-                        >
-                          {item.emergency_contact_phone}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='medical_history'
-                        >
-                          {item.medical_history}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='allergies'
-                        >
-                          {item.allergies}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='current_medications'
-                        >
-                          {item.current_medications}
-                        </td>
-                        <td
-                          className='text-left rtl:text-right'
-                          data-label='family_history'
-                        >
-                          {item.family_history}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            {!users?.patients_user?.length && (
-              <div className={'text-center py-4'}>{t('messages.noData')}</div>
-            )}
-          </CardBox>
-
-          <div className='my-8' />
-
-          <h2 className='text-2xl font-extrabold'>
+          <h2 className='block font-bold mb-2'>
             {t('fields.pharmacy_orders_pharmacist')}
           </h2>
           <CardBox
@@ -737,9 +581,7 @@ const UsersView = () => {
 
           <div className='my-8' />
 
-          <h2 className='text-2xl font-extrabold'>
-            {t('fields.visits_doctor')}
-          </h2>
+          <h2 className='block font-bold mb-2'>{t('fields.visits_doctor')}</h2>
           <CardBox
             className='mb-6 border border-gray-300 rounded overflow-hidden'
             hasTable

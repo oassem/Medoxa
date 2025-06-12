@@ -63,7 +63,7 @@
     "users": {
       "viewTitle": "View user",
       "editTitle": "Edit user",
-      "newTitle": "New User"
+      "newTitle": "New user"
     }
   },
   "components": {
@@ -134,7 +134,7 @@
     "lastName": "Last Name",
     "phoneNumber": "Phone Number",
     "email": "E-Mail",
-    "appRole": "App Role",
+    "appRole": "Role",
     "customPermissions": "Custom Permissions",
     "addInviteUser": "Add/Invite User",
     "filter": "Filter",
@@ -143,7 +143,7 @@
     "confirm": "Confirm",
     "disabled": "Disabled",
     "avatar": "Avatar",
-    "organizations": "Organizations",
+    "organizations": "Organization",
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
@@ -251,7 +251,7 @@
     "avatar": "Avatar",
     "appRole": "App Role",
     "customPermissions": "Custom Permissions",
-    "organizations": "Organizations",
+    "organizations": "Organization",
     "appointmentsDoctor": "Appointments Doctor",
     "appointmentDate": "Appointment Date",
     "startTime": "Start Time",

@@ -1,31 +1,29 @@
 import { mdiChartTimelineVariant } from '@mdi/js';
-import Head from 'next/head';
 import { uniqueId } from 'lodash';
+import Head from 'next/head';
 import React, { ReactElement, useState } from 'react';
 import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
-import { getPageTitle } from '../../config';
 import TableUsers from '../../components/Users/TableUsers';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
+import { getPageTitle } from '../../config';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { setRefetch, uploadCsv } from '../../stores/users/usersSlice';
 import { useTranslation } from 'react-i18next';
 import { hasPermission } from '../../helpers/userPermissions';
 
 const UsersTablesPage = () => {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('common');
+  const { currentUser } = useAppSelector((state) => state.auth);
   const [filterItems, setFilterItems] = useState([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
-
-  const { currentUser } = useAppSelector((state) => state.auth);
-
-  const dispatch = useAppDispatch();
 
   const [filters] = useState([
     { label: t('users.firstName'), title: 'firstName' },
@@ -33,7 +31,10 @@ const UsersTablesPage = () => {
     { label: t('users.phoneNumber'), title: 'phoneNumber' },
     { label: t('users.email'), title: 'email' },
     { label: t('users.appRole'), title: 'app_role' },
-    { label: t('users.customPermissions'), title: 'custom_permissions' },
+    { label: 'Department', title: 'department' },
+    ...(!currentUser?.app_role?.globalAccess
+      ? []
+      : [{ label: 'Organization', title: 'organization' }]),
   ]);
 
   const hasCreatePermission =
@@ -113,6 +114,7 @@ const UsersTablesPage = () => {
             label={t('users.filter')}
             onClick={addFilter}
           />
+
           <BaseButton
             className={'me-3'}
             color='info'

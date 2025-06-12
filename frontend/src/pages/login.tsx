@@ -13,11 +13,11 @@ import FormField from '../components/FormField';
 import FormCheckRadio from '../components/FormCheckRadio';
 import BaseDivider from '../components/BaseDivider';
 import BaseButtons from '../components/BaseButtons';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getPageTitle } from '../config';
 import { findMe, loginUser, resetAction } from '../stores/authSlice';
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
-import Link from 'next/link';
 import { toast, ToastContainer } from 'react-toastify';
 import { getPexelsImage, getPexelsVideo } from '../helpers/pexels';
 
@@ -33,6 +33,7 @@ export default function Login() {
     photographer: undefined,
     photographer_url: undefined,
   });
+
   const [illustrationVideo, setIllustrationVideo] = useState({
     video_files: [],
   });
@@ -46,6 +47,7 @@ export default function Login() {
     token,
     notify: notifyState,
   } = useAppSelector((state) => state.auth);
+
   const [initialValues, setInitialValues] = React.useState({
     email: 'super_admin@flatlogic.com',
     password: '2231a1c1',
@@ -237,19 +239,6 @@ export default function Login() {
                     <code className={`${textColor}`}>2231a1c1</code>
                     {' / '}
                     to login as Admin
-                  </p>
-                  <p>
-                    Use{' '}
-                    <code
-                      className={`cursor-pointer ${textColor} `}
-                      onClick={(e) => setLogin(e.target)}
-                    >
-                      client@hello.com
-                    </code>
-                    {' / '}
-                    <code className={`${textColor}`}>c69e460bf391</code>
-                    {' / '}
-                    to login as User
                   </p>
                 </div>
                 <div>

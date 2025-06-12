@@ -99,7 +99,7 @@ module.exports = function (sequelize, DataTypes) {
       through: 'usersCustom_permissionsPermissions',
     });
 
-    /// loop through entities and it's fields, and if ref === current e[name] and create relation has many on parent entity
+    // loop through entities and it's fields, and if ref === current e[name] and create relation has many on parent entity
 
     db.users.hasMany(db.appointments, {
       as: 'appointments_doctor',
@@ -200,6 +200,14 @@ module.exports = function (sequelize, DataTypes) {
     db.users.belongsTo(db.users, {
       as: 'updatedBy',
     });
+
+    db.users.belongsTo(db.departments, {
+      as: 'department',
+      foreignKey: {
+        name: 'departmentId',
+      },
+      constraints: false,
+    });
   };
 
   users.beforeCreate((users, options) => {
@@ -233,9 +241,7 @@ module.exports = function (sequelize, DataTypes) {
 
 function trimStringFields(users) {
   users.email = users.email.trim();
-
   users.firstName = users.firstName ? users.firstName.trim() : null;
-
   users.lastName = users.lastName ? users.lastName.trim() : null;
 
   return users;

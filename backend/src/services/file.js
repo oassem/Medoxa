@@ -6,7 +6,6 @@ const { format } = require('util');
 
 const ensureDirectoryExistence = (filePath) => {
   const dirname = path.dirname(filePath);
-
   if (fs.existsSync(dirname)) {
     return true;
   }
@@ -79,17 +78,15 @@ const downloadLocal = async (req, res) => {
   if (!privateUrl) {
     return res.sendStatus(404);
   }
+
   res.download(path.join(config.uploadDir, privateUrl));
 };
 
 const initGCloud = () => {
+  const hash = config.gcloud.hash;
+  const privateKey = process.env.GC_PRIVATE_KEY.replace(/\\\n/g, '\n');
   const processFile = require('../middlewares/upload');
   const { Storage } = require('@google-cloud/storage');
-
-  const crypto = require('crypto');
-  const hash = config.gcloud.hash;
-
-  const privateKey = process.env.GC_PRIVATE_KEY.replace(/\\\n/g, '\n');
 
   const storage = new Storage({
     projectId: process.env.GC_PROJECT_ID,
@@ -116,8 +113,6 @@ const uploadGCloud = async (folder, req, res) => {
 
     let path = `${hash}/${folder}/${filename}`;
     let blob = bucket.file(path);
-
-    console.log(path);
 
     const blobStream = blob.createWriteStream({
       resumable: false,
@@ -154,8 +149,7 @@ const uploadGCloud = async (folder, req, res) => {
 
 const downloadGCloud = async (req, res) => {
   try {
-    const { hash, bucket, processFile } = initGCloud();
-
+    const { hash, bucket } = initGCloud();
     const privateUrl = await req.query.privateUrl;
     const filePath = `${hash}/${privateUrl}`;
     const file = bucket.file(filePath);
@@ -178,9 +172,8 @@ const downloadGCloud = async (req, res) => {
 
 const deleteGCloud = async (privateUrl) => {
   try {
-    const { hash, bucket, processFile } = initGCloud();
+    const { hash, bucket } = initGCloud();
     const filePath = `${hash}/${privateUrl}`;
-
     const file = bucket.file(filePath);
     const fileExists = await file.exists();
 

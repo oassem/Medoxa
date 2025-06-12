@@ -2,10 +2,8 @@ const db = require('../models');
 const FileDBApi = require('./file');
 const crypto = require('crypto');
 const Utils = require('../utils');
-
 const bcrypt = require('bcrypt');
 const config = require('../../config');
-
 const Sequelize = db.Sequelize;
 const Op = Sequelize.Op;
 
@@ -42,6 +40,7 @@ module.exports = class UsersDBApi {
       const role = await db.roles.findOne({
         where: { name: 'User' },
       });
+
       if (role) {
         await users.setApp_role(role, {
           transaction,
@@ -53,13 +52,18 @@ module.exports = class UsersDBApi {
       });
     }
 
-    await users.setOrganizations(data.data.organizations || null, {
-      transaction,
-    });
+    await users.setOrganizations(
+      data.data.organizations || currentUser.organizationsId || null,
+      {
+        transaction,
+      },
+    );
 
     await users.setCustom_permissions(data.data.custom_permissions || [], {
       transaction,
     });
+
+    await users.setDepartment(data.data.departmentId || null, { transaction });
 
     await FileDBApi.replaceRelationFiles(
       {
@@ -81,16 +85,13 @@ module.exports = class UsersDBApi {
     // Prepare data - wrapping individual data transformations in a map() method
     const usersData = data.map((item, index) => ({
       id: item.id || undefined,
-
       firstName: item.firstName || null,
       lastName: item.lastName || null,
       phoneNumber: item.phoneNumber || null,
       email: item.email || null,
       disabled: item.disabled || false,
-
       password: item.password || null,
       emailVerified: item.emailVerified || false,
-
       emailVerificationToken: item.emailVerificationToken || null,
       emailVerificationTokenExpiresAt:
         item.emailVerificationTokenExpiresAt || null,
@@ -107,7 +108,6 @@ module.exports = class UsersDBApi {
     const users = await db.users.bulkCreate(usersData, { transaction });
 
     // For each item created, replace relation files
-
     for (let i = 0; i < users.length; i++) {
       await FileDBApi.replaceRelationFiles(
         {
@@ -132,6 +132,7 @@ module.exports = class UsersDBApi {
     if (!data?.app_role) {
       data.app_role = users?.app_role?.id;
     }
+
     if (!data?.custom_permissions) {
       data.custom_permissions = users?.custom_permissions?.map(
         (item) => item.id,
@@ -186,15 +187,6 @@ module.exports = class UsersDBApi {
     if (data.app_role !== undefined) {
       await users.setApp_role(
         data.app_role,
-
-        { transaction },
-      );
-    }
-
-    if (data.organizations !== undefined) {
-      await users.setOrganizations(
-        data.organizations,
-
         { transaction },
       );
     }
@@ -203,6 +195,17 @@ module.exports = class UsersDBApi {
       await users.setCustom_permissions(data.custom_permissions, {
         transaction,
       });
+    }
+
+    if (data.departmentId !== undefined) {
+      await users.setDepartment(data.departmentId, { transaction });
+    }
+
+    if (data.organizations !== undefined) {
+      await users.setOrganizations(
+        data.organizations?.id ? data.organizations.id : data.organizations,
+        { transaction },
+      );
     }
 
     await FileDBApi.replaceRelationFiles(
@@ -267,7 +270,6 @@ module.exports = class UsersDBApi {
 
   static async findBy(where, options) {
     const transaction = (options && options.transaction) || undefined;
-
     const users = await db.users.findOne({ where }, { transaction });
 
     if (!users) {
@@ -335,6 +337,10 @@ module.exports = class UsersDBApi {
       transaction,
     });
 
+    output.department = await users.getDepartment({
+      transaction,
+    });
+
     return output;
   }
 
@@ -343,7 +349,6 @@ module.exports = class UsersDBApi {
     let offset = 0;
     let where = {};
     const currentPage = +filter.page;
-
     const user = (options && options.currentUser) || null;
     const userOrganizations = (user && user.organizations?.id) || null;
 
@@ -355,15 +360,10 @@ module.exports = class UsersDBApi {
 
     offset = currentPage * limit;
 
-    const orderBy = null;
-
-    const transaction = (options && options.transaction) || undefined;
-
     let include = [
       {
         model: db.roles,
         as: 'app_role',
-
         where: filter.app_role
           ? {
             [Op.or]: [
@@ -400,6 +400,11 @@ module.exports = class UsersDBApi {
       {
         model: db.file,
         as: 'avatar',
+      },
+
+      {
+        model: db.departments,
+        as: 'department',
       },
     ];
 
@@ -544,17 +549,6 @@ module.exports = class UsersDBApi {
         };
       }
 
-      if (filter.organizations) {
-        const listItems = filter.organizations.split('|').map((item) => {
-          return Utils.uuid(item);
-        });
-
-        where = {
-          ...where,
-          organizationsId: { [Op.or]: listItems },
-        };
-      }
-
       if (filter.custom_permissions) {
         const searchTerms = filter.custom_permissions.split('|');
 
@@ -609,6 +603,25 @@ module.exports = class UsersDBApi {
             },
           };
         }
+      }
+
+      if (filter.department) {
+        include.push({
+          model: db.departments,
+          as: 'department',
+          where: {
+            name: { [Op.iLike]: `%${filter.department}%` },
+          },
+          required: true,
+        });
+      }
+
+      if (filter.organization) {
+        include.push({
+          model: db.organizations,
+          as: 'organizations',
+          where: { name: { [Op.iLike]: `%${filter.organization}%` } },
+        });
       }
     }
 
@@ -690,15 +703,20 @@ module.exports = class UsersDBApi {
         firstName: data.firstName,
         authenticationUid: data.authenticationUid,
         password: data.password,
-
         organizationId: data.organizationId,
       },
       { transaction },
     );
 
+    // Set department if provided
+    if (data.departmentId) {
+      await users.setDepartment(data.departmentId, { transaction });
+    }
+
     const app_role = await db.roles.findOne({
       where: { name: config.roles?.user || 'User' },
     });
+
     if (app_role?.id) {
       await users.setApp_role(app_role?.id || null, {
         transaction,
@@ -718,7 +736,6 @@ module.exports = class UsersDBApi {
 
   static async updatePassword(id, password, options) {
     const currentUser = (options && options.currentUser) || { id: null };
-
     const transaction = (options && options.transaction) || undefined;
 
     const users = await db.users.findByPk(id, {

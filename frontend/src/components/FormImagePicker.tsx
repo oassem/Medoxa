@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ColorButtonKey } from '../interfaces';
-import BaseButton from './BaseButton';
-import ImagesUploader from './Uploaders/ImagesUploader';
-import FileUploader from './Uploaders/UploadService';
 import { mdiReload } from '@mdi/js';
 import { useAppSelector } from '../stores/hooks';
+import BaseButton from './BaseButton';
+import FileUploader from './Uploaders/UploadService';
 
 type Props = {
   label?: string;
@@ -16,6 +15,7 @@ type Props = {
   schema: object;
   field: any;
   form: any;
+  disabled?: boolean;
 };
 
 const FormImagePicker = ({
@@ -28,6 +28,7 @@ const FormImagePicker = ({
   schema,
   form,
   field,
+  disabled,
 }: Props) => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,7 @@ const FormImagePicker = ({
       setFile(field.value[0]);
     }
   }, [field.value]);
+
   const handleFileChange = async (event) => {
     const file = event.currentTarget.files[0];
     setFile(file);
@@ -77,6 +79,7 @@ const FormImagePicker = ({
           color={color}
           roundedFull={isRoundIcon}
           asAnchor
+          disabled={disabled}
         />
         <input
           type='file'

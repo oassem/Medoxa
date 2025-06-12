@@ -6,13 +6,13 @@ import CardBox from '../../components/CardBox';
 import LayoutAuthenticated from '../../layouts/Authenticated';
 import SectionMain from '../../components/SectionMain';
 import SectionTitleLineWithButton from '../../components/SectionTitleLineWithButton';
-import { getPageTitle } from '../../config';
 import TableUsers from '../../components/Users/TableUsers';
 import BaseButton from '../../components/BaseButton';
 import axiosInstance from '../../utils/axiosInstance';
-import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import CardBoxModal from '../../components/CardBoxModal';
 import DragDropFilePicker from '../../components/DragDropFilePicker';
+import { getPageTitle } from '../../config';
+import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { setRefetch, uploadCsv } from '../../stores/users/usersSlice';
 import { hasPermission } from '../../helpers/userPermissions';
 
@@ -28,10 +28,10 @@ const UsersTablesPage = () => {
     { label: 'Last Name', title: 'lastName' },
     { label: 'Phone Number', title: 'phoneNumber' },
     { label: 'E-Mail', title: 'email' },
-
     { label: 'App Role', title: 'app_role' },
-
     { label: 'Custom Permissions', title: 'custom_permissions' },
+    { label: 'Department', title: 'department' },
+    { label: 'Organization', title: 'organization' },
   ]);
 
   const hasCreatePermission =

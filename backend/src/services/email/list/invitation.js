@@ -23,9 +23,13 @@ module.exports = class InvitationEmail {
       );
 
       const template = await fs.readFile(templatePath, 'utf8');
-
       const appTitle = getNotification('app.title');
-      const signupUrl = `${this.host}&invitation=true`;
+
+      let host = this.host;
+      if (!/^https?:\/\//i.test(host)) {
+        host = 'http://' + host;
+      }
+      const signupUrl = `${host}&invitation=true`;
 
       let html = template
         .replace(/{appTitle}/g, appTitle)

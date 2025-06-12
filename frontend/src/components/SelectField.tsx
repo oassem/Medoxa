@@ -1,7 +1,8 @@
 import React, { useEffect, useId, useState } from 'react';
 import { AsyncPaginate } from 'react-select-async-paginate';
-import axiosInstance from '../utils/axiosInstance';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../stores/hooks';
+import axiosInstance from '../utils/axiosInstance';
 
 export const SelectField = ({
   options,
@@ -10,8 +11,10 @@ export const SelectField = ({
   itemRef,
   showField,
   disabled,
+  onChange,
 }) => {
   const { i18n, t } = useTranslation();
+  const { currentUser } = useAppSelector((state) => state.auth);
   const [value, setValue] = useState(null);
   const PAGE_SIZE = 100;
 
@@ -30,8 +33,13 @@ export const SelectField = ({
   });
 
   const handleChange = (option) => {
-    form.setFieldValue(field.name, option?.value || null);
+    const newValue = option?.value || null;
+    form.setFieldValue(field.name, newValue);
     setValue(option);
+
+    if (onChange) {
+      onChange(newValue);
+    }
   };
 
   async function callApi(inputValue: string, loadedOptions: any[]) {
@@ -39,11 +47,21 @@ export const SelectField = ({
       loadedOptions.length
     }${inputValue ? `&query=${inputValue}` : ''}`;
     const { data } = await axiosInstance(path);
+
+    let filteredData = data;
+    if (itemRef === 'roles' && currentUser?.app_role?.globalAccess) {
+      // Only show roles with 'admin' in their label
+      filteredData = data.filter((role) =>
+        role.label?.toLowerCase().includes('admin'),
+      );
+    }
+
     return {
-      options: data.map(mapResponseToValuesAndLabels),
-      hasMore: data.length === PAGE_SIZE,
+      options: filteredData.map(mapResponseToValuesAndLabels),
+      hasMore: filteredData.length === PAGE_SIZE,
     };
   }
+
   return (
     <AsyncPaginate
       classNames={{

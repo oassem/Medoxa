@@ -1,4 +1,5 @@
 const os = require('os');
+const path = require('path');
 
 const config = {
   gcloud: {
@@ -32,14 +33,14 @@ const config = {
     clientId: process.env.MS_CLIENT_ID || '',
     clientSecret: process.env.MS_CLIENT_SECRET || '',
   },
-  uploadDir: os.tmpdir(),
+  uploadDir: path.join(__dirname, '../uploads'),
   email: {
     from: 'Medoxa <app@flatlogic.app>',
-    host: 'email-smtp.us-east-1.amazonaws.com',
+    host: 'sandbox.smtp.mailtrap.io',
     port: 587,
     auth: {
-      user: process.env.EMAIL_USER || '',
-      pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER || '8b2f229dd32c01',
+      pass: process.env.EMAIL_PASS || '08363c3ddd9f50',
     },
     tls: {
       rejectUnauthorized: false,

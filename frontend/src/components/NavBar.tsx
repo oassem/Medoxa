@@ -1,11 +1,11 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { mdiClose, mdiDotsVertical } from '@mdi/js';
 import { containerMaxW } from '../config';
+import { MenuNavBarItem } from '../interfaces';
+import { useAppSelector } from '../stores/hooks';
 import BaseIcon from './BaseIcon';
 import NavBarItemPlain from './NavBarItemPlain';
 import NavBarMenuList from './NavBarMenuList';
-import { MenuNavBarItem } from '../interfaces';
-import { useAppSelector } from '../stores/hooks';
 
 type Props = {
   menu: MenuNavBarItem[];
@@ -23,6 +23,7 @@ export default function NavBar({ menu, className = '', children }: Props) {
       const scrolled = window.scrollY > 0;
       setIsScrolled(scrolled);
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);

@@ -15,15 +15,15 @@ import { useAppDispatch, useAppSelector } from '../../stores/hooks';
 import { Field, Form, Formik } from 'formik';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { loadColumns } from './configureUsersCols';
-import _ from 'lodash';
-import dataFormatter from '../../helpers/dataFormatter';
 import { dataGridStyles } from '../../styles';
 import { dataGridStyles_ar } from '../../styles_ar';
 import { useTranslation } from 'react-i18next';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { StylesProvider, jssPreset } from '@mui/styles';
 import { create } from 'jss';
+import dataFormatter from '../../helpers/dataFormatter';
 import rtl from 'jss-rtl';
+import _ from 'lodash';
 
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 const perPage = 10;
@@ -184,7 +184,7 @@ const TableSampleUsers = ({
   useEffect(() => {
     if (!currentUser) return;
     loadColumns(handleDeleteModalAction, currentUser, t).then((newCols) =>
-      setColumns(newCols),
+      setColumns(newCols as GridColDef[]),
     );
   }, [currentUser, t, i18n.language]);
 

@@ -16,7 +16,6 @@ router.use(checkCrudPermissions('departments'));
  *      Departments:
  *        type: object
  *        properties:
-
  *          name:
  *            type: string
  *            default: name
@@ -392,7 +391,7 @@ router.get(
  */
 router.get('/autocomplete', async (req, res) => {
   const globalAccess = req.currentUser.app_role.globalAccess;
-  const organizationId = req.currentUser.organization?.id;
+  const organizationId = req.currentUser.organizationsId;
 
   const payload = await DepartmentsDBApi.findAllAutocomplete(
     req.query.query,

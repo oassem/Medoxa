@@ -31,7 +31,6 @@ module.exports = function (sequelize, DataTypes) {
 
   departments.associate = (db) => {
     /// loop through entities and it's fields, and if ref === current e[name] and create relation has many on parent entity
-
     db.departments.hasMany(db.appointment_rules, {
       as: 'appointment_rules_department',
       foreignKey: {
@@ -58,6 +57,14 @@ module.exports = function (sequelize, DataTypes) {
 
     db.departments.hasMany(db.visits, {
       as: 'visits_department',
+      foreignKey: {
+        name: 'departmentId',
+      },
+      constraints: false,
+    });
+
+    db.departments.hasMany(db.users, {
+      as: 'users_department',
       foreignKey: {
         name: 'departmentId',
       },

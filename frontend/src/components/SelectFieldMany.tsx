@@ -8,6 +8,7 @@ export const SelectFieldMany = ({
   form,
   itemRef,
   showField,
+  disabled,
 }) => {
   const [value, setValue] = useState([]);
   const PAGE_SIZE = 100;
@@ -70,6 +71,7 @@ export const SelectFieldMany = ({
       onChange={handleChange}
       defaultOptions
       isClearable
+      isDisabled={disabled}
     />
   );
 };

@@ -3,22 +3,17 @@ const UsersDBApi = require('../db/api/users');
 const processFile = require('../middlewares/upload');
 const ValidationError = require('./notifications/errors/validation');
 const csv = require('csv-parser');
-const axios = require('axios');
 const config = require('../config');
 const stream = require('stream');
-
-const InvitationEmail = require('./email/list/invitation');
-const EmailSender = require('./email');
 const AuthService = require('./auth');
 
 module.exports = class UsersService {
   static async create(data, currentUser, sendInvitationEmails = true, host) {
     let transaction = await db.sequelize.transaction();
-
     const globalAccess = currentUser.app_role.globalAccess;
-
     let email = data.email;
     let emailsToInvite = [];
+
     try {
       if (email) {
         let user = await UsersDBApi.findBy({ email }, { transaction });
@@ -27,9 +22,7 @@ module.exports = class UsersService {
         } else {
           await UsersDBApi.create(
             { data },
-
             globalAccess,
-
             {
               currentUser,
               transaction,
@@ -45,6 +38,7 @@ module.exports = class UsersService {
       await transaction.rollback();
       throw error;
     }
+
     if (emailsToInvite && emailsToInvite.length) {
       if (!sendInvitationEmails) return;
 
@@ -104,7 +98,6 @@ module.exports = class UsersService {
 
   static async update(data, id, currentUser) {
     const transaction = await db.sequelize.transaction();
-
     const globalAccess = currentUser.app_role.globalAccess;
 
     try {
@@ -117,9 +110,7 @@ module.exports = class UsersService {
       const updatedUser = await UsersDBApi.update(
         id,
         data,
-
         globalAccess,
-
         {
           currentUser,
           transaction,
@@ -150,6 +141,22 @@ module.exports = class UsersService {
       }
 
       await UsersDBApi.remove(id, {
+        currentUser,
+        transaction,
+      });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  static async deleteByIds(ids, currentUser) {
+    const transaction = await db.sequelize.transaction();
+
+    try {
+      await UsersDBApi.deleteByIds(ids, {
         currentUser,
         transaction,
       });
